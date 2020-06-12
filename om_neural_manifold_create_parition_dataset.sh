@@ -11,5 +11,5 @@
 #SBATCH --mail-user=ehoseini@mit.edu
 
 
-module add mit/matlab/2019b
+module add mit/matlab/2020a
 matlab -nodisplay -signelCompThread -r "addpath('/home/ehoseini/MyCodes/neural_manifolds/');addpath(genpath('/home/ehoseini/MyCodes/neural_manifolds/'));neural_manifold_create_partiion_dataset;quit;"
