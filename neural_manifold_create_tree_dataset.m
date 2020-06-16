@@ -1,5 +1,5 @@
 beta=0.4;
-n_feat=2000;
+n_feat=200;
 n_entites=16;
 
 % create a partition graph with 2 groups , one has 6 nodes and the other
@@ -20,7 +20,7 @@ node_t=vertcat(first_lat,second_lat,third_lat,forth_lat)*[1,1]
 Gr=graph(node_s,node_t);
 n_latent=Gr.numnodes-n_entites;
 e = Gr.Edges;
-plot(Gr);
+plot(Gr,'layout','force');
 adj_mat=full(adjacency(Gr));
 figure;
 imagesc(adj_mat);

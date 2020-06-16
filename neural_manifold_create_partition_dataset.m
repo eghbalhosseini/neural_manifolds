@@ -1,7 +1,7 @@
 beta=0.4;
-n_feat=28*28;
-num_classes=10;
-example_per_class=2000;
+n_feat=200;
+num_classes=5;
+example_per_class=10;
 n_entites=num_classes.*example_per_class;
 n_latent=num_classes;
 node_s=1:n_entites;
@@ -11,22 +11,27 @@ node_t=reshape(node_t,1,[]);
 % has 4 nodes 
 Gr = graph(node_s,node_t);
 e = Gr.Edges;
-%plot(Gr);
-adj_mat=full(adjacency(Gr));
-%figure;
-%imagesc(adj_mat)
+figure
+plot(Gr);
+adj_mat=(adjacency(Gr));
+figure;
+imagesc(adj_mat)
 %% 
 F_mat=nan*ones(n_feat,n_entites+n_latent); 
 S=sparse(exprnd(beta).*adj_mat);
 Delta_tilde=0;
 sigma=5;%exprnd(beta);
 parfor n=1:n_feat
-    S=sparse(exprnd(beta).*adj_mat);
+    %S=sparse(exprnd(beta).*adj_mat);
     V=diag([(1/sigma^2)*ones(1,n_entites),zeros(1,n_latent)]);
     W=full(spfun(@(x) 1./x,S));
     E=diag(sum(W,2));
     % graph laplacian
     Delta=E-W;
+    if nnz(Delta)/numel(Delta)<.25
+        Delta=sparse(Delta);
+        V=sparse(V);
+    end 
     % proper prior
     Delta_tilde=Delta+V;
     %imagesc(inv(Delta_tilde))
@@ -47,4 +52,4 @@ structure='flat';
 occind=node_t-n_entites;
 %save('/Users/eghbalhosseini/MyCodes/formdiscovery1.0_matlabR2014b/data/synthpartition_eh.mat','data','adj','adjcluster','nobj','sigma','G','structure','occind');
 %save('/Users/eghbalhosseini/MyData/neural_manifolds/data/synthpartition_eh.mat','data','adj','adjcluster','nobj','sigma','G','structure','occind','F_mat','class_id');
-save('/om/user/ehoseini/MyData/neural_manifolds/synthpartition_eh.mat','data','adj','adjcluster','nobj','sigma','G','structure','occind','F_mat','class_id');
+%save('/om/user/ehoseini/MyData/neural_manifolds/synthpartition_eh.mat','data','adj','adjcluster','nobj','sigma','G','structure','occind','F_mat','class_id');
