@@ -55,6 +55,6 @@ ops_out.Adjacency=adj;
 ops_out.struct=structure;
 ops_out.n_latent=n_latent;
 ops_out.class_id=class_id;
-save(strcat(ops.save_path,'neural_manifold_synthpartition.mat'),'ops_out');
-fprintf('saved data in %s \n',strcat(ops.save_path,'neural_manifold_synthpartition.mat'));
+save(strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)),'ops_out');
+fprintf('saved data in %s \n',strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)));
 end
