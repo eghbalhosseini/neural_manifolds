@@ -10,6 +10,7 @@ addParameter(p, 'exm_per_class', 100);
 addParameter(p, 'n_feat', 28*28);
 addParameter(p, 'beta', 0.4);
 addParameter(p, 'sigma', 0.5);
+addParameter(p,'norm',true);
 addParameter(p, 'save_path', '~/');
 if nargin==0,disp('Warning, using default values');end 
 parse(p, varargin{:});
@@ -27,7 +28,6 @@ class_id=ones(ops.exm_per_class,1)*[(1:ops.n_class)];
 class_id=reshape(class_id,1,[]);
 structure='flat';
 % create a feature dataset based on graph
-
 F_mat=nan*ones(n_ent+n_latent,ops.n_feat); 
 Delta_tilde=sparse(zeros(size(adj,1),size(adj,2)));
 beta=ops.beta;
@@ -45,7 +45,11 @@ parfor n=1:n_feat
     % univariate random
     z = randn(n_ent+n_latent,1); 
     L_Lambda = chol(Delta_tilde,'lower'); 
-    F_mat(:,n) = L_Lambda'\z;
+    dat_feat=L_Lambda'\z;
+    if ops.norm
+        dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat) );
+    end 
+    F_mat(:,n) = dat_feat;
     fprintf('feature: %d\n',n);
 end
 % save the results 
@@ -56,6 +60,7 @@ ops_out.Adjacency=adj;
 ops_out.struct=structure;
 ops_out.n_latent=n_latent;
 ops_out.class_id=class_id;
-save(strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)),'ops_out');
-fprintf('saved data in %s \n',strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)));
+data_loc=strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d_norm_%d.mat',n_ent,ops.n_class,n_feat,ops.norm));
+save(data_loc,'ops_out');
+fprintf('saved data in %s \n',data_loc);
 end
