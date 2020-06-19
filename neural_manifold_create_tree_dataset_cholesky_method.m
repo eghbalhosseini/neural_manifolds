@@ -52,7 +52,7 @@ class_id=reshape(class_id,1,[]);
 structure='latenttree';
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent,ops.n_feat); 
-Delta_tilde=sparse(zeros(size(adj,1),size(adj,2)));
+Delta_tilde=sparse(size(adj,1),size(adj,2));
 beta=ops.beta;
 sigma=ops.sigma;
 n_feat=ops.n_feat;
@@ -80,5 +80,5 @@ ops_out.struct=structure;
 ops_out.n_latent=n_latent;
 ops_out.class_id=class_id;
 save(strcat(ops.save_path,sprintf('synthtree_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)),'ops_out');
-fprintf('saved data in %s \n',strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)));
+fprintf('saved data in %s \n',strcat(ops.save_path,sprintf('synthtree_nobj_%d_nclass_%d_nfeat_%d.mat',n_ent,ops.n_class,n_feat)));
 end
