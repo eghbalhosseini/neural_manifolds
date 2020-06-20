@@ -41,7 +41,7 @@ class_id=ones(ex_pr_cl,1)*(1:n_cl);
 class_id=reshape(class_id,1,[]);
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent,n_feat); 
-V=sparse(diag([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]));
+V = spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent);
 parfor n=1:n_feat
     S=sparse(exprnd(beta).*adj);
     W=(spfun(@(x) 1./x,S));
