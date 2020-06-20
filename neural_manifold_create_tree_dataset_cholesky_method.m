@@ -6,7 +6,7 @@ function ops_out=neural_manifold_create_tree_dataset_cholesky_method(varargin)
 % for now its fixed with a certain number of classes. 
 % parse inputs  
 p=inputParser();
-addParameter(p, 'n_class', 100);
+addParameter(p, 'n_class', 50);
 addParameter(p, 'exm_per_class', 1000);
 addParameter(p, 'class_depth', 3);
 addParameter(p, 'n_feat', 28*28);
@@ -19,16 +19,16 @@ ops = p.Results;
 ops_out=ops;
 % construct a partition graph  
 % for 50 class
-%first_level_class=10;
-%first_example_per_class=5;
-%second_level_class=2;
-%second_example_per_class=5;
-
-% for 100 class
 first_level_class=10;
-first_example_per_class=10;
+first_example_per_class=5;
 second_level_class=2;
 second_example_per_class=5;
+
+% for 100 class
+%first_level_class=10;
+%first_example_per_class=10;
+%second_level_class=2;
+%second_example_per_class=5;
 
 
 n_ent=ops.n_class.*ops.exm_per_class;
