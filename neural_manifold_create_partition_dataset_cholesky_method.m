@@ -61,6 +61,6 @@ ops_out.struct=structure;
 ops_out.n_latent=n_latent;
 ops_out.class_id=class_id;
 data_loc=strcat(ops.save_path,sprintf('synthpartition_nobj_%d_nclass_%d_nfeat_%d_norm_%d.mat',n_ent,ops.n_class,n_feat,ops.norm));
-save(data_loc,'ops_out');
+save(data_loc,'ops_out','-v7.3');
 fprintf('saved data in %s \n',data_loc);
 end
