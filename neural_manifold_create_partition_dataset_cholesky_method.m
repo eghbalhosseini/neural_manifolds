@@ -8,8 +8,8 @@ p=inputParser();
 addParameter(p, 'n_class', 10);
 addParameter(p, 'exm_per_class', 100);
 addParameter(p, 'n_feat', 28*28);
-addParameter(p, 'beta', 0.4);
-addParameter(p, 'sigma', 0.5);
+addParameter(p, 'beta', .01);
+addParameter(p, 'sigma', 1.5);
 addParameter(p,'norm',true);
 addParameter(p, 'save_path', '~/');
 if nargin==0,disp('Warning, using default values');end 

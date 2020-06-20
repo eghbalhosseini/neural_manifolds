@@ -12,6 +12,7 @@ addParameter(p, 'class_depth', 3);
 addParameter(p, 'n_feat', 28*28);
 addParameter(p, 'beta', 0.4);
 addParameter(p, 'sigma', 0.5);
+addParameter(p,'norm',true);
 addParameter(p, 'save_path', '~/');
 parse(p, varargin{:});
 ops = p.Results;
@@ -68,7 +69,11 @@ parfor n=1:n_feat
     % univariate random
     z = randn(n_ent+n_latent,1); 
     L_Lambda = chol(Delta_tilde,'lower'); 
-    F_mat(:,n) = L_Lambda'\z;
+    dat_feat=L_Lambda'\z;
+    if ops.norm
+        dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat) );
+    end 
+    F_mat(:,n) = dat_feat;
     fprintf('feature: %d\n',n);
 end
 % save the results 
