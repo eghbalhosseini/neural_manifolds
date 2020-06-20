@@ -6,7 +6,7 @@ function ops_out=neural_manifold_create_tree_dataset_cholesky_method(varargin)
 % for now its fixed with a certain number of classes. 
 % parse inputs  
 p=inputParser();
-addParameter(p, 'n_class', 50);
+addParameter(p, 'n_class', 100);
 addParameter(p, 'exm_per_class', 1000);
 addParameter(p, 'class_depth', 3);
 addParameter(p, 'n_feat', 28*28);
@@ -18,9 +18,15 @@ parse(p, varargin{:});
 ops = p.Results;
 ops_out=ops;
 % construct a partition graph  
-first_level_class=10;
-first_example_per_class=5;
+% for 50 class
+%first_level_class=10;
+%first_example_per_class=5;
+%second_level_class=2;
+%second_example_per_class=5;
 
+% for 100 class
+first_level_class=10;
+first_example_per_class=10;
 second_level_class=2;
 second_example_per_class=5;
 
@@ -84,6 +90,7 @@ ops_out.Adjacency=adj;
 ops_out.struct=structure;
 ops_out.n_latent=n_latent;
 ops_out.class_id=class_id;
+
 data_loc=strcat(ops.save_path,sprintf('synthtree_nobj_%d_nclass_%d_nfeat_%d_norm_%d.mat',n_ent,ops.n_class,n_feat,ops.norm));
 save(data_loc,'ops_out');
 fprintf('saved data in %s \n',data_loc);
