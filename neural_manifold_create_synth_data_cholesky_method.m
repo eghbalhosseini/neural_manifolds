@@ -88,7 +88,7 @@ function [Gr,Hr]=create_graph_for_structure(ops)
             Gr = graph(node_s,node_t);
             Hr = nan; 
         case 'tree'
-            if isEven(ops.n_class)
+            if ~mod(ops.n_class,2)
                 
                 % create a fractal tree: 
                 n_temp=ops.n_class;
