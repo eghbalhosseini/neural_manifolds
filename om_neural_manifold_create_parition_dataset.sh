@@ -18,7 +18,7 @@ module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);addpath('/home/ehoseini/MyCodes/neural_manifolds/');\
 addpath(genpath('/home/ehoseini/MyCodes/neural_manifolds/'));\
 save_path='/om/user/ehoseini/MyData/neural_manifolds/';\
-n_class=10;exm_per_class=6000;n_feat=28*28;\
+n_class=50;exm_per_class=1000;n_feat=3*32*32;\
 beta=0.01;sigma=1.5;\
 neural_manifold_create_partition_dataset_cholesky_method('n_class',n_class,'exm_per_class',exm_per_class,'n_feat',n_feat,'save_path',save_path,'beta',beta,'sigma',sigma);\
 quit;"
