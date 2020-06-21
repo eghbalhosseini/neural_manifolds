@@ -10,8 +10,7 @@ function ops_out=neural_manifold_create_synth_data_cholesky_method(varargin)
 % parse inputs  
 p=inputParser();
 addParameter(p, 'n_class', 50);
-addParameter(p, 'exm_per_class', 1000);
-addParameter(p, 'class_depth', 3);
+addParameter(p, 'exm_per_class', 5);
 addParameter(p, 'n_feat', 28*28);
 addParameter(p, 'beta', 0.01);
 addParameter(p, 'structure', 'partition'); % options : partition , tree
@@ -32,13 +31,10 @@ is_norm=ops.norm;
 %   - Hr is the graph for how classes are connected, in case of partition is it
 %   is nan
 %   - Gr is the complete graph for the entities and classes. 
-[Gr,Hr]=create_graph_for_structure(ops);
+[gr_output]=create_graph_for_structure(ops);
 % first level 
-adj=(adjacency(Gr));
-n_latent=Gr.numnodes-n_ent;
-% create class ids 
-class_id=ones(ex_pr_cl,1)*(1:n_cl);
-class_id=reshape(class_id,1,[]);
+adj=(adjacency(gr_output.full_graph));
+n_latent=gr_output.full_graph.numnodes-n_ent;
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent,n_feat); 
 V = spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent);
@@ -66,15 +62,16 @@ ops_out.data=F_mat(1:n_ent,:);
 ops_out.data_latent=F_mat((n_ent+1):end,:);
 ops_out.Adjacency=adj;
 ops_out.n_latent=n_latent;
-ops_out.class_id=class_id;
-ops_out.entity_graph=Gr;
-ops_out.class_graph=Hr;
-data_loc=strcat(ops.save_path,sprintf('synth%s_nobj_%d_nclass_%d_nfeat_%d_norm_%d.mat',ops.structure,n_ent,n_cl,n_feat,is_norm));
+ops_out.hierarchical_class_ids=gr_output.class_ids;
+ops_out.class_id=gr_output.class_ids{1};
+ops_out.graph=gr_output;
+
+data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nfeat_%d_beta_%1.2f_sigma_%1.2f_norm_%d.mat',ops.structure,n_ent,n_cl,n_feat,beta,sigma,is_norm));
 save(data_loc,'ops_out','-v7.3');
 fprintf('saved data in %s \n',data_loc);
 end
 % funtion for making the graph 
-function [Gr,Hr]=create_graph_for_structure(ops)
+function [gr_output]=create_graph_for_structure(ops)
     gr_struct=ops.structure;
     n_ent=floor(ops.n_class.*ops.exm_per_class);
     ex_pr_cl=ops.exm_per_class;
@@ -87,6 +84,8 @@ function [Gr,Hr]=create_graph_for_structure(ops)
             node_t=reshape(node_t,1,[]);
             Gr = graph(node_s,node_t);
             Hr = nan; 
+            class_id=ones(ex_pr_cl,1)*(1:n_cl);
+            class_ids={reshape(class_id,1,[])};
         case 'tree'
             if ~mod(ops.n_class,2)
                 
@@ -118,6 +117,9 @@ function [Gr,Hr]=create_graph_for_structure(ops)
                 n_t_cell_new=arrayfun(@(x) repmat(1:size(n_t_cell{x},2),size(n_t_cell{x},1),1)+n_t_plus(x),1:size(n_t_cell,2),'uni',false);
                 n_s_cell_new=arrayfun(@(x) n_s_cell{x}+n_s_plus(x),1:size(n_s_cell,2),'uni',false);
                 n_t=cell2mat(cellfun(@(x) transpose(reshape(x,[],1)),n_t_cell_new,'uni',false));
+                % create class_ids
+                class_ids=cellfun(@(x) reshape(reshape(ones(1,n_ent),[],length(x))*diag(x),[],1),n_s_cell,'uni',false);
+                class_ids=cellfun(@transpose,class_ids,'uni',false);
                 % connect 2 sets
                 n_t(end)=n_t(end-1);
                 n_s=cell2mat(n_s_cell_new);
@@ -136,5 +138,8 @@ function [Gr,Hr]=create_graph_for_structure(ops)
         otherwise 
             error('unknown structure type')
     end 
-
+    gr_output=struct;
+    gr_output.full_graph=Gr;
+    gr_output.class_graph=Hr;
+    gr_output.class_ids=class_ids;
 end 
