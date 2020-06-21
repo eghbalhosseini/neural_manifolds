@@ -5,11 +5,15 @@ from torchvision import models
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 from neural_manifold_utils import CFAR100_fake_dataset, train, test
-import os
+import os, sys
 import socket
 from datetime import datetime
 import getpass
-
+print('__cuda available ',torch.cuda.is_available())
+print('__Python VERSION:', sys.version)
+print('__CUDNN VERSION:', torch.backends.cudnn.version())
+print('__Number CUDA Devices:', torch.cuda.device_count())
+print('__Device name:', torch.cuda.get_device_name(0))
 
 user=getpass.getuser()
 print(user)
