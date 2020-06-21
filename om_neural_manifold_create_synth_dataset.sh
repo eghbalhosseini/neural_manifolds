@@ -23,9 +23,9 @@ for n_class in 50 100 ; do
 done
 done
 
-echo "My SLURM_ARRAY_TASK_ID: "$SLURM_ARRAY_TASK_ID"
-echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}
-echo "Running n_class ${n_class_list[$SLURM_ARRAY_TASK_ID]}
+echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
+echo "Running n_class ${n_class_list[$SLURM_ARRAY_TASK_ID]}"
+echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);addpath('/home/ehoseini/MyCodes/neural_manifolds/');\
