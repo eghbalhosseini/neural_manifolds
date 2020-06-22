@@ -2,9 +2,9 @@
 #SBATCH --job-name=mftma_vgg
 #SBATCH --array=0-2
 #SBATCH --time=12:00:00
-#SBATCH --n=8
+#SBATCH -N 1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=12GB
+#SBATCH --mem-per-cpu=16GB
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
