@@ -44,12 +44,10 @@ class CFAR100_fake_dataset_mftma(Dataset):
         #target=list(vals.class_id.astype(int))
         # add extra component defining the graph and dataset.
         return dat_new, target
-    
+
 class CFAR100_fake_dataset(Dataset):
     def __init__(self, data_dir=None):
         self.data_dir=data_dir
-        self.data = []
-        self.targets = []
         self.dat , self.target=self.load_data()
         self.n_samples=self.dat.shape[0]
     def __len__(self):
@@ -58,7 +56,7 @@ class CFAR100_fake_dataset(Dataset):
         #item=np.expand_dims(self.dat[idx],axis=0)
         item=self.dat[idx]
         targ=np.squeeze(self.target[idx])
-        torch.tensor(item,dtype=torch.float), torch.tensor(targ,dtype=torch.long)
+        return torch.tensor(item,dtype=torch.float), torch.tensor(targ,dtype=torch.long)
     def load_data(self):
         try:
             annot=loadmat(self.data_dir)
@@ -81,7 +79,6 @@ class CFAR100_fake_dataset(Dataset):
         dat_new=dat[:,range(3*32*32)]
         dat_new=np.reshape(dat_new,(-1,3,32,32))
         target=np.double(np.transpose(vals['class_id'])-1.0)
-        #target=list(vals.class_id.astype(int))
         # add extra component defining the graph and dataset.
         return dat_new, target
 
