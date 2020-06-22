@@ -9,7 +9,7 @@ from mftma.utils.activation_extractor import extractor
 from mftma.utils.analyze_pytorch import analyze
 import getpass
 import argparse
-from neural_manifold_utils import CFAR100_fake_dataset , save_dict
+from neural_manifold_utils import CFAR100_fake_dataset_mftma , save_dict
 from datetime import datetime
 print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
@@ -32,7 +32,7 @@ args=parser.parse_args()
 
 if __name__=='__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    train_dataset = CFAR100_fake_dataset(data_dir=os.path.join(data_dir, args.datafile))
+    train_dataset = CFAR100_fake_dataset_mftma(data_dir=os.path.join(data_dir, args.datafile))
     # extract samples :
     sampled_classes = train_dataset.n_class
     examples_per_class = 100
