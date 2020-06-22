@@ -15,7 +15,6 @@ print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
 print('__CUDNN VERSION:', torch.backends.cudnn.version())
 print('__Number CUDA Devices:', torch.cuda.device_count())
-print('__Device name:', torch.cuda.get_device_name(0))
 
 user=getpass.getuser()
 print(user)
@@ -94,4 +93,7 @@ if __name__=='__main__':
              'analyze_n_class': sampled_classes
              }
 
-    save_dict(data_, results_file)
+    result_save_path = save_dir + 'mftma_VGG16_synthdata_' + train_dataset.structure + '_nclass_' + str(
+        int(train_dataset.n_class)) + '_n_exm_' + str(int(train_dataset.exm_per_class)) + '_' + current_time
+
+    save_dict(data_, result_save_path)

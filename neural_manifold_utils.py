@@ -3,6 +3,7 @@ import numpy as np
 from torch.utils.data import Dataset
 import mat73
 from scipy.io import loadmat
+import pickle
 
 class CFAR100_fake_dataset(Dataset):
     def __init__(self, data_dir=None):
