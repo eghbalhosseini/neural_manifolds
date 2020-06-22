@@ -32,7 +32,7 @@ if __name__=='__main__':
     # load dataset
     train_batch_size = 32
     test_batch_size = 1024
-    epochs = 25
+    epochs = 100
     train_dataset = CFAR100_fake_dataset(data_dir=os.path.join(data_dir, args.datafile))
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(train_dataset, batch_size=test_batch_size, shuffle=True)

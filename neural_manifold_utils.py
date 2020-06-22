@@ -15,7 +15,7 @@ class CFAR100_fake_dataset(Dataset):
         #item=np.expand_dims(self.dat[idx],axis=0)
         item=self.dat[idx]
         targ=np.squeeze(self.target[idx])
-        return torch.tensor(item,dtype=torch.float), torch.tensor(targ,dtype=torch.long)
+        return (torch.tensor(item,dtype=torch.float), targ)
     def load_data(self):
         try:
             annot=loadmat(self.data_dir)
@@ -80,3 +80,7 @@ def test(model, device, test_loader, epoch):
         100. * correct / len(test_loader.dataset)))
     test_acu = 100. * correct / len(test_loader.dataset)
     return test_acu
+
+def save_dict(di_, filename_):
+    with open(filename_, 'wb') as f:
+        pickle.dump(di_, f)
