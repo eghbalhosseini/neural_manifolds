@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=VGG
 #SBATCH -t 4:00:00
-#SBATCH --array=0-3
+#SBATCH --array=0-1
 #SBATCH --mem=30000
 #SBATCH --gres=gpu:1
 #SBATCH --exclude node017,node018
