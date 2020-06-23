@@ -54,7 +54,7 @@ parfor n=1:n_feat
         dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
     end 
     F_mat(:,n) = dat_feat;
-    fprintf('feature: %d\n',n);
+%    fprintf('feature: %d\n',n);
 end
 % save the results 
 ops_out=ops;
@@ -67,8 +67,8 @@ ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
 
 data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nfeat_%d_beta_%1.2f_sigma_%1.2f_norm_%d.mat',ops.structure,n_ent,n_cl,n_feat,beta,sigma,is_norm));
-save(data_loc,'ops_out','-v7.3');
-fprintf('saved data in %s \n',data_loc);
+%save(data_loc,'ops_out','-v7.3');
+%fprintf('saved data in %s \n',data_loc);
 end
 % funtion for making the graph 
 function [gr_output]=create_graph_for_structure(ops)

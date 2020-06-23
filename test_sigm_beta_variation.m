@@ -1,0 +1,55 @@
+% do one to get the within and between identifier 
+ops=neural_manifold_create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10);
+temp=ops.class_id'*ops.class_id;
+temp1=repmat(diag(temp),1,length(ops.class_id));
+within_class=double(arrayfun(@(x,y) isequal(x,y),temp,temp1));
+between_class=double(~within_class);
+within_class(within_class==0)=nan;
+within_class=1+within_class.*(diag(nan*ones(length(within_class),1)));
+between_class(between_class==0)=nan;
+%% 
+beta_range=linspace(1e-10,.05,25);
+sigma_range=linspace(1e-5,10,25);
+[Beta,Sigma]=meshgrid(beta_range,sigma_range);
+c_ratio=nan*Beta;
+BTW_c=c_ratio;
+WTH_c=c_ratio;
+for i=1:(length(Beta(:)))
+    ops=neural_manifold_create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'beta',Beta(i),'sigma',Sigma(i));
+    c=cov(transpose(ops.data));
+    wth_c=c.*within_class;
+    btw_c=c.*between_class;
+    c_ratio(i)=nanmean(btw_c(:))-nanmean(wth_c(:));
+    BTW_c(i)=nanmean(btw_c(:));
+    WTH_c(i)=nanmean(wth_c(:));
+    fprintf(strcat(num2str(i),'\n'));
+end 
+%%
+figure;
+surf(Beta,Sigma,WTH_c);shg
+view([143.2000,18.4000]);shg
+xlabel('beta')
+ylabel('sigma')
+zlabel('c_{wth}')
+set(gca,'fontsize',16)
+%
+figure;
+surf(Beta,Sigma,BTW_c);shg
+view([143.2000,18.4000]);shg
+xlabel('beta')
+ylabel('sigma')
+zlabel('c_{btw}')
+set(gca,'fontsize',16)
+%
+figure;
+surf(Beta,Sigma,BTW_c./WTH_c);shg
+view([143.2000,18.4000]);shg
+xlabel('beta')
+ylabel('sigma')
+zlabel('c_{btw}/c_{wth}')
+set(gca,'fontsize',16)
+%% 
+ops=neural_manifold_create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'beta',.001,'sigma',1.5);
+c=cov(transpose(ops.data));
+figure;
+imagesc(c)
