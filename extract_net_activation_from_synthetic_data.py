@@ -54,4 +54,5 @@ if __name__=='__main__':
              'network_dir':model_save_path,
              'dataset_dir':os.path.join(data_dir, args.datafile)}
 
-    (data_, result_save_path)
+    save_dict(data_, result_save_path)
+    print(result_save_path)
