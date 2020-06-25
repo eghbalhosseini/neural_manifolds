@@ -3,16 +3,14 @@
 #SBATCH --job-name=VGG
 #SBATCH -t 4:00:00
 #SBATCH --array=0
-#SBATCH --mem=30000
-#SBATCH --gres=gpu:QUADRORTX6000:4
+#SBATCH --mem=60000
+#SBATCH --gres=gpu:1
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
-#SBATCH --output=VGG_result_%j.out
-#SBATCH --error=VGG_result_%j.err
 
 i=0
-for data in synth_tree_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat ; do
+for data in synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat ; do
     dataset_list[$i]="$data"
     i=$i+1
 done
