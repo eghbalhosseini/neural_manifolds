@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_extr
-#SBATCH --array=0-3
+#SBATCH --array=0-2
 #SBATCH --time=12:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=96G
