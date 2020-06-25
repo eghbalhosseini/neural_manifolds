@@ -84,6 +84,7 @@ class CFAR100_fake_dataset(Dataset):
 
 def train(model, device, train_loader, optimizer):
     model.train()
+    accuracy=[]
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -99,7 +100,8 @@ def train(model, device, train_loader, optimizer):
                  batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item(),
                  100. * correct / len(target)))
-
+            accuracy.append((100. * correct / len(target)))
+    return accuracy
 
 def test(model, device, test_loader, epoch):
     model.eval()

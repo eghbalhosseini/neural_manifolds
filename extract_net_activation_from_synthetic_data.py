@@ -52,7 +52,9 @@ if __name__=='__main__':
              'n_class':sampled_classes,
              'exm_per_class':examples_per_class,
              'network_dir':model_save_path,
-             'dataset_dir':os.path.join(data_dir, args.datafile)}
+             'dataset_dir':os.path.join(data_dir, args.datafile),
+             'structure': train_dataset.structure
+             }
 
     save_dict(data_, result_save_path)
     print(result_save_path)
