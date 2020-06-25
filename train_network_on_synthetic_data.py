@@ -79,5 +79,7 @@ if __name__=='__main__':
         torch.save(model.state_dict(), model_save_path)
     else:
         print('unsuccessful training')
-    # end of file.
+
+    # to do : add a function for extracting activations,
+
 
