@@ -82,7 +82,50 @@ class CFAR100_fake_dataset(Dataset):
         # add extra component defining the graph and dataset.
         return dat_new, target
 
-def train(model, device, train_loader, optimizer,train_spec):
+def resize_tensor(data,shape=(-1,3,32,32)):
+    dat_new = np.reshape(data, shape)
+    return dat_new
+
+class sub_data(Dataset):
+    def __init__(self, data_path,resize=True,transform=None):
+        self.data_path=data_path
+        mat = mat73.loadmat(data_path)
+        ops = mat['ops_out']
+        self.data = ops['data']  # obs! if loading using sio, do: ops['data'][0][0]
+        self.targets = ops['class_id'].squeeze()
+        self.targets = self.targets - 1
+        assert (np.sqrt(datatest.shape[1]) == type(int))
+        self.transform = transform
+        self.resize = resize
+        self.structure = ops.structure
+        self.n_class = int(ops.n_class)
+        self.exm_per_class = int(ops.exm_per_class)
+        self.beta = int(ops.beta)
+        self.sigma = int(ops.sigma)
+        self.data_latent=ops.data_latent
+        self.n_feat=int(ops.n_feat)
+        self.n_latent=int(ops.n_latent)
+        self.is_norm=bool(ops.norm)
+        self.hierarchical_target=ops.hierarchical_class_ids
+    def __len__(self):
+        return len(self.targets)
+
+    def __getitem__(self, idx):
+        single_data = self.data[idx]
+        single_target = self.targets[idx]
+        target_tensor = torch.from_numpy(np.array(single_target))
+        target = target_tensor.long()
+        if self.transform is not None:
+            single_data = self.transform(single_data)
+        if self.resize:  # make 2d input for CNN
+            single_data = single_data.reshape(1, self.height, self.height)
+        if not self.resize:
+            single_data = np.expand_dims(single_data, axis=0)
+        data_tensor = torch.from_numpy(single_data)
+        data_tensor = data_tensor.type(torch.FloatTensor)
+        return data_tensor, target
+
+def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
     model.train()
     test_accuracies = []
     train_accuracies = []
@@ -99,12 +142,27 @@ def train(model, device, train_loader, optimizer,train_spec):
             pred = output.argmax(dim=1, keepdim=True)
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
+            train_accuracies.append(accuracy_train)
             print('Train Epoch: [{}/{} ({:.0f}%)]\Loss: {:.6f}, Train Accuracy: ({:.0f}%)'.format(
                  batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item(),
                  100. * correct / len(target)))
-            accuracy.append((100. * correct / len(target)))
-    return accuracy
+    epoch_dat = {
+        "fc": [],
+        "target": [],
+        "batch": [],
+        "epoch": epoch,
+        "test_acc": test_accuracies,
+        "train_acc": train_accuracies}
+
+    # if is_cuda:
+    epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
+    epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
+    epoch_dat['fc'] = np.concatenate(epoch_dat['fc'], axis=0)
+    epoch_dat['target'] = np.concatenate(epoch_dat['target'])
+    epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
+
+    return epoch_dat
 
 def test(model, device, test_loader, epoch):
     model.eval()
