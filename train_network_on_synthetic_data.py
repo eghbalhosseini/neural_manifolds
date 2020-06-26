@@ -33,6 +33,7 @@ args=parser.parse_args()
 
 if __name__=='__main__':
     # load dataset
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_batch_size = 32
     test_batch_size = 1024
     epochs = 100
@@ -46,6 +47,7 @@ if __name__=='__main__':
     hier_classes = [x - 1 for x in train_dataset_mtmfa.vals.hierarchical_class_ids]
     hier_n_class = [int(max(x) + 1) for x in hier_classes]
     hier_dat_mtmfa=[]
+
     for idx, x in enumerate(hier_classes):
         dat_mfmta = []
         dat_mtmfa = copy.deepcopy(train_dataset_mtmfa)
@@ -68,7 +70,6 @@ if __name__=='__main__':
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     # build model
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = models.vgg16(num_classes=train_dataset.n_class)
     model = model.to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
