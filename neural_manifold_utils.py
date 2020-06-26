@@ -94,7 +94,7 @@ class sub_data(Dataset):
         self.data = ops['data']  # obs! if loading using sio, do: ops['data'][0][0]
         self.targets = ops['class_id'].squeeze()
         self.targets = self.targets - 1
-        assert (np.sqrt(datatest.shape[1]) == type(int))
+        #assert (np.sqrt(datatest.shape[1]) == type(int))
         self.transform = transform
         self.resize = resize
         self.structure = ops.structure
