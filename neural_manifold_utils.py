@@ -82,9 +82,11 @@ class CFAR100_fake_dataset(Dataset):
         # add extra component defining the graph and dataset.
         return dat_new, target
 
-def train(model, device, train_loader, optimizer):
+def train(model, device, train_loader, optimizer,train_spec):
     model.train()
-    accuracy=[]
+    test_accuracies = []
+    train_accuracies = []
+    log_interval=train_spec['log_interval']
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -93,9 +95,10 @@ def train(model, device, train_loader, optimizer):
         loss = torch.nn.functional.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        if (batch_idx % 1000 == 0) & (batch_idx!=0):
+        if (batch_idx % log_interval == 0) & (batch_idx!=0):
             pred = output.argmax(dim=1, keepdim=True)
             correct = pred.eq(target.view_as(pred)).sum().item()
+            accuracy_train = (100. * correct / len(target))
             print('Train Epoch: [{}/{} ({:.0f}%)]\Loss: {:.6f}, Train Accuracy: ({:.0f}%)'.format(
                  batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item(),

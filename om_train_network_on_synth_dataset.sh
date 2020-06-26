@@ -27,4 +27,4 @@ export RESULTCACHING_HOME
 XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
-singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/neural_manifold_fz.simg python ~/MyCodes/neural_manifolds/train_network_on_synthetic_data.py "${dataset_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36.simg python ~/MyCodes/neural_manifolds/train_network_on_synthetic_data.py "${dataset_list[$SLURM_ARRAY_TASK_ID]}"
