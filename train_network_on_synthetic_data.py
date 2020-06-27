@@ -18,7 +18,10 @@ print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
 print('__CUDNN VERSION:', torch.backends.cudnn.version())
 print('__Number CUDA Devices:', torch.cuda.device_count())
-
+try :
+    print('__Device name:', torch.cuda.get_device_name(0))
+except:
+    print('no gpu to run')
 
 user=getpass.getuser()
 print(user)
