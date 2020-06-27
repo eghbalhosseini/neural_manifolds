@@ -165,7 +165,8 @@ def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class
     # Iterate through the dataset until enough samples are drawn
     for i in idx:
         sample, label = dataset[i]
-        if int(label) in sampled_labels and len(sampled_data[label]) < examples_per_class:
+        label = int(label)
+        if label in sampled_labels and len(sampled_data[label]) < examples_per_class:
             sampled_data[label].append(sample)
         # Check if enough samples have been drawn
         complete = True
