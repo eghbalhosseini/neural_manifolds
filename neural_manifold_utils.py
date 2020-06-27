@@ -217,12 +217,15 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
         "train_acc": train_accuracies}
 
     # if is_cuda:
-    epoch_dat['test_acc'] = np.concatenate(epoch_dat['test_acc'])
-    epoch_dat['train_acc'] = np.concatenate(epoch_dat['train_acc'])
-    epoch_dat['fc'] = np.concatenate(epoch_dat['fc'], axis=0)
-    epoch_dat['target'] = np.concatenate(epoch_dat['target'])
-    epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
-
+    if train_spec['is_cuda']:
+        try:
+            epoch_dat['test_acc'] = np.concatenate(epoch_dat['test_acc'])
+            epoch_dat['train_acc'] = np.concatenate(epoch_dat['train_acc'])
+            epoch_dat['fc'] = np.concatenate(epoch_dat['fc'], axis=0)
+            epoch_dat['target'] = np.concatenate(epoch_dat['target'])
+            epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
+        except:
+            print('couldnt reformat the data')
     return epoch_dat
 
 def test(model, device, test_loader, epoch):
