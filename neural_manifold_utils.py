@@ -106,7 +106,12 @@ class sub_data(Dataset):
         self.n_feat=int(ops.n_feat)
         self.n_latent=int(ops.n_latent)
         self.is_norm=bool(ops.norm)
-        self.hierarchical_target=ops.hierarchical_class_ids
+        self.hierarchical_target=[x-1 for x in ops.hierarchical_class_ids]
+        if self.resize:
+            self.resize_tensor()
+    def resize_tensor(self, shape=(-1, 3, 32, 32)):
+        self.data = np.reshape(self.data, shape)
+
     def __len__(self):
         return len(self.targets)
 
@@ -117,10 +122,6 @@ class sub_data(Dataset):
         target = target_tensor.long()
         if self.transform is not None:
             single_data = self.transform(single_data)
-        if self.resize:  # make 2d input for CNN
-            single_data = single_data.reshape(1, self.height, self.height)
-        if not self.resize:
-            single_data = np.expand_dims(single_data, axis=0)
         data_tensor = torch.from_numpy(single_data)
         data_tensor = data_tensor.type(torch.FloatTensor)
         return data_tensor, target
