@@ -244,9 +244,9 @@ def test(model, device, test_loader, epoch):
     test_loss /= len(test_loader.dataset)
 
     print('\nTest set epoch {}: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        epoch, test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
-    test_acu = 100. * correct / len(test_loader.dataset)
+        epoch, test_loss, correct, len(test_loader.sampler),
+        100. * correct / len(test_loader.sampler)))
+    test_acu = 100. * correct / len(test_loader.sampler)
     return test_acu
 
 def save_dict(di_, filename_):
