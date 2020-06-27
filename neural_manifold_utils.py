@@ -187,6 +187,9 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
     model.train()
     test_accuracies = []
     train_accuracies = []
+    fcs=[]
+    targets=[]
+    batchs=[]
     log_interval=train_spec['log_interval']
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
@@ -206,16 +209,16 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
                 100. * batch_idx / len(train_loader), loss.item(),
                  100. * correct / len(target)))
     epoch_dat = {
-        "fc": [],
-        "target": [],
-        "batch": [],
+        "fc": fcs,
+        "target": target,
+        "batch":  batchs,
         "epoch": epoch,
         "test_acc": test_accuracies,
         "train_acc": train_accuracies}
 
     # if is_cuda:
-    epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
-    epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
+    epoch_dat['test_acc'] = np.concatenate(epoch_dat['test_acc'])
+    epoch_dat['train_acc'] = np.concatenate(epoch_dat['train_acc'])
     epoch_dat['fc'] = np.concatenate(epoch_dat['fc'], axis=0)
     epoch_dat['target'] = np.concatenate(epoch_dat['target'])
     epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
