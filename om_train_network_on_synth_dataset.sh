@@ -4,7 +4,7 @@
 #SBATCH -t 4:00:00
 #SBATCH --array=0
 #SBATCH --mem=60000
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:QUADRORTX6000:4
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
