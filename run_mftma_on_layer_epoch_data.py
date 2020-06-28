@@ -65,7 +65,7 @@ if __name__=='__main__':
         layer_activ_cell[hier_id] = activ_hier
 
     # project the epoch data first
-    for hier_id, activ_hier in enumerate(activations_cell):
+    for hier_id, activ_hier in enumerate(layer_activ_cell):
         layer_names = list(activ_hier.keys())
         for layer, data, in activ_hier.items():
             X = [d.reshape(d.shape[0], -1).T for d in data]
@@ -78,7 +78,7 @@ if __name__=='__main__':
                 M /= np.sqrt(np.sum(M * M, axis=1, keepdims=True))
                 X = [np.matmul(M, d) for d in X]
             activ_hier[layer] = X
-        activations_cell[hier_id] = activ_hier
+        layer_activ_cell[hier_id] = activ_hier
     # run mftma on all layers and hierarchies
     mftmas_cell = []
     for hier_id, activ_hier in enumerate(layer_activ_cell):
