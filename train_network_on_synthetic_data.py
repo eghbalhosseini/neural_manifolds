@@ -45,7 +45,7 @@ if __name__=='__main__':
     batch_size_test = 64
     resize = True
     epochs = 50
-    exm_per_class = 20
+    exm_per_class = 100
     save_epochs = False
     momentum = 0.5
     lr = 0.01
