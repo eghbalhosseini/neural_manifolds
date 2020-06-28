@@ -28,7 +28,7 @@ elif user == 'ehoseini':
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 parser = argparse.ArgumentParser(description='neural manifold test network')
 parser.add_argument('train_dir', type=str, default="train_VGG16_synthdata_tree_nclass_50_n_exm_1000",help='')
-parser.add_arguement('epoch_id',type=int,default=1)
+parser.add_argument('epoch_id',type=int,default=1)
 parser.add_arguement('layer_num',type=int,default=1)
 args=parser.parse_args()
 
