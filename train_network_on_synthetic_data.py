@@ -31,6 +31,9 @@ if user=='eghbalhosseini':
 elif user=='ehoseini':
     save_dir='/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
     data_dir='/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+elif user == 'gretatu':
+    save_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
+    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 
 if not os.path.exists(save_dir):
         os.makedirs(save_dir)

@@ -1,9 +1,10 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_epoch
-#SBATCH --array=0-254%50
+#SBATCH --array=0-10
 #SBATCH --time=56:00:00
-#SBATCH --ntasks=1
-#SBATCH --mem=120G
+#SBATCH --nodes=1
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task=2
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
