@@ -16,7 +16,9 @@ timestamp() {
 
 filename="mftma_epoch_"$(date '+%Y%m%d%T')".txt"
 
-python /om/user/`whoami`/neural_manifolds/run_mftma_on_epoch_data.py --train_dir "${1}" --epoch_id "${2}" > "$filename"
+cd /om/user/`whoami`/neural_manifolds/
+
+python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
 
 
 #module add openmind/singularity
