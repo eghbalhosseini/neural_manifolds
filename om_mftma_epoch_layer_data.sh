@@ -13,7 +13,7 @@
 LAYERS=$(seq 0 16)
 EPOCHS=$(seq 1 15)
 i=0
-for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm do
+for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm ; do
   for epoch in ${EPOCHS[@]} ; do
       for layer in ${LAYERS[@]} ; do
         train_dir_list[$i]="$train_dir"
