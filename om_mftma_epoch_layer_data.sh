@@ -4,7 +4,7 @@
 #SBATCH -t 5000
 #SBATCH -N 1 # on one node
 #SBATCH -n 1 # one core
-#SBATCH -p=normal
+#SBATCH --partition=normal
 #SBATCH --mem=10G
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
