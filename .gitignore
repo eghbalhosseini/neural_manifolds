@@ -1,3 +1,7 @@
+# Directories
+figures/*
+network_training_on_synthetic/*
+
 # Compiled source #
 ###################
 *.com
@@ -46,7 +50,6 @@ parts/
 sdist/
 var/
 wheels/
-figures/
 *.egg-info/
 .installed.cfg
 *.egg
