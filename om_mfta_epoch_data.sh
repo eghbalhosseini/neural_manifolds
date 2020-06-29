@@ -6,7 +6,7 @@
 #SBATCH --mem=267G
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=ehoseini@mit.edu
+#SBATCH --mail-user=`whoami`@mit.edu
 
 EPOCHS=$(seq 0 39)
 i=0

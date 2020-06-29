@@ -7,7 +7,7 @@
 #SBATCH --gres=gpu:QUADRORTX6000:4
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=ehoseini@mit.edu
+#SBATCH --mail-user=`whoami@mit.edu
 
 i=0
 for data in synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat ; do
