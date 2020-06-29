@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH -t 04:00:00
 #SBATCH -c 1
-#SBATCH -- exclude node[017-092]
+#SBATCH --exclude node[017-092]
 
 # echo "Running training  ${1}"
 # echo "Running epoch ${2}"
