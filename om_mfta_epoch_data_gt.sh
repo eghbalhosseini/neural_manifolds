@@ -18,7 +18,7 @@ filename="mftma_epoch_"$(date '+%Y%m%d%T')".txt"
 
 cd /om/user/`whoami`/neural_manifolds/
 
-python run_mftma_on_epoch_data_noargs.py "$filename"
+python run_mftma_on_epoch_data_noargs.py > "$filename"
 
 #python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
 
