@@ -4,9 +4,8 @@
 #SBATCH -t 5000
 #SBATCH -N 1 # on one node
 #SBATCH -n 1 # one core
-#SBATCH --partition=normal
 #SBATCH --mem=10G
-#SBATCH --exclude node[017-092] 
+#SBATCH --exclude node[017-092]
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
 
