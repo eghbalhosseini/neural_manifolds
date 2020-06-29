@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_epoch
-#SBATCH --array=0
+#SBATCH --array=0-10
 #SBATCH --time=56:00:00
 #SBATCH --nodes=6
 #SBATCH --mem=20G
@@ -20,11 +20,6 @@ for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm_1000 ; do
       done
     done
 done
-
-echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
-echo "Running training  ${train_dir_list[$SLURM_ARRAY_TASK_ID]}"
-echo "Running epoch ${epoch_list[$SLURM_ARRAY_TASK_ID]}"
-echo "Running layer ${layer_list[$SLURM_ARRAY_TASK_ID]}"
 
 module add openmind/singularity
 export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
