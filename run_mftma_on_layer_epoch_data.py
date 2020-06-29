@@ -52,18 +52,6 @@ if __name__=='__main__':
     layer_activ_cell = [{layer_id[idx]: x[layer_id[idx]]} for idx, x in enumerate(activations_cell)]
     del activations_cell
     # do projection:
-    for hier_id, activ_hier in enumerate(layer_activ_cell):
-        for layer, data in activ_hier.items():
-            X = [d.reshape(d.shape[0], -1).T for d in data]
-            N = X[0].shape[0]
-            if N > 5000:
-                print("Projecting {}".format(layer))
-                M = np.random.randn(5000, N)
-                M /= np.sqrt(np.sum(M * M, axis=1, keepdims=True))
-                X = [np.matmul(M, d) for d in X]
-            activ_hier[layer] = X
-        layer_activ_cell[hier_id] = activ_hier
-
     # project the epoch data first
     for hier_id, activ_hier in enumerate(layer_activ_cell):
         layer_names = list(activ_hier.keys())
