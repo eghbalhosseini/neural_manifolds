@@ -1,22 +1,28 @@
-#!/bin/zsh
+#!/bin/bash
+
 
 LAYERS=$(seq 0 16)
+EPOCHS=$(seq 1 15)
 i=0
-for n_class in 50 ; do
-  for exm_per_class in 100 ; do
-    for data in synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat \
-      synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat \
-      synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat  ; do
+for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm_1000 ; do
+  for epoch in ${EPOCHS[@]} ; do
       for layer in ${LAYERS[@]} ; do
-        dataset_list[$i]="$data"
+        train_dir_list[$i]="$train_dir"
         layer_list[$i]="$layer"
-        n_class_list[$i]="$n_class"
-        exm_per_class_list[$i]="$exm_per_class"
+        epoch_list[$i]="$epoch"
         i=$i+1
       done
     done
-  done
 done
 
-lines=$i
-echo $lines
+lines=$(seq 0 254)
+eval "$(command conda 'shell.bash' 'hook' 2> /dev/null)"
+conda activate manifold
+
+
+for line in ${lines[@]} ; do
+ echo "running training ${train_dir_list[line]}"
+  echo "Running layer ${layer_list[line]}"
+  echo "Running epoch ${epoch_list[line]}"
+  python /Users/eghbalhosseini/MyCodes/neural_manifolds/run_mftma_on_layer_epoch_data.py ${train_dir_list[line]} ${epoch_list[line]} ${layer_list[line]}
+done
