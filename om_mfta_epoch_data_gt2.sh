@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH -t 04:00:00
 #SBATCH -c 1
-#SBATCH --exclude node[017-092]
+
 
 # echo "Running training  ${1}"
 # echo "Running epoch ${2}"
@@ -22,3 +22,4 @@ cd /om/user/`whoami`/neural_manifolds/
 python run_mftma_on_epoch_data_noargs.py > "$filename"
 
 #python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
+#--exclude node[017-092]
