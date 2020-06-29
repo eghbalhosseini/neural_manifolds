@@ -2,7 +2,7 @@
 #SBATCH --job-name=mftma_epoch
 #SBATCH --output=mftma_epoch_%j.out
 #SBATCH --error=mftma_epoch_%j.err
-#SBATCH --mem=24G
+#SBATCH --mem=60G
 #SBATCH --nodes=1
 #SBATCH -t 04:00:00
 #SBATCH -c 1
@@ -18,8 +18,9 @@ filename="mftma_epoch_"$(date '+%Y%m%d%T')".txt"
 
 cd /om/user/`whoami`/neural_manifolds/
 
-python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
+python run_mftma_on_epoch_data.py "$filename"
 
+#python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
 
 #module add openmind/singularity
 #export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
