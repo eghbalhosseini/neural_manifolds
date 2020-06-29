@@ -1,18 +1,18 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_epoch
 #SBATCH --array=0-10
-#SBATCH --time=56:00:00
-#SBATCH -N = 1
-#SBATCH -n = 1
+#SBATCH -t 5000
+#SBATCH -N 1 # on one node
+#SBATCH -n 1 # one core
 #SBATCH -p=normal
-#SBATCH --mem=8G
+#SBATCH --mem=10G
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
 LAYERS=$(seq 0 16)
 EPOCHS=$(seq 1 15)
 i=0
-for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm_1000 ; do
+for train_dir in train_VGG16_synthdata_tree_nclass_50_n_exm
   for epoch in ${EPOCHS[@]} ; do
       for layer in ${LAYERS[@]} ; do
         train_dir_list[$i]="$train_dir"
