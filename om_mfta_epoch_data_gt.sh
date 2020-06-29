@@ -28,6 +28,6 @@ export RESULTCACHING_HOME
 XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
-singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/neural_manifold_fz.simg python /om/user/gretatu/neural_manifolds/run_mftma_on_epoch_data_noargs.py 
+singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36.simg python /om/user/gretatu/neural_manifolds/run_mftma_on_epoch_data_noargs.py 
 
 #python run_mftma_on_epoch_data.py "${1}" "${2}" > "$filename"
