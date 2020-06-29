@@ -55,11 +55,11 @@ if __name__=='__main__':
 
     # project the epoch data first
     for hier_id, activ_hier in enumerate(activations_cell):
-        if hier_id > 2:
-            break
+        # if hier_id > 2:
+        #     break
         # print(activ_hier)
         layer_names = list(activ_hier.keys())
-        print(hier_id)
+        print('Hier ID: ', hier_id)
         for layer, data, in activ_hier.items():
             X = [d.reshape(d.shape[0], -1).T for d in data]
             # Get the number of features in the flattened data
