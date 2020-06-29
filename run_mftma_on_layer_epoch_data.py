@@ -6,8 +6,11 @@ from mftma.manifold_analysis_correlation import manifold_analysis_corr
 
 import getpass
 import argparse
-from neural_manifold_utils import  save_dict
-from datetime import datetime
+
+def save_dict(di_, filename_):
+    with open(filename_, 'wb') as f:
+        pickle.dump(di_, f)
+
 
 user = getpass.getuser()
 print(user)
