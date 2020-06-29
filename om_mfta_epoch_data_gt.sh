@@ -21,6 +21,12 @@ filename="mftma_epoch_"$(date '+%Y%m%d%T')".txt"
 
 # python run_mftma_on_epoch_data_noargs.py > "$filename"
 
+module add openmind/singularity
+export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
+RESULTCACHING_HOME=/om/user/`whoami`/.result_caching
+export RESULTCACHING_HOME
+XDG_CACHE_HOME=/om/user/`whoami`/st
+export XDG_CACHE_HOME
 
 singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds.simg python /om/user/gretatu/neural_manifolds/run_mftma_on_epoch_data_noargs.py 
 
