@@ -2,10 +2,10 @@
 #SBATCH --job-name=mftma_epoch
 #SBATCH --array=0-10
 #SBATCH --time=56:00:00
+#SBATCH -N = 1
+#SBATCH -n = 1
 #SBATCH -p=normal
 #SBATCH --mem=8G
-#SBATCH -N=1
-#SBATCH -n=1
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
