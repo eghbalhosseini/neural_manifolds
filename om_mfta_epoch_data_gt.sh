@@ -1,12 +1,12 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_epoch
-#SBATCH --time=05:00:00
-#SBATCH --ntasks=1
-#SBATCH --mem=20G
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=gretatu@mit.edu
+#SBATCH --output=mftma_epoch_%j.out
+#SBATCH --error=mftma_epoch_%j.err
+#SBATCH --mem=24G
+#SBATCH --nodes=1
+#SBATCH -t 04:00:00
+#SBATCH -c 1
 
-echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running training  ${1}"
 echo "Running epoch ${2}"
 
