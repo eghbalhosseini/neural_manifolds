@@ -9,13 +9,7 @@ import getpass
 import argparse
 from neural_manifold_utils import  save_dict
 from datetime import datetime
-print('__cuda available ',torch.cuda.is_available())
-print('__Python VERSION:', sys.version)
-print('__Number CUDA Devices:', torch.cuda.device_count())
-try :
-    print('__Device name:', torch.cuda.get_device_name(0))
-except:
-    print('no gpu to run')
+
 
 user = getpass.getuser()
 print(user)
@@ -34,27 +28,28 @@ args=parser.parse_args()
 
 
 if __name__=='__main__':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    datafile = os.path.join(save_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id))
-    epoch_dat = pickle.load(open(datafile, 'rb'))
-    activations_cell = epoch_dat['activations_cell']
-    # contstruct a result dir and remove the big file
-    mfmta_data_ = {'mftma_results': [],
-                   'train_spec': epoch_dat['train_spec'],
-                   'train_accuracy': epoch_dat['train_accuracy'],
-                   'train_success': epoch_dat['train_success'],
-                   'epoch': epoch_dat['epoch'],
-                   'layer_num':args.layer_num
-                   }
-    del epoch_dat
-    hier_layer_names = [list(activations.keys()) for activations in activations_cell]
-    layer_id = [x[args.layer_num] for x in hier_layer_names]
-    layer_activ_cell = [{layer_id[idx]: x[layer_id[idx]]} for idx, x in enumerate(activations_cell)]
-    del activations_cell
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # datafile = os.path.join(save_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id))
+    # epoch_dat = pickle.load(open(datafile, 'rb'))
+    # activations_cell = epoch_dat['activations_cell']
+    # # contstruct a result dir and remove the big file
+    # mfmta_data_ = {'mftma_results': [],
+    #                'train_spec': epoch_dat['train_spec'],
+    #                'train_accuracy': epoch_dat['train_accuracy'],
+    #                'train_success': epoch_dat['train_success'],
+    #                'epoch': epoch_dat['epoch'],
+    #                'layer_num':args.layer_num
+    #                }
+    # del epoch_dat
+    # hier_layer_names = [list(activations.keys()) for activations in activations_cell]
+    # layer_id = [x[args.layer_num] for x in hier_layer_names]
+    # layer_activ_cell = [{layer_id[idx]: x[layer_id[idx]]} for idx, x in enumerate(activations_cell)]
+    # del activations_cell
     # do projection:
     # project the epoch data first
     np.random.seed(0)
     X = [np.random.randn(500, 50) for i in range(100)]  # Replace this with data to analyze
+    print('created dataset')
     kappa = 0
     n_t = 200
     capacity_all, radius_all, dimension_all, center_correlation, K = manifold_analysis_corr(X, kappa, n_t)
