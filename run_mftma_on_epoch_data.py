@@ -26,15 +26,23 @@ if user == 'eghbalhosseini':
 elif user == 'ehoseini':
     save_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+
+elif user == 'gretatu':
+    save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
+    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
+
 parser = argparse.ArgumentParser(description='neural manifold test network')
 parser.add_argument('train_dir', type=str, default="train_VGG16_synthdata_tree_nclass_50_n_exm_1000",help='')
-parser.add_arguement('epoch_id',type=int,default=1)
+parser.add_argument('epoch_id',type=int,default=1) # TYPO fixed
 args=parser.parse_args()
 
+# for testing
+# train_dir="train_VGG16_synthdata_tree_nclass_50_n_exm_1000"
+# epoch_id = 1
 
 if __name__=='__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    datafile = os.path.join(save_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id))
+    datafile = os.path.join(data_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id)) #    datafile = os.path.join(save_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id))
     epoch_dat = pd.read_pickle(datafile)
     activations_cell = epoch_dat['activations_cell']
     # contstruct a result dir and remove the big file
@@ -47,7 +55,11 @@ if __name__=='__main__':
 
     # project the epoch data first
     for hier_id, activ_hier in enumerate(activations_cell):
+        if hier_id > 2:
+            break
+        # print(activ_hier)
         layer_names = list(activ_hier.keys())
+        print(hier_id)
         for layer, data, in activ_hier.items():
             X = [d.reshape(d.shape[0], -1).T for d in data]
             # Get the number of features in the flattened data
@@ -60,6 +72,8 @@ if __name__=='__main__':
                 X = [np.matmul(M, d) for d in X]
             activ_hier[layer] = X
         activations_cell[hier_id] = activ_hier
+
+
     # run mftma on all layers and hierarchies
     mftmas_cell = []
     for hier_id, activ_hier in enumerate(activations_cell):
