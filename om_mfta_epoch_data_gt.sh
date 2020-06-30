@@ -2,10 +2,10 @@
 #SBATCH --job-name=mftma_epoch
 #SBATCH --output=mftma_epoch_%j.out
 #SBATCH --error=mftma_epoch_%j.err
-#SBATCH --mem=20G
+#SBATCH --mem=10G
 #SBATCH --nodes=1
-#SBATCH -t 04:00:00
-#SBATCH -c 1
+#SBATCH -t 5000
+#SBATCH -c 16
 #SBATCH --exclude node[017-092]
 
 # echo "Running training  ${1}"
