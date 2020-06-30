@@ -2,8 +2,7 @@
 #SBATCH --job-name=mftma_epoch
 #SBATCH --array=0-2
 #SBATCH -t 5000
-#SBATCH -N 1 # on one node
-#SBATCH -n 1 # one core
+#SBATCH -c 16
 #SBATCH --mem=10G
 #SBATCH --exclude node[017-092]
 #SBATCH --mail-type=ALL
