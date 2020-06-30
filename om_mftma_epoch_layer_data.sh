@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_epoch
-#SBATCH --array=0-2
+#SBATCH --array=0-254%50
 #SBATCH -t 5000
 #SBATCH -c 16
 #SBATCH --mem=10G
