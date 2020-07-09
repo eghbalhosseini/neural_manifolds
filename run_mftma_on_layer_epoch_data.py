@@ -1,3 +1,5 @@
+# this function runs mftma on activations from layers of network over different epochs
+# 09-07-2020 eghbal hosseini- MIT
 import numpy as np
 import pickle
 import sys

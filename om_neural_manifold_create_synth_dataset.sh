@@ -39,7 +39,7 @@ addpath(genpath('/home/ehoseini/MyCodes/neural_manifolds/'));\
 save_path='/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/';\
 structures={'partition','tree'};\
 betas=[1e-10,0.0222];\
-simgas=[0.8333,2.5];\
+sigmas=[0.8333,2.5];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
 n_class=${n_class_list[$SLURM_ARRAY_TASK_ID]};\
