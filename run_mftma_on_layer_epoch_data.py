@@ -1,21 +1,18 @@
+# this function runs mftma on activations from layers of network over different epochs
+# 09-07-2020 eghbal hosseini- MIT
 import numpy as np
-import torch
+import pickle
 import sys
 import os
-import pandas as pd
 from mftma.manifold_analysis_correlation import manifold_analysis_corr
 
 import getpass
 import argparse
-from neural_manifold_utils import  save_dict
-from datetime import datetime
-print('__cuda available ',torch.cuda.is_available())
-print('__Python VERSION:', sys.version)
-print('__Number CUDA Devices:', torch.cuda.device_count())
-try :
-    print('__Device name:', torch.cuda.get_device_name(0))
-except:
-    print('no gpu to run')
+
+def save_dict(di_, filename_):
+    with open(filename_, 'wb') as f:
+        pickle.dump(di_, f)
+
 
 user = getpass.getuser()
 print(user)
@@ -28,15 +25,17 @@ elif user == 'ehoseini':
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 parser = argparse.ArgumentParser(description='neural manifold test network')
 parser.add_argument('train_dir', type=str, default="train_VGG16_synthdata_tree_nclass_50_n_exm_1000",help='')
-parser.add_argument('epoch_id',type=int,default=1)
-parser.add_argument('layer_num',type=int,default=1)
+parser.add_argument('epoch_id',type=str,default='1')
+parser.add_argument('layer_num',type=str,default='1')
 args=parser.parse_args()
 
-
 if __name__=='__main__':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     datafile = os.path.join(save_dir,args.train_dir, 'train_epoch_' + str(args.epoch_id))
-    epoch_dat = pd.read_pickle(datafile)
+    epoch_dat = pickle.load(open(datafile, 'rb'))
+    args.layer_num=int(args.layer_num)
+    args.epoch_id=int(args.epoch_id)
+    print(args.layer_num)
+    print(args.epoch_id)
     activations_cell = epoch_dat['activations_cell']
     # contstruct a result dir and remove the big file
     mfmta_data_ = {'mftma_results': [],
@@ -84,11 +83,9 @@ if __name__=='__main__':
         data_['layer'] = layer_id[hier_id]
         data_['n_hier_class'] = len(activ_hier[layer_id[hier_id]])
         for k, X, in activ_hier.items():
-            print(k)
             # Analyze each layer's activations
             try:
                 a, r, d, r0, K = manifold_analysis_corr(X, 0, 300, n_reps=1)
-
                 # Compute the mean values
                 a = 1 / np.mean(1 / a)
                 r = np.mean(r)
@@ -110,8 +107,7 @@ if __name__=='__main__':
         data_['dimensions'] = dimensions
         data_['correlations'] = correlations
         mftmas_cell.append(data_)
-
-    # combine the results and save them
+    #combine the results and save them
     mfmta_data_['mftma_results']=mftmas_cell
     result_file = os.path.join(save_dir, args.train_dir, 'mftma_epoch_' + str(args.epoch_id)+'_layer_'+str(args.layer_num))
     save_dict(mfmta_data_, result_file)
