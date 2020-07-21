@@ -1,3 +1,4 @@
+%% Figure parameters
 set(0,'defaultfigurecolor',[1 1 1])
 
 %%
@@ -25,9 +26,7 @@ between_class(between_class==0)=nan;
 figure;imagesc(within_class)
 figure;imagesc(between_class)
 
-%%
-addpath('../../GitHub/LearningDynamics/')
-%%
+%% Function for visualizing various aspects of the data
 plot_decomp(data)
 
 %% 
@@ -82,8 +81,6 @@ pd = median(pdist((c(between_class==1))));
 pd2 = median(pdist((c(within_class==1))));
 
 pd2tril = mean(pdist(tril(c(within_class==1),-1)));
-
-
 
 %%
 figure;
