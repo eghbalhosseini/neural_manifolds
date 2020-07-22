@@ -34,7 +34,7 @@ class params:
     resize = True # reshape data into a 2D array # TODO make adaptable
     
     #### MODEL ####
-    model = models.vgg16(num_classes=dataset.n_class) # or CNN etc
+    model = CNN_open # models.vgg16(num_classes=dataset.n_class) # or CNN etc
     
     #### TRAINING ####
     train_type = 'train_test'

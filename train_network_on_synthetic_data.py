@@ -5,7 +5,7 @@ import copy
 from torchvision import models
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from neural_manifold_utils import train, test, train_test, save_dict, sub_data, create_manifold_data, NN_open, CNN_open
+from neural_manifold_utils import train, test, train_test, save_dict, sub_data, create_manifold_data, NN_open, CNN_open, extractor
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
@@ -13,7 +13,7 @@ from datetime import datetime
 import getpass
 import numpy as np
 
-from mftma.utils.activation_extractor import extractor
+# from mftma.utils.activation_extractor import extractor
 
 print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
