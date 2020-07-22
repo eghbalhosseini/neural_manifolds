@@ -5,7 +5,7 @@
 #SBATCH --job-name=SYNTH
 #SBATCH -t 1:00:00
 #SBATCH -N 1
-#SBATCH --array=0-3
+#SBATCH --array=0-15
 #SBATCH -n 8
 #SBATCH --mem-per-cpu 32000
 #SBATCH --exclude node017,node018

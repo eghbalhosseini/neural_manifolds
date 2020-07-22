@@ -10,9 +10,10 @@
 #SBATCH --mail-user=`whoami@mit.edu
 
 i=0
-for data in synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat ; do
-    dataset_list[$i]="$data"
-    i=$i+1
+for data in synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat \
+    synth_tree_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat; do
+      dataset_list[$i]="$data"
+      i=$i+1
 done
 # synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat
 # synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat \
