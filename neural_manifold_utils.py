@@ -6,84 +6,9 @@ from scipy.io import loadmat
 import pickle
 from collections import defaultdict
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
-
-class CFAR100_fake_dataset_mftma(Dataset):
-    def __init__(self, data_dir=None):
-        self.data_dir=data_dir
-        self.data = []
-        self.targets = []
-        self.dat , self.target=self.load_data()
-        self.n_samples=self.dat.shape[0]
-    def __len__(self):
-        return self.n_samples
-    def __getitem__(self, idx):
-        #item=np.expand_dims(self.dat[idx],axis=0)
-        item=self.dat[idx]
-        targ=np.squeeze(self.target[idx])
-        return (torch.tensor(item,dtype=torch.float), targ)
-    def load_data(self):
-        try:
-            annot=loadmat(self.data_dir)
-            ops_struct=annot['ops_out']
-            vals=ops_struct[0,0]
-        except:
-            data_dict = mat73.loadmat(self.data_dir)
-            vals=data_dict['ops_out']
-        dat=vals['data']
-        self.vals=vals
-        self.beta=float(vals['beta'])
-        self.sigma = float(vals['sigma'])
-        self.data_latent=vals['data_latent']
-        self.exm_per_class=int(vals['exm_per_class'])
-        self.n_class=int(vals['n_class'])
-        self.n_feat=int(vals['n_feat'])
-        self.n_latent=int(vals['n_latent'])
-        self.is_norm=bool(vals['norm'])
-        self.structure = str(vals['structure'])
-        dat_new=dat[:,range(3*32*32)]
-        dat_new=np.reshape(dat_new,(-1,3,32,32))
-        target=np.double(np.transpose(vals['class_id'])-1.0)
-        #target=list(vals.class_id.astype(int))
-        # add extra component defining the graph and dataset.
-        return dat_new, target
-
-class CFAR100_fake_dataset(Dataset):
-    def __init__(self, data_dir=None):
-        self.data_dir=data_dir
-        self.dat , self.target=self.load_data()
-        self.n_samples=self.dat.shape[0]
-    def __len__(self):
-        return self.n_samples
-    def __getitem__(self, idx):
-        #item=np.expand_dims(self.dat[idx],axis=0)
-        item=self.dat[idx]
-        targ=np.squeeze(self.target[idx])
-        return torch.tensor(item,dtype=torch.float), torch.tensor(targ,dtype=torch.long)
-    def load_data(self):
-        try:
-            annot=loadmat(self.data_dir)
-            ops_struct=annot['ops_out']
-            vals=ops_struct[0,0]
-        except:
-            data_dict = mat73.loadmat(self.data_dir)
-            vals=data_dict['ops_out']
-        dat=vals['data']
-        self.vals=vals
-        self.beta=float(vals['beta'])
-        self.sigma = float(vals['sigma'])
-        self.data_latent=vals['data_latent']
-        self.exm_per_class=int(vals['exm_per_class'])
-        self.n_class=int(vals['n_class'])
-        self.n_feat=int(vals['n_feat'])
-        self.n_latent=int(vals['n_latent'])
-        self.is_norm=bool(vals['norm'])
-        self.structure = str(vals['structure'])
-        dat_new=dat[:,range(3*32*32)]
-        dat_new=np.reshape(dat_new,(-1,3,32,32))
-        target=np.double(np.transpose(vals['class_id'])-1.0)
-        # add extra component defining the graph and dataset.
-        return dat_new, target
 
 def resize_tensor(data,shape=(-1,3,32,32)):
     dat_new = np.reshape(data, shape)
@@ -128,9 +53,6 @@ class sub_data(Dataset):
         data_tensor = torch.from_numpy(single_data)
         data_tensor = data_tensor.type(torch.FloatTensor)
         return data_tensor, target
-
-
-
 
 def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0):
     '''
@@ -252,3 +174,56 @@ def test(model, device, test_loader, epoch):
 def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
         pickle.dump(di_, f)
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv1_bn = nn.BatchNorm2d(10)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_bn = nn.BatchNorm2d(20)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc1_bn = nn.BatchNorm1d(50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        bn_1 = self.conv1_bn(self.conv1(x))
+        x = F.relu(F.max_pool2d(bn_1, 2))
+        bn_2 = self.conv2_bn(self.conv2(x))
+        x = F.relu(F.max_pool2d(self.conv2_drop(bn_2), 2))
+        x = x.view(-1, 320) #flatten
+        bn_fc = self.fc1_bn(self.fc1(x))
+        x = F.relu(bn_fc)
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+
+class Net_open(nn.Module):
+    def __init__(self):
+        super(Net_open, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv1_bn = nn.BatchNorm2d(10,eps=1e-09)
+        self.conv1_drop = nn.Dropout2d() #added
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_bn = nn.BatchNorm2d(20,eps=1e-09)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc1_bn = nn.BatchNorm1d(50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        bn_1 = self.conv1_bn(self.conv1(x))
+        #x_pool2d = F.relu(F.max_pool2d(bn_1, 2))
+        x_pool2d = F.relu(F.max_pool2d(self.conv1_drop(bn_1), 2)) #added
+       # bn_2 = self.conv2_bn(self.conv2(x_pool2d))
+        bn_2 = (self.conv2(x_pool2d)) #remove bn
+        x_maxpool2d = F.relu(F.max_pool2d(self.conv2_drop(bn_2), 2))
+        x_maxpool2d = x_maxpool2d.view(-1, 320) #flatten
+        bn_fc = self.fc1_bn(self.fc1(x_maxpool2d))
+        x_fc = F.relu(bn_fc)
+        x_drop = F.dropout(x_fc, training=self.training)
+        x_fc2 = self.fc2(x_drop)
+        return F.log_softmax(x_fc2, dim=1), x_fc
+
+
