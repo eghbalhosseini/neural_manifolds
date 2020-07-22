@@ -1,5 +1,6 @@
 # Directories
 figures/*
+prev_code/*
 network_training_on_synthetic/*
 
 # Compiled source #
