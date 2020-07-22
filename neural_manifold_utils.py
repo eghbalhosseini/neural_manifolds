@@ -11,6 +11,50 @@ import torch.nn.functional as F
 import numpy as np
 import os
 
+# from mftma
+def extractor(model, data, layer_nums=None, layer_types=None):
+    '''
+    Extract model activations on the given data for the specified layers
+
+    Args:
+        model: Model to extract activations from
+        data: Iterable containing batches of inputs to extract activations from
+        layer_nums (optional): Numbers of layers ot extract activations for. If None,
+            activations from all layers are returned.
+        layer_types (optional): Names of layers to extract activations from. If None
+            activations from all layers are returned. Only use this or layer_nums
+
+    Returns:
+        extracted_dict: Dictionary containing extracted activations. Order matches
+            the order of the given data.
+    '''
+    assert (layer_nums is None or layer_types is None), 'Only specify one of layer_nums or layer_types'
+    global extracted_dict
+    extracted_dict = OrderedDict()
+
+    # Find all the layers that match the specified types
+    flat_children = []
+    leaf_traverse(model, flat_children)
+    add_layer_names(flat_children)
+    flat_children = filter_layers(flat_children, layer_types, layer_nums)
+
+    # Register hooks to the found layers
+    registered_hooks = register_hooks(flat_children)
+
+    extracted_dict['layer_0_Input'] = []
+    for d in data:
+        # Store the input
+        extracted_dict['layer_0_Input'] += [d.data.cpu().numpy()]
+
+        # Run the data through the model
+        _ = model(d)
+
+    # Remove the hooks
+    deregister_hooks(registered_hooks)
+
+    # Return the activations
+    return extracted_dict
+
 def resize_tensor(data,shape=(-1,3,32,32)):
     dat_new = np.reshape(data, shape)
     return dat_new
@@ -173,7 +217,7 @@ def test(model, device, test_loader, epoch):
     test_acu = 100. * correct / len(test_loader.sampler)
     return test_acu
 
-def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,writer):
+def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec): # writer
     model.train()
 
     fc_all = []
@@ -182,8 +226,8 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     test_accuracies = []
     train_accuracies = []
     log_interval=train_spec['log_interval']
-    save_epochs = train_spec['save_epochs']
-    save_dir=train_spec['save_dir']
+    # save_epochs = train_spec['save_epochs']
+    # save_dir=train_spec['save_dir']
     for batch_idx, (data, target) in enumerate(train_loader):
 
         data, target = data.to(device), target.to(device)
@@ -226,23 +270,23 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                     accuracy_train, accuracy_test))
             n_iter = batch_idx + (epoch - 1) * len(train_loader)  # eg epoch 2: 75 + 1*750
 
-            writer.add_scalar('Loss - Train', loss, n_iter)
-            writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
-            writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
+            # writer.add_scalar('Loss - Train', loss, n_iter)
+            # writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
+            # writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
             # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
 
             model.eval()
 
-            if save_epochs:  # save individual mat files for each chosen epoch, batch.
-                model.eval()
-                state = {
-                    'epoch': epoch,
-                    'batch_idx': batch_idx,
-                    'state_dict': model.state_dict(),
-                    'optimizer': optimizer.state_dict(), }
-                fname = 'mnist_CNN_epoch_' + str(epoch) + '_batchidx_' + str(batch_idx) + '.pth'
-                torch.save(state, os.path.join(save_dir, fname))
-                print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
+            # if save_epochs:  # save individual mat files for each chosen epoch, batch.
+            #     model.eval()
+            #     state = {
+            #         'epoch': epoch,
+            #         'batch_idx': batch_idx,
+            #         'state_dict': model.state_dict(),
+            #         'optimizer': optimizer.state_dict(), }
+            #     fname = 'mnist_CNN_epoch_' + str(epoch) + '_batchidx_' + str(batch_idx) + '.pth'
+            #     torch.save(state, os.path.join(save_dir, fname))
+            #     print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
     # writer.add_embedding(fc_all,tag='train_all',global_step=epoch,metadata=target_all)
     # sio.savemat('np_vector.mat', {'vect':vect})
 
