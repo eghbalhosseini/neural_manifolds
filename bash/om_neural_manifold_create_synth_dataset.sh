@@ -12,7 +12,6 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ehoseini@mit.edu
 #SBATCH --output=SYNTH_result_%j.out
-#SBATCH --error=SYNTH_result_%j.err
 
 i=0
 for beta_id in 1 2 ; do

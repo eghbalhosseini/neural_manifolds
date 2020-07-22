@@ -54,7 +54,7 @@ parfor n=1:n_feat
         dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
     end 
     F_mat(:,n) = dat_feat;
-%    fprintf('feature: %d\n',n);
+    fprintf('feature: %d\n',n);
 end
 % save the results 
 ops_out=ops;

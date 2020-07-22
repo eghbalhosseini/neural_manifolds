@@ -173,7 +173,6 @@ def test(model, device, test_loader, epoch):
     test_acu = 100. * correct / len(test_loader.sampler)
     return test_acu
 
-
 def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,writer):
     model.train()
 
@@ -263,7 +262,6 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
 
     return epoch_dat
-
 
 class NN_open(nn.Module):
     def __init__(self):
