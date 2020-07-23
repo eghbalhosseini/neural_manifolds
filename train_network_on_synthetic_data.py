@@ -100,13 +100,21 @@ if __name__=='__main__':
     
     
     #### LOGGING ####
+    # Tensorboard
+    access_rights = 0o755
     current_time = datetime.now().strftime('%b%d_%H-%M-%S')
     log_dir = os.path.join(save_dir, 'runs', current_time + '_' + socket.gethostname())
+
+    writer = SummaryWriter(log_dir=log_dir)
+    writer.add_graph(model)
+    writer.add_hparams(hparam_dict=train_spec)
+
     model_dir = save_dir + 'train_synthdata_' + dataset.structure + '_nclass_' + str(
         int(dataset.n_class)) + '_n_exm_' + str(int(dataset.exm_per_class))
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
-    
+
+
     #### TRAINING ####
     for epoch in range(1, params.epochs + 1):
         data_ = {'activations_cell': [],
@@ -120,7 +128,7 @@ if __name__=='__main__':
         
         #### DEFINE TRAIN FUNCTION ####
         if params.train_type == 'train_test':
-            epoch_dat = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec)
+            epoch_dat = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer)
         if params.train_type == 'train':
             epoch_dat = train(epoch, model, device, train_loader, test_loader, optimizer, train_spec)
         else:
@@ -139,7 +147,9 @@ if __name__=='__main__':
         data_['test_accuracy']=test_accuracy
         data_['activations_cell'] = activations_cell
         data_['train_success'] = train_success
-        epoch_save_path = os.path.join(model_dir, 'train_epoch_' + str(epoch))
+        num = str(epoch)
+        enum = num.zfill(3)
+        epoch_save_path = os.path.join(model_dir, 'train_epoch_' + str(enum))
         save_dict(data_, epoch_save_path)
         if train_success:
             print('successful training')
