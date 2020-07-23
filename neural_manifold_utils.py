@@ -9,6 +9,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 
+def hello():
+    return []
 # from mftma
 def extractor(model, data, layer_nums=None, layer_types=None):
     '''
