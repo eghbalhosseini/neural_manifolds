@@ -338,6 +338,7 @@ def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
         pickle.dump(di_, f)
 
+# this is from brainscore.utils import LazyLoad
 class LazyLoad:
     def __init__(self, load_fnc):
         self.load_fnc = load_fnc
