@@ -6,10 +6,10 @@ Created on Wed Jul 22 11:08:09 2020
 """
 
 from neural_manifold_utils import sub_data, NN, CNN
+import neural_manifold_utils
 from torchvision import models
 import itertools
 import copy
-from importlib import import_module
 
 import os
 import getpass
@@ -44,7 +44,7 @@ class params:
         resize = True # reshape data into a 2D array # TODO make adaptable
         #### MODEL ####
         self.models=getattr(neural_manifold_utils,model)
-        model = CNN_open # models.vgg16(num_classes=dataset.n_class) # or CNN etc
+        model = CNN # models.vgg16(num_classes=dataset.n_class) # or CNN etc
     
         #### TRAINING ####
         self.train_type=train_type
@@ -90,7 +90,7 @@ for config in train_configuration:
         model=configure['model']
         datafile=configure['dataset']
         train_type=configure['train_type']
-        train_param=params(model=model,datafile=datafile,train_type=train_type)
+        train_param=params(model=model,datafile=datafile,train_type=train_type,identifier=identifier)
         return train_param
 
     train_pool[identifier]=train_instantionation
