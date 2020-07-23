@@ -4,8 +4,8 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-import neural_manifold_utils
-from neural_manifold_utils import sub_data, NN_open, CNN_open
+
+from neural_manifold_utils import sub_data, NN, CNN
 from torchvision import models
 import itertools
 import copy
@@ -26,8 +26,7 @@ elif user == 'gretatu':
     save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 
-def load_train(train_name):
-    return train_pool[train_name]()
+
 
 class params:
     def __init__(self,datafile="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",
@@ -53,6 +52,9 @@ class params:
     #model = CNN_open  # models.vgg16(num_classes=dataset.n_class) # or CNN etc
     #datafile = "synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat"
     #train_type = 'train_test'
+    #### TRAINING ####
+    train_type = 'train_test'
+
     batch_size_train = 64
     batch_size_test = 64
     epochs = 50

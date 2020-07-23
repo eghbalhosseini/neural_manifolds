@@ -9,67 +9,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 
-def hello():
-    return []
-# from mftma
-def extractor(model, data, layer_nums=None, layer_types=None):
-    '''
-    Extract model activations on the given data for the specified layers
-
-    Args:
-        model: Model to extract activations from
-        data: Iterable containing batches of inputs to extract activations from
-        layer_nums (optional): Numbers of layers ot extract activations for. If None,
-            activations from all layers are returned.
-        layer_types (optional): Names of layers to extract activations from. If None
-            activations from all layers are returned. Only use this or layer_nums
-
-    Returns:
-        extracted_dict: Dictionary containing extracted activations. Order matches
-            the order of the given data.
-    '''
-    assert (layer_nums is None or layer_types is None), 'Only specify one of layer_nums or layer_types'
-    global extracted_dict
-    extracted_dict = OrderedDict()
-
-    # Find all the layers that match the specified types
-    flat_children = []
-    leaf_traverse(model, flat_children)
-    add_layer_names(flat_children)
-    flat_children = filter_layers(flat_children, layer_types, layer_nums)
-
-    # Register hooks to the found layers
-    registered_hooks = register_hooks(flat_children)
-
-    extracted_dict['layer_0_Input'] = []
-    for d in data:
-        # Store the input
-        extracted_dict['layer_0_Input'] += [d.data.cpu().numpy()]
-
-        # Run the data through the model
-        _ = model(d)
-
-    # Remove the hooks
-    deregister_hooks(registered_hooks)
-
-    # Return the activations
-    return extracted_dict
-
-def resize_tensor(data,shape=(-1,3,32,32)):
-    dat_new = np.reshape(data, shape)
-    return dat_new
-
 class sub_data(Dataset):
-    def __init__(self, data_path,resize=True,transform=None):
+    def __init__(self, data_path,shape=(1,28,28),transform=None):
         self.data_path=data_path
         mat = mat73.loadmat(data_path)
         ops = mat['ops_out']
         self.data = ops['data']  # obs! if loading using sio, do: ops['data'][0][0]
         self.targets = ops['class_id'].squeeze()
         self.targets = self.targets - 1
-        #assert (np.sqrt(datatest.shape[1]) == type(int))
         self.transform = transform
-        self.resize = resize
+        self.shape = shape
         self.structure = ops.structure
         self.n_class = int(ops.n_class)
         self.exm_per_class = int(ops.exm_per_class)
@@ -80,10 +29,6 @@ class sub_data(Dataset):
         self.n_latent=int(ops.n_latent)
         self.is_norm=bool(ops.norm)
         self.hierarchical_target=[x-1 for x in ops.hierarchical_class_ids]
-        if self.resize:
-            self.resize_tensor()
-    def resize_tensor(self, shape=(-1, 3, 32, 32)):
-        self.data = np.reshape(self.data, shape)
 
     def __len__(self):
         return len(self.targets)
@@ -91,12 +36,17 @@ class sub_data(Dataset):
     def __getitem__(self, idx):
         single_data = self.data[idx]
         single_target = self.targets[idx]
-        target_tensor = torch.from_numpy(np.array(single_target))
-        target = target_tensor.long()
+        
         if self.transform is not None:
             single_data = self.transform(single_data)
+            
+        single_data = single_data.reshape(self.shape)
         data_tensor = torch.from_numpy(single_data)
         data_tensor = data_tensor.type(torch.FloatTensor)
+        
+        target_tensor = torch.from_numpy(np.array(single_target))
+        target = target_tensor.long()
+        
         return data_tensor, target
 
 def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0):
@@ -158,7 +108,6 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
     targets=[]
     batchs=[]
     log_interval=train_spec['log_interval']
-    save_path = train_spec['save_path']
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -220,17 +169,17 @@ def test(model, device, test_loader, epoch):
 def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,writer):
     model.train()
 
-    fc_all = []
     target_all = []
     batch_all = []
     test_accuracies = []
     train_accuracies = []
-    log_interval=train_spec['log_interval']
+    log_interval = train_spec['log_interval']
+    
     for batch_idx, (data, target) in enumerate(train_loader):
-
+        print('in training batch idx loop')
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
-        output, fc = model(data)
+        output = model(data)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -249,9 +198,8 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
 
             with torch.no_grad():  # don't save gradient
                 data_test, target_test = data_test.to(device), target_test.to(device)
-                output_test, fc = model(data_test)
+                output_test = model(data_test)
 
-            fc_all.append(fc.cpu())
             target_all.append(target_test.cpu())
             batch_all.append(target_test.cpu() * 0 + batch_idx)
 
@@ -267,17 +215,17 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                            100. * batch_idx / len(train_loader), loss.item(),
                     accuracy_train, accuracy_test))
             n_iter = batch_idx + (epoch - 1) * len(train_loader)  # eg epoch 2: 75 + 1*750
-
-            writer.add_scalar('Loss - Train', loss, n_iter)
-            writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
-            writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
-            # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
+            
+            if writer:
+                writer.add_scalar('Loss - Train', loss, n_iter)
+                writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
+                writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
+                # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
 
             model.eval()
     # writer.add_embedding(fc_all,tag='train_all',global_step=epoch,metadata=target_all)
 
     epoch_dat = {
-        "fc": fc_all,
         "target": target_all,
         "batch": batch_all,
         "epoch": epoch,
@@ -287,15 +235,14 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     # if is_cuda:
     epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
     epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
-    epoch_dat['fc'] = np.concatenate(epoch_dat['fc'], axis=0)
     epoch_dat['target'] = np.concatenate(epoch_dat['target'])
     epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
 
     return epoch_dat
 
-class NN_open(nn.Module):
+class NN(nn.Module):
     def __init__(self):
-        super(NN_open).__init__()
+        super(NN).__init__()
         # Inputs to hidden layer linear transformation
         self.hidden = nn.Linear(784, 256)
         # Output layer, 10 units
@@ -309,12 +256,12 @@ class NN_open(nn.Module):
         x = self.hidden(x)
         x = self.sigmoid(x)
         x = self.output(x)
-        return self.log_softmax(x), x
+        return self.log_softmax(x)
 
-class CNN_open(nn.Module):
-    def __init__(self):
-        super(CNN_open, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+class CNN(nn.Module):
+    def __init__(self, num_classes=10, num_channels=3):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(num_channels, 10, kernel_size=5)
         # print('conv1 size: ', np.shape(self.conv1))
         self.conv1_bn = nn.BatchNorm2d(10,eps=1e-09)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
@@ -322,7 +269,7 @@ class CNN_open(nn.Module):
         self.conv2_drop = nn.Dropout2d()
         self.fc1 = nn.Linear(320, 50)
         self.fc1_bn = nn.BatchNorm1d(50)
-        self.fc2 = nn.Linear(50, 10)
+        self.fc2 = nn.Linear(50, num_classes)
 
     def forward(self, x):
         bn_1 = self.conv1_bn(self.conv1(x))
@@ -334,7 +281,7 @@ class CNN_open(nn.Module):
         x_fc = F.relu(bn_fc)
         x_drop = F.dropout(x_fc, training=self.training)
         x_fc2 = self.fc2(x_drop)
-        return F.log_softmax(x_fc2, dim=1), x_fc
+        return F.log_softmax(x_fc2, dim=1)
 
 def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
