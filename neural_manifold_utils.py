@@ -340,4 +340,45 @@ def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
         pickle.dump(di_, f)
 
+class LazyLoad:
+    def __init__(self, load_fnc):
+        self.load_fnc = load_fnc
+        self.content = None
 
+    def __getattr__(self, name):
+        self._ensure_loaded()
+        return getattr(self.content, name)
+
+    def __setattr__(self, key, value):
+        if key not in ['content', 'load_fnc']:
+            self._ensure_loaded()
+            return setattr(self.content, key, value)
+        return super(LazyLoad, self).__setattr__(key, value)
+
+    def __getitem__(self, item):
+        self._ensure_loaded()
+        return self.content.__getitem__(item)
+
+    def __setitem__(self, key, value):
+        self._ensure_loaded()
+        return self.content.__setitem__(key, value)
+
+    def _ensure_loaded(self):
+        if self.content is None:
+            self.content = self.load_fnc()
+
+    def reload(self):
+        self.content = self.load_fnc()
+
+    def __call__(self, *args, **kwargs):
+        self._ensure_loaded()
+        return self.content(*args, **kwargs)
+
+    def __len__(self):
+        self._ensure_loaded()
+        return len(self.content)
+
+    @property
+    def __class__(self):
+        self._ensure_loaded()
+        return self.content.__class__
