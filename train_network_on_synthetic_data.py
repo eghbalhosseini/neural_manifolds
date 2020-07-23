@@ -5,7 +5,7 @@ import copy
 from torchvision import models
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from neural_manifold_utils import train, test, train_test, save_dict, sub_data, create_manifold_data, NN_open, CNN_open, extractor
+from neural_manifold_utils import train, test, train_test, save_dict, sub_data, create_manifold_data, NN, CNN, extractor
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
@@ -94,7 +94,7 @@ if __name__=='__main__':
                   'is_cuda': torch.cuda.is_available()
                   }
 
-    model = params.model
+    model = CNN() # TESTING
     model = model.to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum)
     
@@ -142,9 +142,9 @@ if __name__=='__main__':
             
         # extract activation
         model = model.eval()
-        activations_cell = [extractor(model, x, layer_types=['Conv2d', 'Linear']) for x in hier_sample_mtmfa]
-        data_['train_accuracy']=epoch_dat['train_acc']
-        data_['test_accuracy']=test_accuracy
+        activations_cell = [extractor(model, x) for x in hier_sample_mtmfa]
+        data_['train_accuracy'] = epoch_dat['train_acc']
+        data_['test_accuracy'] = test_accuracy
         data_['activations_cell'] = activations_cell
         data_['train_success'] = train_success
         num = str(epoch)
