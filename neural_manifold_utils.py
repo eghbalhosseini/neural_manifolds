@@ -176,7 +176,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     log_interval = train_spec['log_interval']
     
     for batch_idx, (data, target) in enumerate(train_loader):
-
+        print('in training batch idx loop')
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -242,7 +242,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
 
 class NN(nn.Module):
     def __init__(self):
-        super(NN_open).__init__()
+        super(NN).__init__()
         # Inputs to hidden layer linear transformation
         self.hidden = nn.Linear(784, 256)
         # Output layer, 10 units
@@ -259,9 +259,9 @@ class NN(nn.Module):
         return self.log_softmax(x)
 
 class CNN(nn.Module):
-    def __init__(self, num_classes=10):
-        super(CNN_open, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+    def __init__(self, num_classes=10, num_channels=3):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(num_channels, 10, kernel_size=5)
         # print('conv1 size: ', np.shape(self.conv1))
         self.conv1_bn = nn.BatchNorm2d(10,eps=1e-09)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)

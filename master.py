@@ -4,10 +4,9 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-import neural_manifold_utils
-from neural_manifold_utils import sub_data, NN_open, CNN_open, LazyLoad
+
+from neural_manifold_utils import sub_data, NN, CNN
 from torchvision import models
-import itertools
 
 import os
 import getpass
@@ -27,27 +26,19 @@ elif user == 'gretatu':
 
 
 class params:
-    def __init__(self,datafile="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",
-                 model='CNN_open',
-                 train_type='train'):
-        ##### DATA ####
-        self.datafile=datafile
-        self.dataset= sub_data(data_path=os.path.join(data_dir, self.datafile))
-        #
-        datafile = "synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat"
-        dataset = sub_data(data_path=os.path.join(data_dir, datafile))
-        exm_per_class = 100 # examples per class
-        resize = True # reshape data into a 2D array # TODO make adaptable
-        #### MODEL ####
-        self.models=getattr(neural_manifold_utils,model)
-        model = CNN_open # models.vgg16(num_classes=dataset.n_class) # or CNN etc
     
-        #### TRAINING ####
-        self.train_type=train_type
-
-    model = CNN_open  # models.vgg16(num_classes=dataset.n_class) # or CNN etc
+    ##### DATA ####
     datafile = "synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat"
+    dataset = sub_data(data_path=os.path.join(data_dir, datafile), shape=(3,32,32))
+    exm_per_class = 100 # examples per class
+    resize = True # reshape data into a 2D array # TODO make adaptable
+    
+    #### MODEL ####
+    # model = CNN # models.vgg16(num_classes=dataset.n_class) # or CNN etc
+    
+    #### TRAINING ####
     train_type = 'train_test'
+    
     batch_size_train = 64
     batch_size_test = 64
     epochs = 50
@@ -59,24 +50,3 @@ class params:
     shuffle_dataset = True
     random_seed = 1
     save_epochs = False # save individual mat files for each chosen epoch # GET RID OF?
-
-train_configuration=[]
-for dataset , model, train_type in itertools.product(
-        ['synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat',
-         'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat',
-         'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat',
-         'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat',
-         'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat',
-         'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat'
-         'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat',
-         'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat',
-         'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat']
-        ,['CNN_open','VGG16'],['train','train_test']):
-    train_configuration.append(dict(dataset=dataset,model=model,train_type=train_type))
-
-
-# create the pool
-#for config in train_configuration:
-
-
-
