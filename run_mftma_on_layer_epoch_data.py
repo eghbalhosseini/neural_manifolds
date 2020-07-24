@@ -19,10 +19,13 @@ print(user)
 if user == 'eghbalhosseini':
     save_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
     data_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/synthetic_datasets/'
-
 elif user == 'ehoseini':
     save_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+elif user == 'gretatu':
+    save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
+    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+
 parser = argparse.ArgumentParser(description='neural manifold test network')
 parser.add_argument('train_dir', type=str, default="train_VGG16_synthdata_tree_nclass_50_n_exm_1000",help='')
 parser.add_argument('epoch_id',type=str,default='1')
