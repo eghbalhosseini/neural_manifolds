@@ -11,6 +11,7 @@ import copy
 import os
 import getpass
 user = getpass.getuser()
+import re
 
 if user=='eghbalhosseini':
     save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
@@ -27,32 +28,22 @@ def load_train(train_name):
 
 
 class params:
-    def __init__(self,datafile="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",
-                 model='CNN_open',
-                 train_type='train',identifier=None):
+    def __init__(self,datafile=None,model=None,train_type='train',identifier=None,beta=0,sigma=0,nclass=0,nobj=0,shape=(1,1,1),structure=None):
         ##### DATA ####
         self.datafile=datafile
         self.identifier=identifier
-        print('running')
+        self.beta=beta
+        self.sigma=sigma
+        self.nclass=nclass
+        self.nobj=nobj
+        self.shape=shape
+        self.structure=structure
         self.dataset= sub_data(data_path=os.path.join(data_dir, self.datafile))
-        #
-        #datafile = "synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat"
-        #dataset = sub_data(data_path=os.path.join(data_dir, datafile))
-        exm_per_class = 100 # examples per class
-        resize = True # reshape data into a 2D array # TODO make adaptable
-        #### MODEL ####
-        self.models=getattr(neural_manifold_utils, model)
-        model = CNN # models.vgg16(num_classes=dataset.n_class) # or CNN etc
-    
-        #### TRAINING ####
+        self.model=model
         self.train_type=train_type
-
-    #model = CNN_open  # models.vgg16(num_classes=dataset.n_class) # or CNN etc
-    #datafile = "synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat"
-    #train_type = 'train_test'
-    #### TRAINING ####
-    train_type = 'train_test'
-
+    #training_spec
+    resize = True  # reshape data into a 2D array # TODO make adaptable
+    exm_per_class = 100  # examples per class
     batch_size_train = 64
     batch_size_test = 64
     epochs = 50
@@ -66,17 +57,27 @@ class params:
     save_epochs = False # save individual mat files for each chosen epoch # GET RID OF?
 
 # TODO : make the cnn automatically read the num_class
-data_config={
-'partition/nclass=100/beta0.1/sigma1.5':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat',
-'partition/nclass=50/beta0.01/sigma1.5':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat',
-#'partition/nclass=64/beta0.00/sigma0.83':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat',
-#'partition/nclass=64/beta0.02/sigma0.83':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat',
-#'partition/nclass=64/beta0.02/sigma2.5':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat'
-}
+# TODO : make the naming extracted from the filename
+data_config=[{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)},
+             {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)} ]
+
 train_configuration=[]
-for dataset , model, train_type in itertools.product(list(data_config.keys()),['CNN_open'],['train_test']):
-    identifier=f"[{model}]-[{dataset}]-[{train_type}]"
-    train_configuration.append(dict(identifier=identifier,dataset=data_config[dataset],model=model,train_type=train_type))
+for dataset , model, train_type in itertools.product(data_config,['CNN'],['train_test']):
+    s = re.findall('nclass_\d+', dataset['data_file'])[0]
+    nclass = int(s.split('_')[1])
+    s = re.findall('synth_\w+_nobj', dataset['data_file'])[0]
+    structure = (s.split('_')[1])
+    s = re.findall('beta_\d+\.\d+', dataset['data_file'])[0]
+    beta=float(s.split('_')[1])
+    s = re.findall('sigma_\d+\.\d+', dataset['data_file'])[0]
+    sigma = float(s.split('_')[1])
+    s = re.findall('nobj_\d+', dataset['data_file'])[0]
+    nobj = int(s.split('_')[1])
+    s = re.findall('nfeat_\d+', dataset['data_file'])[0]
+    nfeat = int(s.split('_')[1])
+    identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]"
+    train_configuration.append(dict(identifier=identifier,dataset=dataset['data_file'],shape=dataset['shape'],
+                                    nclass=nclass,nobj=nobj,sigma=sigma,beta=beta,model=model,train_type=train_type,structure=structure))
 
 train_pool={}
 # create the pool
@@ -85,10 +86,16 @@ for config in train_configuration:
     identifier=configuration['identifier']
     def train_instantionation(identfier=identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        model=configure['model']
-        datafile=configure['dataset']
-        train_type=configure['train_type']
-        train_param=params(model=model,datafile=datafile,train_type=train_type,identifier=identifier)
+        train_param=params(model=configure['model'],
+                           datafile=configure['dataset'],
+                           train_type=configure['train_type'],
+                           identifier=identifier,
+                           shape=configure['shape'],
+                           beta=configure['beta'],
+                           sigma=configure['sigma'],
+                           nclass=configure['nclass'],
+                           nobj=configure['nobj'],
+                           structure=configure['structure'])
         return train_param
 
     train_pool[identifier]=train_instantionation
