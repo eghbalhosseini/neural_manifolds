@@ -94,7 +94,7 @@ if __name__=='__main__':
                   'is_cuda': torch.cuda.is_available()
                   }
 
-    model = CNN(num_classes=50, num_channels=3) # TESTING
+    model = NN(num_classes=50)# CNN(num_classes=50, num_channels=1) # TESTING
     model = model.to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum)
     
