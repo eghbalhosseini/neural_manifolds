@@ -1,18 +1,16 @@
 from __future__ import print_function
-import argparse
 import torch
 import copy
-from torchvision import models
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from neural_manifold_utils import train, test, train_test, save_dict, sub_data, create_manifold_data, NN, CNN
+from neural_manifolds_utils.neural_manifold_utils import train, test, train_test, save_dict, create_manifold_data, CNN
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
 from datetime import datetime
 import getpass
 import numpy as np
-
+from neural_manifolds_utils import train_pool
 # from mftma.utils.activation_extractor import extractor
 
 print('__cuda available ',torch.cuda.is_available())
@@ -45,8 +43,8 @@ if not os.path.exists(save_dir):
 #args=parser.parse_args()
 
 if __name__=='__main__':
-    from master import params
-
+    model_identifer='[CNN_open]-[partition/nclass=100/beta0.1/sigma1.5]-[train_test]'
+    params=train_pool[model_identifer]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ##### DATA ####

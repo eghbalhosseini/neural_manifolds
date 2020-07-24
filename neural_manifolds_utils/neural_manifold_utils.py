@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import os
+from mftma.utils.activation_extractor import extractor
+
 
 class sub_data(Dataset):
     def __init__(self, data_path,shape=(1,28,28),transform=None):
@@ -47,7 +49,7 @@ class sub_data(Dataset):
         target_tensor = torch.from_numpy(np.array(single_target))
         target = target_tensor.long()
         # print('Length of tensor target: ', target.size())
-        
+
         return data_tensor, target
 
 def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0):
