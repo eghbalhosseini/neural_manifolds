@@ -46,6 +46,7 @@ class sub_data(Dataset):
         
         target_tensor = torch.from_numpy(np.array(single_target))
         target = target_tensor.long()
+        # print('Length of tensor target: ', target.size())
         
         return data_tensor, target
 
@@ -112,8 +113,9 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        output = torch.nn.functional.log_softmax(output, dim=1)
-        loss = torch.nn.functional.nll_loss(output, target)
+        # output = torch.nn.functional.log_softmax(output, dim=1)
+        loss = torch.nn.CrossEntropyLoss(output, target)
+        # loss = torch.nn.functional.nll_loss(output, target)
         loss.backward()
         optimizer.step()
         if (batch_idx % log_interval == 0) & (batch_idx!=0):
@@ -180,6 +182,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
+        output = torch.squeeze(output)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -189,6 +192,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             print('target len: ', len(target))
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            # _, pred = (torch.max(output_sq, 1)) # other way of computing max pred - better?
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
@@ -199,6 +203,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             with torch.no_grad():  # don't save gradient
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
+                output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
             batch_all.append(target_test.cpu() * 0 + batch_idx)
@@ -241,35 +246,78 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     return epoch_dat
 
 class NN(nn.Module):
-    def __init__(self):
-        super(NN).__init__()
-        # Inputs to hidden layer linear transformation
-        self.hidden = nn.Linear(784, 256)
-        # Output layer, 10 units
-        self.output = nn.Linear(256, 10)
 
-        # Define sigmoid activation and softmax output
-        self.sigmoid = nn.Sigmoid()
-        self.softmax = nn.Softmax(dim=1)
+  def __init__(self, num_classes = 50):
+    super(NN, self).__init__()
+    self.fc1 = nn.Linear(3072, 1024)
+    self.fc2 = nn.Linear(1024, 256)
+    self.fc3 = nn.Linear(256, num_classes)
 
-    def forward(self, x):
-        x = self.hidden(x)
-        x = self.sigmoid(x)
-        x = self.output(x)
-        return self.log_softmax(x)
+  def forward(self, x):
+    x = F.relu(self.fc1(x))
+    x = F.relu(self.fc2(x))
+    return torch.sigmoid(self.fc3(x))
+
+# class NN(nn.Module):
+#     def __init__(self, num_classes=50):
+#         super(NN, self).__init__()
+#         # Inputs to hidden layer linear transformation
+#         self.hidden = nn.Linear(3072, 256)
+#         # Output layer, 10 units
+#         self.output = nn.Linear(256, num_classes)
+#
+#         # Define sigmoid activation and softmax output
+#         self.sigmoid = nn.Sigmoid()
+#         self.softmax = nn.Softmax(dim=1)
+#
+#     def forward(self, x):
+#         for layer in self.NN:
+#             lay = layer(lay)
+#             print(lay.size())
+#
+#         x = self.hidden(x)
+#         x = self.sigmoid(x)
+#         x = self.output(x)
+#         # x = self.softmax(x)
+#         return x
+
+# class CNN(nn.Module):
+#     def __init__(self, num_classes=50, num_channels=1):
+#         super(CNN, self).__init__()
+#         self.conv1 = nn.Conv2d(num_channels, 32, 3, 1)
+#         self.conv2 = nn.Conv2d(32, 64, 3, 1)
+#         self.dropout1 = nn.Dropout2d(0.25)
+#         self.dropout2 = nn.Dropout2d(0.5)
+#         self.fc1 = nn.Linear(9216, 128)
+#         self.fc2 = nn.Linear(128, num_classes)
+#
+#     def forward(self, x):
+#         x = self.conv1(x)
+#         x = F.relu(x)
+#         x = self.conv2(x)
+#         x = F.relu(x)
+#         x = F.max_pool2d(x, 2)
+#         x = self.dropout1(x)
+#         x = torch.flatten(x, 1)
+#         x = self.fc1(x)
+#         x = F.relu(x)
+#         x = self.dropout2(x)
+#         x = self.fc2(x)
+#         output = F.log_softmax(x, dim=1)
+#         return output
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10, num_channels=3):
         super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(num_channels, 10, kernel_size=5)
+        self.conv1 = nn.Conv2d(num_channels, num_classes, kernel_size=5)
         # print('conv1 size: ', np.shape(self.conv1))
-        self.conv1_bn = nn.BatchNorm2d(10,eps=1e-09)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv1_bn = nn.BatchNorm2d(num_classes, eps=1e-09)
+        self.conv2 = nn.Conv2d(num_classes, 20, kernel_size=5)
         self.conv2_bn = nn.BatchNorm2d(20,eps=1e-09)
         self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
-        self.fc1_bn = nn.BatchNorm1d(50)
-        self.fc2 = nn.Linear(50, num_classes)
+        self.fc1 = nn.Linear(320, 100)
+        self.fc1_bn = nn.BatchNorm1d(100)
+        self.fc2 = nn.Linear(100, num_classes)
 
     def forward(self, x):
         bn_1 = self.conv1_bn(self.conv1(x))
