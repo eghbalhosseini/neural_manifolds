@@ -1,16 +1,13 @@
-import numpy as np
 import torch
 import sys
 import os
 from torchvision import models
-from mftma.manifold_analysis_correlation import manifold_analysis_corr
 from mftma.utils.make_manifold_data import make_manifold_data
 from mftma.utils.activation_extractor import extractor
-from mftma.utils.analyze_pytorch import analyze
 import getpass
 import argparse
-from neural_manifold_utils import CFAR100_fake_dataset_mftma , save_dict
-from datetime import datetime
+from neural_manifolds_utils.neural_manifold_utils import CFAR100_fake_dataset_mftma , save_dict
+
 print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
 print('__Number CUDA Devices:', torch.cuda.device_count())
