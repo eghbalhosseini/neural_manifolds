@@ -43,7 +43,7 @@ if not os.path.exists(save_dir):
 #args=parser.parse_args()
 
 if __name__=='__main__':
-    model_identifer='[CNN_open]-[partition/nclass=100/beta0.1/sigma1.5]-[train_test]'
+    model_identifer='[CNN]-[partition/nclass=100/nobj=100000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]'
     params=train_pool[model_identifer]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

@@ -26,7 +26,6 @@ elif user == 'gretatu':
 def load_train(train_name):
     return train_pool[train_name]()
 
-
 class params:
     def __init__(self,datafile=None,model=None,train_type='train',identifier=None,beta=0,sigma=0,nclass=0,nobj=0,shape=(1,1,1),structure=None):
         ##### DATA ####
@@ -56,10 +55,11 @@ class params:
     random_seed = 1
     save_epochs = False # save individual mat files for each chosen epoch # GET RID OF?
 
-# TODO : make the cnn automatically read the num_class
-# TODO : make the naming extracted from the filename
 data_config=[{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)},
              {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)} ]
+
+mftma_config=[{'exm_per_class':100},
+              {'exm_per_class':100}]
 
 train_configuration=[]
 for dataset , model, train_type in itertools.product(data_config,['CNN'],['train_test']):
@@ -99,6 +99,7 @@ for config in train_configuration:
         return train_param
 
     train_pool[identifier]=train_instantionation
+
 
 
 
