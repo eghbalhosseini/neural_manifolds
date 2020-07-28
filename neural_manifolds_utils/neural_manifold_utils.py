@@ -201,6 +201,8 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             data_test, target_test = next(iteration)
 
             with torch.no_grad():  # don't save gradient
+                # Allow eval for test set inference
+                model.eval()
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
                 output_test = torch.squeeze(output_test)
@@ -226,8 +228,6 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
                 writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
                 # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
-
-            model.eval()
 
     epoch_dat = {
         "target": target_all,
