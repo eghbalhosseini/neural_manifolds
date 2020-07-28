@@ -1,6 +1,8 @@
 from __future__ import print_function
 import torch
 import copy
+
+from mftma.utils.activation_extractor import extractor
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
 from neural_manifolds_utils.neural_manifold_utils import train, test, train_test, save_dict, create_manifold_data, NN
@@ -92,7 +94,7 @@ if __name__=='__main__':
                   'is_cuda': torch.cuda.is_available()
                   }
 
-    model = NN(num_classes=50)# CNN(num_classes=50, num_channels=1) # TESTING
+
     model = model.to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum)
     

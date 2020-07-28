@@ -4,7 +4,7 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-from neural_manifolds_utils.neural_manifold_utils import sub_data, CNN
+from neural_manifolds_utils.neural_manifold_utils import sub_data, NN
 from neural_manifolds_utils import neural_manifold_utils
 import itertools
 import copy
@@ -58,11 +58,9 @@ class params:
 data_config=[{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)},
              {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)} ]
 
-mftma_config=[{'exm_per_class':100},
-              {'exm_per_class':100}]
 
 train_configuration=[]
-for dataset , model, train_type in itertools.product(data_config,['CNN'],['train_test']):
+for dataset , model, train_type in itertools.product(data_config,['NN'],['train_test']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
     s = re.findall('synth_\w+_nobj', dataset['data_file'])[0]
@@ -100,6 +98,41 @@ for config in train_configuration:
 
     train_pool[identifier]=train_instantionation
 
+
+
+
+# TODO , think about how to make test examples seperate from training examples
+
+analyze_method=['mftma','super_class','dating']
+exm_per_class=[50,100]
+
+analyze_configuration=[]
+for analyze_meth , exm in itertools.product(analyze_method,exm_per_class):
+
+    identifier=f"[{analyze_meth}]-[exm_per_class={exm}]"
+    analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,analysis_method=analyze_meth))
+
+
+analyze_pool={}
+# create the pool
+for config in train_configuration:
+    configuration=copy.deepcopy(config)
+    identifier=configuration['identifier']
+    def train_instantionation(identfier=identifier,configure=frozenset(configuration.items())):
+        configure = dict(configure)
+        train_param=params(model=configure['model'],
+                           datafile=configure['dataset'],
+                           train_type=configure['train_type'],
+                           identifier=identifier,
+                           shape=configure['shape'],
+                           beta=configure['beta'],
+                           sigma=configure['sigma'],
+                           nclass=configure['nclass'],
+                           nobj=configure['nobj'],
+                           structure=configure['structure'])
+        return train_param
+
+    train_pool[identifier]=train_instantionation
 
 
 
