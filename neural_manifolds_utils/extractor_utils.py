@@ -1,11 +1,17 @@
 from mftma.utils.activation_extractor import extractor
+from collections import defaultdict
+import numpy as np
+import torch
+
+
 class mftma_extractor(object):
     def __init__(self,model=None, exm_per_class=50, nclass=50, data=None):
         self.extractor=extractor
+
         
         
         
-def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0):
+def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
     '''
     Samples manifold data for use in later analysis
 
@@ -17,6 +23,8 @@ def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class
             this many examples per class in the dataset)
         max_class (optional): Maximum class to sample from. Defaults to sampled_classes if unspecified
         seed (optional): Random seed used for drawing samples
+        randomize= True/False, if false the function starts from the first index and samples sequentially until all groups are filled,
+        otherwise it will randomly sample from the dataset.
 
     Returns:
         data: Iterable containing manifold input data
@@ -34,7 +42,9 @@ def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class
     sampled_labels = np.random.choice(list(range(max_class)), size=sampled_classes, replace=False)
     # Shuffle the order to iterate through the dataset
     idx = [i for i in range(len(dataset))]
-    np.random.shuffle(idx)
+    if randomize:
+        np.random.shuffle(idx)
+
     # Iterate through the dataset until enough samples are drawn
     for i in idx:
         sample, label = dataset[i]
