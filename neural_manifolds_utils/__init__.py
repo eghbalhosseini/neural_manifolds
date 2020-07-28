@@ -12,6 +12,8 @@ import os
 import getpass
 user = getpass.getuser()
 import re
+from importlib import import_module
+
 
 if user=='eghbalhosseini':
     save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
@@ -82,9 +84,12 @@ train_pool={}
 for config in train_configuration:
     configuration=copy.deepcopy(config)
     identifier=configuration['identifier']
+
     def train_instantionation(identfier=identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        train_param=params(model=configure['model'],
+        module = import_module('neural_manifolds_utils.neural_manifold_utils')
+        model=getattr(module,configure['model'])
+        train_param=params(model=model,
                            datafile=configure['dataset'],
                            train_type=configure['train_type'],
                            identifier=identifier,
@@ -115,24 +120,7 @@ for analyze_meth , exm in itertools.product(analyze_method,exm_per_class):
 
 analyze_pool={}
 # create the pool
-for config in train_configuration:
-    configuration=copy.deepcopy(config)
-    identifier=configuration['identifier']
-    def train_instantionation(identfier=identifier,configure=frozenset(configuration.items())):
-        configure = dict(configure)
-        train_param=params(model=configure['model'],
-                           datafile=configure['dataset'],
-                           train_type=configure['train_type'],
-                           identifier=identifier,
-                           shape=configure['shape'],
-                           beta=configure['beta'],
-                           sigma=configure['sigma'],
-                           nclass=configure['nclass'],
-                           nobj=configure['nobj'],
-                           structure=configure['structure'])
-        return train_param
 
-    train_pool[identifier]=train_instantionation
 
 
 
