@@ -8,11 +8,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import os
-from mftma.utils.activation_extractor import extractor
-
 
 class sub_data(Dataset):
-    def __init__(self, data_path,shape=(1,28,28),transform=None):
+    def __init__(self, data_path, shape=(1,3072), transform=None):
         self.data_path=data_path
         mat = mat73.loadmat(data_path)
         ops = mat['ops_out']
@@ -182,6 +180,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
+        output = torch.squeeze(output)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -191,6 +190,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             print('target len: ', len(target))
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            # _, pred = (torch.max(output_sq, 1)) # other way of computing max pred - better?
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
@@ -201,6 +201,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             with torch.no_grad():  # don't save gradient
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
+                output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
             batch_all.append(target_test.cpu() * 0 + batch_idx)
@@ -225,6 +226,9 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
 
             model.eval()
+
+
+
     # writer.add_embedding(fc_all,tag='train_all',global_step=epoch,metadata=target_all)
 
     epoch_dat = {
@@ -243,22 +247,16 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     return epoch_dat
 
 class NN(nn.Module):
-    def __init__(self):
-        super(NN).__init__()
-        # Inputs to hidden layer linear transformation
-        self.hidden = nn.Linear(784, 256)
-        # Output layer, 10 units
-        self.output = nn.Linear(256, 10)
-
-        # Define sigmoid activation and softmax output
-        self.sigmoid = nn.Sigmoid()
-        self.softmax = nn.Softmax(dim=1)
+    def __init__(self, num_classes=50):
+        super(NN, self).__init__()
+        self.fc1 = nn.Linear(3072, 1024)
+        self.fc2 = nn.Linear(1024, 256)
+        self.fc3 = nn.Linear(256, num_classes)
 
     def forward(self, x):
-        x = self.hidden(x)
-        x = self.sigmoid(x)
-        x = self.output(x)
-        return self.log_softmax(x)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return torch.sigmoid(self.fc3(x))
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10, num_channels=3):
