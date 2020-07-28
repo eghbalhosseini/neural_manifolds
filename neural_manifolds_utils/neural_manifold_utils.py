@@ -176,7 +176,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     log_interval = train_spec['log_interval']
     
     for batch_idx, (data, target) in enumerate(train_loader):
-        print('in training batch idx loop')
+        print('In training batch idx loop')
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -186,8 +186,9 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
         optimizer.step()
 
         if (batch_idx % log_interval == 0) & (batch_idx != 0):
-            print('data len:', len(data))
-            print('target len: ', len(target))
+            # print('data len:', len(data))
+            # print('target len: ', len(target))
+
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             # _, pred = (torch.max(output_sq, 1)) # other way of computing max pred - better?
@@ -195,6 +196,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
 
+            # Extract independent test set during training
             iteration = iter(test_loader)
             data_test, target_test = next(iteration)
 
@@ -227,10 +229,6 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
 
             model.eval()
 
-
-
-    # writer.add_embedding(fc_all,tag='train_all',global_step=epoch,metadata=target_all)
-
     epoch_dat = {
         "target": target_all,
         "batch": batch_all,
@@ -247,11 +245,11 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     return epoch_dat
 
 class NN(nn.Module):
-    def __init__(self, num_classes=50):
+    def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
         super(NN, self).__init__()
-        self.fc1 = nn.Linear(3072, 1024)
-        self.fc2 = nn.Linear(1024, 256)
-        self.fc3 = nn.Linear(256, num_classes)
+        self.fc1 = nn.Linear(num_fc1, num_fc2)
+        self.fc2 = nn.Linear(num_fc2, num_fc3)
+        self.fc3 = nn.Linear(num_fc3, num_classes)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
@@ -286,4 +284,5 @@ class CNN(nn.Module):
 def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
         pickle.dump(di_, f)
+
 
