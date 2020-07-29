@@ -35,7 +35,7 @@ def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class
     assert examples_per_class * max_class <= len(dataset), 'Not enough examples per class in dataset'
 
     # Set the seed
-    np.random.seed(0)
+    np.random.seed(seed)
     # Storage for samples
     sampled_data = defaultdict(list)
     # Sample the labels
