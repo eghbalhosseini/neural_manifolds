@@ -29,7 +29,7 @@ def load_train(train_name):
     return train_pool[train_name]()
 
 class params:
-    def __init__(self,datafile=None,model=None,train_type='train',identifier=None,beta=0,sigma=0,nclass=0,nobj=0,shape=(1,1,1),structure=None):
+    def __init__(self,datafile=None,model=None,train_type='train',identifier=None,beta=0,sigma=0,nclass=0,nobj=0,shape=(1,1,1),structure=None,nfeat=0):
         ##### DATA ####
         self.datafile=datafile
         self.identifier=identifier
@@ -42,6 +42,7 @@ class params:
         self.dataset= sub_data(data_path=os.path.join(data_dir, self.datafile))
         self.model=model
         self.train_type=train_type
+        self.nfeat=nfeat
     #training_spec
     resize = True  # reshape data into a 2D array # TODO make adaptable
     exm_per_class = 100  # examples per class
@@ -77,7 +78,7 @@ for dataset , model, train_type in itertools.product(data_config,['NN'],['train_
     nfeat = int(s.split('_')[1])
     identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]"
     train_configuration.append(dict(identifier=identifier,dataset=dataset['data_file'],shape=dataset['shape'],
-                                    nclass=nclass,nobj=nobj,sigma=sigma,beta=beta,model=model,train_type=train_type,structure=structure))
+                                    nclass=nclass,nobj=nobj,sigma=sigma,beta=beta,model=model,train_type=train_type,structure=structure,nfeat=nfeat))
 
 train_pool={}
 # create the pool
@@ -98,7 +99,7 @@ for config in train_configuration:
                            sigma=configure['sigma'],
                            nclass=configure['nclass'],
                            nobj=configure['nobj'],
-                           structure=configure['structure'])
+                           structure=configure['structure'],nfeat=configure['nfeat'])
         return train_param
 
     train_pool[identifier]=train_instantionation
