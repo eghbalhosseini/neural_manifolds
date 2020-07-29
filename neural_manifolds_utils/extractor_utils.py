@@ -8,9 +8,6 @@ class mftma_extractor(object):
     def __init__(self,model=None, exm_per_class=50, nclass=50, data=None):
         self.extractor=extractor
 
-        
-        
-        
 def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
     '''
     Samples manifold data for use in later analysis
