@@ -76,24 +76,24 @@ for dataset , model, train_type in itertools.product(data_config,['NN'],['train_
     nobj = int(s.split('_')[1])
     s = re.findall('nfeat_\d+', dataset['data_file'])[0]
     nfeat = int(s.split('_')[1])
-    identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]"
-    train_configuration.append(dict(identifier=identifier,dataset=dataset['data_file'],shape=dataset['shape'],
+    train_identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]"
+    train_configuration.append(dict(identifier=train_identifier,dataset=dataset['data_file'],shape=dataset['shape'],
                                     nclass=nclass,nobj=nobj,sigma=sigma,beta=beta,model=model,train_type=train_type,structure=structure,nfeat=nfeat))
 
 train_pool={}
 # create the pool
 for config in train_configuration:
     configuration=copy.deepcopy(config)
-    identifier=configuration['identifier']
-
-    def train_instantionation(identfier=identifier,configure=frozenset(configuration.items())):
+    train_identifier=configuration['identifier']
+    #TODO model to device doesnt work
+    def train_instantionation(identfier=train_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
         module = import_module('neural_manifolds_utils.neural_manifold_utils')
         model=getattr(module,configure['model'])
         train_param=params(model=model,
                            datafile=configure['dataset'],
                            train_type=configure['train_type'],
-                           identifier=identifier,
+                           identifier=configure['identifier'],
                            shape=configure['shape'],
                            beta=configure['beta'],
                            sigma=configure['sigma'],
@@ -102,26 +102,38 @@ for config in train_configuration:
                            structure=configure['structure'],nfeat=configure['nfeat'])
         return train_param
 
-    train_pool[identifier]=train_instantionation
+    train_pool[train_identifier]=train_instantionation
 
 
 
 
-# TODO , think about how to make test examples seperate from training examples
+# Define extraction pool
+extract_pool={}
 
-analyze_method=['mftma','super_class','dating']
-exm_per_class=[50,100]
+extract_method=['mftma_extract']
+exm_per_class=[20,50,100]
+projection_flag=[False,True]
 
-analyze_configuration=[]
-for analyze_meth , exm in itertools.product(analyze_method,exm_per_class):
+extract_configuration=[]
+for extract_meth , exm, p_flag in itertools.product(extract_method,exm_per_class,projection_flag):
+    identifier=f"[{extract_meth}]-[exm_per_class={exm}]-[Proj={p_flag}]"
+    extract_configuration.append(dict(identifier=identifier,exm_per_class=exm,extract_method=extract_meth,project=p_flag))
 
-    identifier=f"[{analyze_meth}]-[exm_per_class={exm}]"
-    analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,analysis_method=analyze_meth))
+[extract_pool.update({x['identifier']:x}) for x in extract_configuration]
 
-
+# define the analysis pool
 analyze_pool={}
-# create the pool
+analyze_method=['mftma']
+n_ts=[300]
+kappas=[0]
+n_reps=[1]
+analyze_configuration=[]
+for analy_meth , n_t, kappa,n_rep in itertools.product(analyze_method,n_ts,kappas,n_reps):
+    identifier=f"[{analy_meth}]-[n_t={n_t}]-[kappa={kappa}]-[n_rep={n_rep}]"
+    analyze_configuration.append(dict(identifier=identifier,n_t=n_t,analyze_method=analy_meth,kappa=kappa,n_rep=n_rep))
 
+
+[analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]
 
 
 

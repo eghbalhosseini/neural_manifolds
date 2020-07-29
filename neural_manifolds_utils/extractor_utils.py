@@ -4,9 +4,30 @@ import numpy as np
 import torch
 
 
+def project( activation, max_dim=5000):
+    for layer, data, in activation.items():
+        X = [d.reshape(d.shape[0], -1).T for d in data]
+        # Get the number of features in the flattened data
+        N = X[0].shape[0]
+        # If N is greater than 5000, do the random projection to 5000 features
+        if N > max_dim:
+            print("Projecting {}".format(layer))
+            M = np.random.randn(max_dim, N)
+            M /= np.sqrt(np.sum(M * M, axis=1, keepdims=True))
+            X = [np.matmul(M, d) for d in X]
+        activation[layer] = X
+    return activation
+
 class mftma_extractor(object):
-    def __init__(self,model=None, exm_per_class=50, nclass=50, data=None):
+    def __init__(self,model=None, exm_per_class=50, nclass=50, data=None,max_dim=5000):
         self.extractor=extractor
+        self.exm__per_class=exm_per_class
+        self.nclass=nclass
+        self.data=data
+        self.max_dim=max_dim
+        self.project=project
+
+    # there should be a section for hierarchical data used
 
 def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
     '''
@@ -62,3 +83,4 @@ def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class
     for s, d in sampled_data.items():
         data.append(torch.stack(d))
     return data
+
