@@ -124,8 +124,8 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     model.train()
 
     target_all = []
-    batch_all = []
-    test_accuracies = []
+    # batch_all = []
+    test_accuracies = [] # Return list of test accuracies for each epoch train_test is called
     train_accuracies = []
     log_interval = train_spec['log_interval']
     
@@ -135,18 +135,13 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
         optimizer.zero_grad()
         output = model(data)
         # output = torch.squeeze(output)
-
         # print(output.size())
         # print(target.size())
-
         loss = F.nll_loss(output, target) # nn.MSELoss(output, target)#
         loss.backward()
         optimizer.step()
 
         if (batch_idx % log_interval == 0) & (batch_idx != 0):
-            # print('data len:', len(data))
-            # print('target len: ', len(target))
-
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             # _, pred = (torch.max(output, 1)) # other way of computing max pred - better?
@@ -166,13 +161,13 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 # output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
-            batch_all.append(target_test.cpu() * 0 + batch_idx)
+            # batch_all.append(target_test.cpu() * 0 + batch_idx)
 
             # Test error
             pred_test = output_test.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct_test = pred_test.eq(target_test.view_as(pred_test)).sum().item()
             accuracy_test = (100. * correct_test / len(target_test))
-            # test_accuracies.append(accuracy_test)
+            test_accuracies.append(accuracy_test)
 
             print(
                 'Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}, Train Accuracy: ({:.0f}%), Test Accuracy: ({:.0f}%)'.format(
@@ -193,28 +188,16 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 'state_dict': model.state_dict(),
                 'optimizer': optimizer.state_dict(),
                 'train_acc': accuracy_train,
-                'test_acc': accuracy_test, }
+                'test_acc': accuracy_test,
+                'data_test': data_test,
+                'target_test': target_test, } # add test targets etc for starters
 
             # Define file names for saving
-            fname = params.identifier + '-[epoch=' + str(e) + ']' + '-[batchidx=' + str(b) + ']' + '.pth'
-            # torch.save(state, os.path.join(save_dir, fname))
-            # print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
+            fname = train_spec['model_identifier'] + '-epoch=' + str(epoch) + '-batchidx=' + str(batch_idx) + '.pth'
+            torch.save(state, os.path.join(save_dir, fname))
+            print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
 
-    # epoch_dat = {
-    #     "target": target_all,
-    #     "batch": batch_all,
-    #     "epoch": epoch,
-    #     "test_acc": test_accuracies,
-    #     "train_acc": train_accuracies}
-    #
-    # # if is_cuda:
-    # epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
-    # epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
-    # epoch_dat['target'] = np.concatenate(epoch_dat['target'])
-    # epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
-    #
-    # return epoch_dat
-    return accuracy_test
+    return test_accuracies
 
 class NN(nn.Module):
     def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
