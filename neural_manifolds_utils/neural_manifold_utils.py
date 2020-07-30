@@ -8,6 +8,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import os
+import matplotlib.pyplot as plt
+from random import sample
+
+save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
 
 class sub_data(Dataset):
     def __init__(self, data_path, shape=(1,3072), transform=None):
@@ -49,56 +53,6 @@ class sub_data(Dataset):
         
         return data_tensor, target
 
-def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0):
-    '''
-    Samples manifold data for use in later analysis
-
-    Args:
-        dataset: PyTorch style dataset, or iterable that contains (input, label) pairs
-        sampled_classes: Number of classes to sample from (must be less than or equal to
-            the number of classes in dataset)
-        examples_per_class: Number of examples per class to draw (there should be at least
-            this many examples per class in the dataset)
-        max_class (optional): Maximum class to sample from. Defaults to sampled_classes if unspecified
-        seed (optional): Random seed used for drawing samples
-
-    Returns:
-        data: Iterable containing manifold input data
-    '''
-    if max_class is None:
-        max_class = sampled_classes
-    assert sampled_classes <= max_class, 'Not enough classes in the dataset'
-    assert examples_per_class * max_class <= len(dataset), 'Not enough examples per class in dataset'
-
-    # Set the seed
-    np.random.seed(0)
-    # Storage for samples
-    sampled_data = defaultdict(list)
-    # Sample the labels
-    sampled_labels = np.random.choice(list(range(max_class)), size=sampled_classes, replace=False)
-    # Shuffle the order to iterate through the dataset
-    idx = [i for i in range(len(dataset))]
-    np.random.shuffle(idx)
-    # Iterate through the dataset until enough samples are drawn
-    for i in idx:
-        sample, label = dataset[i]
-        label = int(label)
-        if label in sampled_labels and len(sampled_data[label]) < examples_per_class:
-            sampled_data[label].append(sample)
-        # Check if enough samples have been drawn
-        complete = True
-        for s in sampled_labels:
-            if len(sampled_data[s]) < examples_per_class:
-                complete = False
-        if complete:
-            break
-    # Check that enough samples have been found
-    assert complete, 'Could not find enough examples for the sampled classes'
-    # Combine the samples into batches
-    data = []
-    for s, d in sampled_data.items():
-        data.append(torch.stack(d))
-    return data
 
 def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
     model.train()
@@ -176,12 +130,16 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
     log_interval = train_spec['log_interval']
     
     for batch_idx, (data, target) in enumerate(train_loader):
-        print('In training batch idx loop')
+        # print('In training batch idx loop')
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        output = torch.squeeze(output)
-        loss = F.nll_loss(output, target)
+        # output = torch.squeeze(output)
+
+        # print(output.size())
+        # print(target.size())
+
+        loss = F.nll_loss(output, target) # nn.MSELoss(output, target)#
         loss.backward()
         optimizer.step()
 
@@ -191,7 +149,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
 
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
-            # _, pred = (torch.max(output_sq, 1)) # other way of computing max pred - better?
+            # _, pred = (torch.max(output, 1)) # other way of computing max pred - better?
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
@@ -205,7 +163,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 model.eval()
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
-                output_test = torch.squeeze(output_test)
+                # output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
             batch_all.append(target_test.cpu() * 0 + batch_idx)
@@ -214,14 +172,15 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             pred_test = output_test.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct_test = pred_test.eq(target_test.view_as(pred_test)).sum().item()
             accuracy_test = (100. * correct_test / len(target_test))
-            test_accuracies.append(accuracy_test)
+            # test_accuracies.append(accuracy_test)
 
             print(
                 'Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}, Train Accuracy: ({:.0f}%), Test Accuracy: ({:.0f}%)'.format(
                     epoch, batch_idx * len(data), (len(train_loader) * len(target)),
                            100. * batch_idx / len(train_loader), loss.item(),
                     accuracy_train, accuracy_test))
-            n_iter = batch_idx + (epoch - 1) * len(train_loader)  # eg epoch 2: 75 + 1*750
+
+            n_iter = batch_idx + (epoch - 1) * len(train_loader)  # eg epoch 2: 75 + 1*1250
             
             if writer:
                 writer.add_scalar('Loss - Train', loss, n_iter)
@@ -229,20 +188,33 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 writer.add_scalar('Accuracy - Test', accuracy_test, n_iter)
                 # writer.add_embedding(fc,tag='test_batch',global_step=n_iter,metadata=target_test)
 
-    epoch_dat = {
-        "target": target_all,
-        "batch": batch_all,
-        "epoch": epoch,
-        "test_acc": test_accuracies,
-        "train_acc": train_accuracies}
+            # Save weights and accuracies
+            state = {
+                'state_dict': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+                'train_acc': accuracy_train,
+                'test_acc': accuracy_test, }
 
-    # if is_cuda:
-    epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
-    epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
-    epoch_dat['target'] = np.concatenate(epoch_dat['target'])
-    epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
+            # Define file names for saving
+            fname = params.identifier + '-[epoch=' + str(e) + ']' + '-[batchidx=' + str(b) + ']' + '.pth'
+            # torch.save(state, os.path.join(save_dir, fname))
+            # print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
 
-    return epoch_dat
+    # epoch_dat = {
+    #     "target": target_all,
+    #     "batch": batch_all,
+    #     "epoch": epoch,
+    #     "test_acc": test_accuracies,
+    #     "train_acc": train_accuracies}
+    #
+    # # if is_cuda:
+    # epoch_dat['test_acc'] = np.stack(epoch_dat['test_acc'])
+    # epoch_dat['train_acc'] = np.stack(epoch_dat['train_acc'])
+    # epoch_dat['target'] = np.concatenate(epoch_dat['target'])
+    # epoch_dat['batch'] = np.concatenate(epoch_dat['batch'])
+    #
+    # return epoch_dat
+    return accuracy_test
 
 class NN(nn.Module):
     def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
@@ -254,7 +226,17 @@ class NN(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        return torch.sigmoid(self.fc3(x))
+        x = self.fc3(x)
+        # print(x.size())
+        x = torch.squeeze(x)
+        # print(x.size())
+        x_out = F.log_softmax(x, dim=1)
+        # print(yy.size())
+
+        return x_out
+
+        # return torch.sigmoid(self.fc3(x))
+        # return torch.log_softmax(self.fc3(x))
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10, num_channels=3):
@@ -286,3 +268,19 @@ def save_dict(di_, filename_):
         pickle.dump(di_, f)
 
 
+def show_cov(dataset, frac=50):
+    fname = dataset.data_path
+    fname_split = fname.split('/')
+    subsample_idx = sample(list(range(1, len(dataset.data))), int(len(dataset.data) / frac))
+    subsample_labels = dataset.targets[subsample_idx]
+    argsorted = np.argsort(subsample_labels)
+
+    subsample_data = dataset.data[subsample_idx, :]
+    sorted_data = subsample_data[argsorted] # sort according to the label ordering
+    sorted_labels = subsample_labels[argsorted] # for sanity checking
+
+    cov = np.cov((sorted_data))
+
+    plt.figure()
+    plt.imshow(cov)
+    plt.savefig(save_dir + 'cov_' + fname_split[-1][:-4] + '.pdf')
