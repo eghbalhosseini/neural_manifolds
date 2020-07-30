@@ -134,7 +134,6 @@ for analy_meth , n_t, kappa,n_rep in itertools.product(analyze_method,n_ts,kappa
     identifier=f"[{analy_meth}]-[n_t={n_t}]-[kappa={kappa}]-[n_rep={n_rep}]"
     analyze_configuration.append(dict(identifier=identifier,n_t=n_t,analyze_method=analy_meth,kappa=kappa,n_rep=n_rep))
 
-
 [analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]
 
 
