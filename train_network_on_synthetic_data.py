@@ -12,6 +12,7 @@ from datetime import datetime
 import getpass
 import numpy as np
 from neural_manifolds_utils import train_pool
+import re
 
 print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
@@ -43,8 +44,9 @@ if not os.path.exists(save_dir):
 #args=parser.parse_args()
 
 if __name__=='__main__':
-    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]' # TODO args
+    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]' # TODO args
     params = train_pool[model_identifer]()
+    model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ##### DATA ####
@@ -68,7 +70,7 @@ if __name__=='__main__':
     test_loader = torch.utils.data.DataLoader(dataset, batch_size=params.batch_size_test, sampler=test_sampler)
 
     # Define train specs and model
-    train_spec = {'model_identifier': params.identifier,
+    train_spec = {'model_identifier': model_identifier_for_saving,
                   'train_batch_size': params.batch_size_train,
                   'test_batch_size': params.batch_size_test,
                   'num_epochs': params.epochs,
@@ -100,54 +102,62 @@ if __name__=='__main__':
     writer.add_hparams(hparam_dict=train_spec, metric_dict={})
 
     #### TRAINING ####
-    for epoch in range(1, params.epochs + 1):
+    for epoch in range(1, params.epochs + 1): # e.g. if epochs = 50, then running from 1 to 50
 
         #### DEFINE TRAIN FUNCTION ####
         if params.train_type == 'train_test':
-            test_acc = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer)
+            test_accuracies = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer)
         if params.train_type == 'train':
             epoch_dat = train(epoch, model, device, train_loader, test_loader, optimizer, train_spec)
 
         # Define when to stop training:
-        stop = False
-
+        train_success = False
         if params.stop_criteria == 'test_performance':
-            if test_acc:
-                    if test_acc > 70:
-                        train_success = True
-            else:
-                train_success = False
+            num_last_test_accs = 3
+            if num_last_test_accs < len(test_accuracies):
+                test_acc_mean = np.mean(test_accuracies[-num_last_test_accs:])
 
-            # Stop if test accuracy reached, or at last epoch
-            if train_success or epoch == params.epochs:
-                stop = True
-                if train_success:
-                    print('Successful training - test accuracy > 70%')
-                if epoch == params.epochs:
-                    print('Model did not reach test accuracy > 70% - reaching end of epochs')
+            if num_last_test_accs >= len(test_accuracies):
+                test_acc_mean = np.mean(test_accuracies) # mean over all values
 
-        #if params.stop_criteria ==
+            print('Mean test acc: ', test_acc_mean)
+            if test_acc_mean > 50:
+                train_success = True
 
-            # Save the test set used
+        # Stop if test accuracy reached, or at last epoch
+        if train_success or epoch == params.epochs:
+            if train_success:
+                print('Successful training - test accuracy > 50%')
+            if epoch == params.epochs:
+                print('Reaching end of epochs')
+
+            # Save the test set used (either at test accuracy performance, or reaching end of epochs)
             # Generate list of batch idx files
             num_batches = int(len(train_loader) / params.batch_size_train)
             num_batches_lst = []
-            for i in range(0, num_batches):
-                if (i % params.log_interval == 0) & (i != 0):
-                    num_batches_lst.append(i)
+            for i in range(1, num_batches):
+                num_batches_lst.append(i*params.log_interval)
 
             files = []
+            generated_files_txt = open(save_dir + 'master_' + model_identifier_for_saving + '.txt', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    files.append(params.identifier + '-[epoch=' + str(e) + ']' + '-[batchidx=' + str(b) + ']' + '.pth')
+                    pth_file = model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
+                    files.append(pth_file)
 
-            d = {'test_loader': test_loader,
+                    # Write to txt file
+                    generated_files_txt.writelines(pth_file + '\n')
+
+            generated_files_txt.close()
+
+            d_master = {'test_loader': test_loader,
                  'model_untrained': model_untrained,
                  'files_generated': files}
 
-            save_dict(d, 'master-'+params.identifier+'.pkl')
+            save_dict(d_master, save_dir + 'master_'+model_identifier_for_saving+'.pkl')
 
-            break
+            break # Break statement in case the end was not reached (test accuracy termination)
+
 
 
 
