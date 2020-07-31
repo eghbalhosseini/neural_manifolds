@@ -10,10 +10,10 @@ import itertools
 import copy
 import os
 import getpass
-user = getpass.getuser()
 import re
 from importlib import import_module
 
+user = getpass.getuser()
 
 if user=='eghbalhosseini':
     save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
@@ -29,8 +29,8 @@ def load_train(train_name):
     return train_pool[train_name]()
 
 class params:
-    def __init__(self,datafile=None,model=None,train_type='train',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,
-                 shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performence'):
+    def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,
+                 shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance'):
         ##### DATA ####
         self.datafile=datafile
         self.identifier=identifier
@@ -40,31 +40,28 @@ class params:
         self.nobj=nobj
         self.shape=shape
         self.structure=structure
-        self.dataset= sub_data(data_path=os.path.join(data_dir, self.datafile))
+        self.dataset=sub_data(data_path=os.path.join(data_dir, self.datafile))
         self.model=model
         self.train_type=train_type
         self.nfeat=nfeat
         self.stop_criteria=stop_criteria
-    #training_spec
-    resize = True  # reshape data into a 2D array # TODO make adaptable
+
+    #####  Training specs #####
     exm_per_class = 100  # examples per class
     batch_size_train = 64
     batch_size_test = 64
     epochs = 50
     momentum = 0.5
     lr = 0.01
-    # gamma = 0.7 not used
-    log_interval = 75 # when to save, extract, and test the data
+    log_interval = 300 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
-    save_epochs = False # save individual mat files for each chosen epoch # GET RID OF?
 
-data_config=[{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)},
-             {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(3,32,32)} ]
+data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
+             {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)} ]
 
-
-train_configuration=[]
+train_configuration = []
 for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
@@ -89,7 +86,7 @@ for config in train_configuration:
     configuration=copy.deepcopy(config)
     train_identifier=configuration['identifier']
     #TODO model to device doesnt work
-    def train_instantionation(identfier=train_identifier,configure=frozenset(configuration.items())):
+    def train_instantiation(identfier=train_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
         module = import_module('neural_manifolds_utils.neural_manifold_utils')
         model=getattr(module,configure['model'])
@@ -107,7 +104,7 @@ for config in train_configuration:
                            stop_criteria=configure['stop_criteria'])
         return train_param
 
-    train_pool[train_identifier]=train_instantionation
+    train_pool[train_identifier]=train_instantiation
 
 # Define extraction pool
 extract_pool={}

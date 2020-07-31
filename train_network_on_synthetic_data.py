@@ -85,11 +85,14 @@ if __name__=='__main__':
                   }
 
     model = params.model(num_classes=params.nclass, num_fc1=params.shape[1])
-    # model = model.to(device)
-    optimizer = torch.optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum)
+    model = model.to(device)
+    model_initialized = copy.deepcopy(model)
 
     # Save the very initial weights
     model_untrained = model.state_dict()
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum)
+    optimizer_initialized = copy.deepcopy(optimizer)
 
     #### LOGGING ####
     # Tensorboard
@@ -133,10 +136,11 @@ if __name__=='__main__':
 
             # Save the test set used (either at test accuracy performance, or reaching end of epochs)
             # Generate list of batch idx files
-            num_batches = int(len(train_loader) / params.batch_size_train)
+            num_batches = int(len(train_loader))
             num_batches_lst = []
-            for i in range(1, num_batches):
-                num_batches_lst.append(i*params.log_interval)
+            for batch_idx in range(1, num_batches):
+                if (batch_idx % params.log_interval == 0) & (batch_idx != 0):
+                    num_batches_lst.append(batch_idx)
 
             files = []
             generated_files_txt = open(save_dir + 'master_' + model_identifier_for_saving + '.txt', 'w')
@@ -151,7 +155,9 @@ if __name__=='__main__':
             generated_files_txt.close()
 
             d_master = {'test_loader': test_loader,
-                 'model_untrained': model_untrained,
+                 'model_untrained_weights': model_untrained,
+                 'model_structure': model_initialized,
+                 'optimizer_structure': optimizer_initialized,
                  'files_generated': files}
 
             save_dict(d_master, save_dir + 'master_'+model_identifier_for_saving+'.pkl')
