@@ -50,6 +50,7 @@ if __name__=='__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ##### DATA ####
+    params.load_dataset()
     dataset = params.dataset
     exm_per_class = params.exm_per_class
 
