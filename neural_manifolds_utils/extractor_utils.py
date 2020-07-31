@@ -29,7 +29,7 @@ class mftma_extractor(object):
 
     # there should be a section for hierarchical data used
 
-def create_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
+def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
     '''
     Samples manifold data for use in later analysis
 
