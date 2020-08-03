@@ -169,7 +169,7 @@ for config in analyze_configuration:
                            n_t=configure['n_t'],
                            kappa=configure['kappa'],
                            n_rep=configure['n_rep'],
-                           randomize=configure['ranomize'],
+                           randomize=configure['randomize'],
                            project=configure['project']
                           )
         return analyze_param
