@@ -52,7 +52,7 @@ if __name__=='__main__':
     ##### DATA ####
     params.load_dataset()
     dataset = params.dataset
-    exm_per_class = params.exm_per_class
+    exm_per_class = dataset.exm_per_class
 
     # If plotting a subsampled cov matrix:
     # show_cov(dataset)
