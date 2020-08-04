@@ -2,6 +2,7 @@
 figures/*
 prev_code/*
 network_training_on_synthetic/*
+local/*
 
 # Compiled source #
 ###################
