@@ -9,21 +9,11 @@ from neural_manifolds_utils import neural_manifold_utils
 import itertools
 import copy
 import os
-import getpass
 import re
 from importlib import import_module
 
-user = getpass.getuser()
-
-if user=='eghbalhosseini':
-    save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir='/Users/eghbalhosseini/MyData/neural_manifolds/synthetic_datasets/'
-elif user=='ehoseini':
-    save_dir='/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir='/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
-elif user == 'gretatu':
-    save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
-    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted'
+data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data'
 
 def load_train(train_name):
     return train_pool[train_name]()
@@ -113,16 +103,18 @@ for config in train_configuration:
 #############ANALYSIS ###########################
 # Creating tags for analysis paradigms
 class analyze_params:
-    def __init__(self,analyze_method=None,exm_per_class=None,identifier=None,n_t=None,kappa=None,n_rep=None,randomize=None,project=None):
+    def __init__(self,analyze_method=None,exm_per_class=None,identifier=None,n_t=None,kappa=None,n_rep=None,randomize=None,project=None,n_project=5000,save_mat=False):
         ##### DATA ####
         self.analyze_method=analyze_method
-        self.exm_per_class=None
+        self.exm_per_class=exm_per_class
         self.randomize=randomize
         self.project=project
+        self.n_project=n_project
         self.identifier=identifier
         self.n_t=n_t
         self.kappa=kappa
         self.n_rep=n_rep
+        self.save_mat=save_mat
 
 
     #####  Training specs #####
@@ -134,23 +126,21 @@ class analyze_params:
     shuffle_dataset = True
     random_seed = 1
 
-
-
 analyze_pool={}
 analyze_method=['mftma']
 n_ts=[300]
 kappas=[0]
 n_reps=[1]
-
+n_projs=[5000]
 
 exm_per_class=[20,50,100]
 projection_flag=[False,True]
 randomize=[True,False]
 
 analyze_configuration=[]
-for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag in itertools.product(analyze_method,n_ts,n_reps,kappas,exm_per_class,projection_flag,randomize):
+for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag,n_proj in itertools.product(analyze_method,n_ts,n_reps,kappas,exm_per_class,projection_flag,randomize,n_projs):
     identifier=f"[{method}]-[exm_per_class={exm}]-[proj={proj_flag}]-[rand={rand_flag}]-[kappa={kappa}]-[n_t={n_t}]-[n_rep={n_rep}]"
-    analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,ranomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep))
+    analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,randomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep,n_project=n_proj))
 
 #[analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]
 
@@ -170,8 +160,8 @@ for config in analyze_configuration:
                            kappa=configure['kappa'],
                            n_rep=configure['n_rep'],
                            randomize=configure['randomize'],
-                           project=configure['project']
-                          )
+                           project=configure['project'],
+                          n_project=configure['n_project'])
         return analyze_param
 
     analyze_pool[analyze_identifier] = analyze_instantiation
