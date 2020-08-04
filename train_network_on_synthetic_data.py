@@ -4,14 +4,14 @@ import copy
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from neural_manifolds_utils.neural_manifold_utils import train, test, train_test, save_dict, NN, show_cov
+from utils.model_utils import train, test, train_test, save_dict, NN, show_cov
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
 from datetime import datetime
 import getpass
 import numpy as np
-from neural_manifolds_utils import train_pool
+from utils import train_pool
 import re
 
 print('__cuda available ',torch.cuda.is_available())

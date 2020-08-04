@@ -6,7 +6,7 @@ from mftma.utils.make_manifold_data import make_manifold_data
 from mftma.utils.activation_extractor import extractor
 import getpass
 import argparse
-from neural_manifolds_utils.neural_manifold_utils import CFAR100_fake_dataset_mftma , save_dict
+from utils.model_utils import CFAR100_fake_dataset_mftma , save_dict
 
 print('__cuda available ',torch.cuda.is_available())
 print('__Python VERSION:', sys.version)

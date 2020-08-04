@@ -1,7 +1,7 @@
-from neural_manifolds_utils.extractor_utils import mftma_extractor
-from neural_manifolds_utils.neural_manifold_utils import NN, save_dict
-from neural_manifolds_utils.extractor_utils import make_manifold_data
-from neural_manifolds_utils import save_dir, data_dir, analyze_pool, train_pool
+from utils.extractor_utils import mftma_extractor
+from utils.model_utils import NN, save_dict
+from utils.extractor_utils import make_manifold_data
+from utils import save_dir, data_dir, analyze_pool, train_pool
 import pickle
 import torch
 import argparse

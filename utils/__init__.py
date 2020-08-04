@@ -4,16 +4,20 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-from neural_manifolds_utils.neural_manifold_utils import sub_data, NN
-from neural_manifolds_utils import neural_manifold_utils
+
+
+save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted'
+data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data'
+
+from utils.model_utils import sub_data, NN
+from utils import model_utils
 import itertools
 import copy
 import os
 import re
 from importlib import import_module
 
-save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted'
-data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data'
+
 
 def load_train(train_name):
     return train_pool[train_name]()
@@ -81,7 +85,7 @@ for config in train_configuration:
     train_identifier=configuration['identifier']
     def train_instantiation(identfier=train_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        module = import_module('neural_manifolds_utils.neural_manifold_utils')
+        module = import_module('utils.neural_manifold_utils')
         model=getattr(module,configure['model'])
         train_param=params(model=model,
                            datafile=configure['dataset'],
