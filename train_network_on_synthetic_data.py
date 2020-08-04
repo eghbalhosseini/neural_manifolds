@@ -89,7 +89,6 @@ if __name__ == '__main__':
     log_dir = os.path.join(save_dir, 'runs', current_time + '_' + socket.gethostname())
 
     writer = SummaryWriter(log_dir=log_dir)
-    # writer.add_graph(model)
     writer.add_hparams(hparam_dict=train_spec, metric_dict={})
 
     #### TRAINING ####
@@ -131,10 +130,10 @@ if __name__ == '__main__':
                     num_batches_lst.append(batch_idx)
 
             files = []
-            generated_files_txt = open(save_dir + 'master_' + model_identifier_for_saving + '.txt', 'w')
+            generated_files_txt = open(save_dir + '/master_' + model_identifier_for_saving + '.txt', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = save_dir + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(
+                    pth_file = save_dir + '/' + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(
                         b) + '.pth'
                     files.append(pth_file)
 
