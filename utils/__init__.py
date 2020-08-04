@@ -49,10 +49,10 @@ class params:
     #exm_per_class = 100  # examples per class
     batch_size_train = 64
     batch_size_test = 64
-    epochs = 50
+    epochs = 3
     momentum = 0.5
     lr = 0.01
-    log_interval = 300 # when to save, extract, and test the data
+    log_interval = 15 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
@@ -85,7 +85,7 @@ for config in train_configuration:
     train_identifier=configuration['identifier']
     def train_instantiation(identfier=train_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        module = import_module('utils.neural_manifold_utils')
+        module = import_module('utils.model_utils')
         model=getattr(module,configure['model'])
         train_param=params(model=model,
                            datafile=configure['dataset'],
@@ -124,8 +124,8 @@ class analyze_params:
     #####  Training specs #####
     batch_size_train = 64
     batch_size_test = 64
-    epochs = 50
-    log_interval = 300 # when to save, extract, and test the data
+    epochs = 3
+    log_interval = 15 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1

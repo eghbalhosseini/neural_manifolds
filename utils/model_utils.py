@@ -10,9 +10,7 @@ import torch.nn.functional as F
 import os
 import matplotlib.pyplot as plt
 from random import sample
-
-save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
-
+from utils import save_dir
 
 class sub_data(Dataset):
     def __init__(self, data_path, shape=(1, 3072), transform=None):

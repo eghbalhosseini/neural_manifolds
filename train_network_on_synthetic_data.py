@@ -4,14 +4,14 @@ import copy
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from neural_manifolds_utils.neural_manifold_utils import train, test, train_test, save_dict, NN, show_cov
+from utils.model_utils import train, test, train_test, save_dict, NN, show_cov
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
 from datetime import datetime
 import getpass
 import numpy as np
-from neural_manifolds_utils import train_pool
+from utils import save_dir, train_pool
 import re
 
 print('__cuda available ', torch.cuda.is_available())
@@ -26,25 +26,12 @@ except:
 user = getpass.getuser()
 print(user)
 
-if user == 'eghbalhosseini':
-    save_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/synthetic_datasets/'
-elif user == 'ehoseini':
-    save_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
-elif user == 'gretatu':
-    save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
-    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
-
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
-
 # parser = argparse.ArgumentParser(description='neural manifold train network')
 # parser.add_argument('datafile', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",help='')
 # args=parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]'  # TODO args
+    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'  # TODO args
     params = train_pool[model_identifer]()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
