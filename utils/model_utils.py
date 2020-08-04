@@ -10,11 +10,13 @@ import torch.nn.functional as F
 import os
 import matplotlib.pyplot as plt
 from random import sample
-from utils import save_dir
+
+save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
+
 
 class sub_data(Dataset):
-    def __init__(self, data_path, shape=(1,3072), transform=None):
-        self.data_path=data_path
+    def __init__(self, data_path, shape=(1, 3072), transform=None):
+        self.data_path = data_path
         mat = mat73.loadmat(data_path)
         ops = mat['ops_out']
         self.data = ops['data']  # obs! if loading using sio, do: ops['data'][0][0]
@@ -27,11 +29,11 @@ class sub_data(Dataset):
         self.exm_per_class = int(ops.exm_per_class)
         self.beta = int(ops.beta)
         self.sigma = int(ops.sigma)
-        self.data_latent=ops.data_latent
-        self.n_feat=int(ops.n_feat)
-        self.n_latent=int(ops.n_latent)
-        self.is_norm=bool(ops.norm)
-        self.hierarchical_target=[x-1 for x in ops.hierarchical_class_ids]
+        self.data_latent = ops.data_latent
+        self.n_feat = int(ops.n_feat)
+        self.n_latent = int(ops.n_latent)
+        self.is_norm = bool(ops.norm)
+        self.hierarchical_target = [x - 1 for x in ops.hierarchical_class_ids]
 
     def __len__(self):
         return len(self.targets)
@@ -39,28 +41,28 @@ class sub_data(Dataset):
     def __getitem__(self, idx):
         single_data = self.data[idx]
         single_target = self.targets[idx]
-        
+
         if self.transform is not None:
             single_data = self.transform(single_data)
-            
+
         single_data = single_data.reshape(self.shape)
         data_tensor = torch.from_numpy(single_data)
         data_tensor = data_tensor.type(torch.FloatTensor)
-        
+
         target_tensor = torch.from_numpy(np.array(single_target))
         target = target_tensor.long()
-        
+
         return data_tensor, target
 
 
-def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
+def train(epoch, model, device, train_loader, test_loader, optimizer, train_spec):
     model.train()
     test_accuracies = []
     train_accuracies = []
-    fcs=[]
-    targets=[]
-    batchs=[]
-    log_interval=train_spec['log_interval']
+    fcs = []
+    targets = []
+    batchs = []
+    log_interval = train_spec['log_interval']
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -69,19 +71,19 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
         loss = torch.nn.functional.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        if (batch_idx % log_interval == 0) & (batch_idx!=0):
+        if (batch_idx % log_interval == 0) & (batch_idx != 0):
             pred = output.argmax(dim=1, keepdim=True)
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
             print('Train Epoch: [{}/{} ({:.0f}%)]\Loss: {:.6f}, Train Accuracy: ({:.0f}%)'.format(
-                 batch_idx * len(data), len(train_loader.dataset),
+                batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item(),
-                 100. * correct / len(target)))
+                100. * correct / len(target)))
     epoch_dat = {
         "fc": fcs,
         "target": target,
-        "batch":  batchs,
+        "batch": batchs,
         "epoch": epoch,
         "test_acc": test_accuracies,
         "train_acc": train_accuracies}
@@ -97,6 +99,7 @@ def train(epoch,model, device, train_loader,test_loader, optimizer,train_spec):
         except:
             print('couldnt reformat the data')
     return epoch_dat
+
 
 def test(model, device, test_loader, epoch):
     model.eval()
@@ -119,15 +122,16 @@ def test(model, device, test_loader, epoch):
     test_acu = 100. * correct / len(test_loader.sampler)
     return test_acu
 
-def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,writer):
+
+def train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer):
     model.train()
 
     target_all = []
     # batch_all = []
-    test_accuracies = [] # Return list of test accuracies for each epoch train_test is called
+    test_accuracies = []  # Return list of test accuracies for each epoch train_test is called
     train_accuracies = []
     log_interval = train_spec['log_interval']
-    
+
     for batch_idx, (data, target) in enumerate(train_loader):
         # print('In training batch idx loop')
         data, target = data.to(device), target.to(device)
@@ -136,7 +140,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
         # output = torch.squeeze(output)
         # print(output.size())
         # print(target.size())
-        loss = F.nll_loss(output, target) # nn.MSELoss(output, target)#
+        loss = F.nll_loss(output, target)  # nn.MSELoss(output, target)#
         loss.backward()
         optimizer.step()
 
@@ -175,7 +179,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                     accuracy_train, accuracy_test))
 
             n_iter = batch_idx + (epoch - 1) * len(train_loader)  # eg epoch 2: 75 + 1*1250
-            
+
             if writer:
                 writer.add_scalar('Loss - Train', loss, n_iter)
                 writer.add_scalar('Accuracy - Train', accuracy_train, n_iter)
@@ -189,7 +193,9 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
                 'train_acc': accuracy_train,
                 'test_acc': accuracy_test,
                 'data_test': data_test,
-                'target_test': target_test, } # add test targets etc for starters
+                'target_test': target_test,
+                'epoch': epoch,
+                'batchidx': batch_idx, }  # add test targets etc for starters
 
             # Define file names for saving
             fname = train_spec['model_identifier'] + '-epoch=' + str(epoch) + '-batchidx=' + str(batch_idx) + '.pth'
@@ -197,6 +203,7 @@ def train_test(epoch,model,device,train_loader,test_loader,optimizer,train_spec,
             print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
 
     return test_accuracies
+
 
 class NN(nn.Module):
     def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
@@ -220,14 +227,15 @@ class NN(nn.Module):
         # return torch.sigmoid(self.fc3(x))
         # return torch.log_softmax(self.fc3(x))
 
+
 class CNN(nn.Module):
     def __init__(self, num_classes=10, num_channels=3):
         super(CNN, self).__init__()
         self.conv1 = nn.Conv2d(num_channels, 10, kernel_size=5)
         # print('conv1 size: ', np.shape(self.conv1))
-        self.conv1_bn = nn.BatchNorm2d(10,eps=1e-09)
+        self.conv1_bn = nn.BatchNorm2d(10, eps=1e-09)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_bn = nn.BatchNorm2d(20,eps=1e-09)
+        self.conv2_bn = nn.BatchNorm2d(20, eps=1e-09)
         self.conv2_drop = nn.Dropout2d()
         self.fc1 = nn.Linear(320, 50)
         self.fc1_bn = nn.BatchNorm1d(50)
@@ -238,12 +246,13 @@ class CNN(nn.Module):
         x_pool2d = F.relu(F.max_pool2d(bn_1, 2))
         bn_2 = self.conv2_bn(self.conv2(x_pool2d))
         x_maxpool2d = F.relu(F.max_pool2d(self.conv2_drop(bn_2), 2))
-        x_maxpool2d = x_maxpool2d.view(-1, 320) #flatten
+        x_maxpool2d = x_maxpool2d.view(-1, 320)  # flatten
         bn_fc = self.fc1_bn(self.fc1(x_maxpool2d))
         x_fc = F.relu(bn_fc)
         x_drop = F.dropout(x_fc, training=self.training)
         x_fc2 = self.fc2(x_drop)
         return F.log_softmax(x_fc2, dim=1)
+
 
 def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:
@@ -258,8 +267,8 @@ def show_cov(dataset, frac=50):
     argsorted = np.argsort(subsample_labels)
 
     subsample_data = dataset.data[subsample_idx, :]
-    sorted_data = subsample_data[argsorted] # sort according to the label ordering
-    sorted_labels = subsample_labels[argsorted] # for sanity checking
+    sorted_data = subsample_data[argsorted]  # sort according to the label ordering
+    sorted_labels = subsample_labels[argsorted]  # for sanity checking
 
     cov = np.cov((sorted_data))
 

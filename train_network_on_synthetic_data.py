@@ -4,17 +4,17 @@ import copy
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from utils.model_utils import train, test, train_test, save_dict, NN, show_cov
+from neural_manifolds_utils.neural_manifold_utils import train, test, train_test, save_dict, NN, show_cov
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
 from datetime import datetime
 import getpass
 import numpy as np
-from utils import train_pool
+from neural_manifolds_utils import train_pool
 import re
 
-print('__cuda available ',torch.cuda.is_available())
+print('__cuda available ', torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
 print('__CUDNN VERSION:', torch.backends.cudnn.version())
 print('__Number CUDA Devices:', torch.cuda.device_count())
@@ -23,28 +23,28 @@ try:
 except:
     print('no gpu to run')
 
-user=getpass.getuser()
+user = getpass.getuser()
 print(user)
 
-if user=='eghbalhosseini':
-    save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir='/Users/eghbalhosseini/MyData/neural_manifolds/synthetic_datasets/'
-elif user=='ehoseini':
-    save_dir='/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
-    data_dir='/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
+if user == 'eghbalhosseini':
+    save_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
+    data_dir = '/Users/eghbalhosseini/MyData/neural_manifolds/synthetic_datasets/'
+elif user == 'ehoseini':
+    save_dir = '/om/user/ehoseini/MyData/neural_manifolds/network_training_on_synthetic/'
+    data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 elif user == 'gretatu':
     save_dir = '/om/user/gretatu/neural_manifolds/network_training_on_synthetic/'
     data_dir = '/om/user/ehoseini/MyData/neural_manifolds/synthetic_datasets/'
 
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
-        
-#parser = argparse.ArgumentParser(description='neural manifold train network')
-#parser.add_argument('datafile', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",help='')
-#args=parser.parse_args()
 
-if __name__=='__main__':
-    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]' # TODO args
+# parser = argparse.ArgumentParser(description='neural manifold train network')
+# parser.add_argument('datafile', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",help='')
+# args=parser.parse_args()
+
+if __name__ == '__main__':
+    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]'  # TODO args
     params = train_pool[model_identifer]()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -106,7 +106,7 @@ if __name__=='__main__':
     writer.add_hparams(hparam_dict=train_spec, metric_dict={})
 
     #### TRAINING ####
-    for epoch in range(1, params.epochs + 1): # e.g. if epochs = 50, then running from 1 to 50
+    for epoch in range(1, params.epochs + 1):  # e.g. if epochs = 50, then running from 1 to 50
 
         #### DEFINE TRAIN FUNCTION ####
         if params.train_type == 'train_test':
@@ -122,7 +122,7 @@ if __name__=='__main__':
                 test_acc_mean = np.mean(test_accuracies[-num_last_test_accs:])
 
             if num_last_test_accs >= len(test_accuracies):
-                test_acc_mean = np.mean(test_accuracies) # mean over all values
+                test_acc_mean = np.mean(test_accuracies)  # mean over all values
 
             print('Mean test acc: ', test_acc_mean)
             if test_acc_mean > 50:
@@ -147,7 +147,8 @@ if __name__=='__main__':
             generated_files_txt = open(save_dir + 'master_' + model_identifier_for_saving + '.txt', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
+                    pth_file = save_dir + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(
+                        b) + '.pth'
                     files.append(pth_file)
 
                     # Write to txt file
@@ -156,14 +157,14 @@ if __name__=='__main__':
             generated_files_txt.close()
 
             d_master = {'test_loader': test_loader,
-                 'model_untrained_weights': model_untrained,
-                 'model_structure': model_initialized,
-                 'optimizer_structure': optimizer_initialized,
-                 'files_generated': files}
+                        'model_untrained_weights': model_untrained,
+                        'model_structure': model_initialized,
+                        'optimizer_structure': optimizer_initialized,
+                        'files_generated': files}
 
-            save_dict(d_master, save_dir + 'master_'+model_identifier_for_saving+'.pkl')
+            save_dict(d_master, save_dir + 'master_' + model_identifier_for_saving + '.pkl')
 
-            break # Break statement in case the end was not reached (test accuracy termination)
+            break  # Break statement in case the end was not reached (test accuracy termination)
 
 
 
