@@ -16,6 +16,7 @@ import copy
 import os
 import re
 from importlib import import_module
+from mftma.utils.activation_extractor import leaf_traverse, add_layer_names
 
 
 
@@ -45,6 +46,13 @@ class params:
 
     def load_dataset(self):
         self.dataset = sub_data(data_path=self.dataset_path)
+    def get_layer_names(self):
+        childrens=[]
+        leaf_traverse(self.model(),childrens)
+        add_layer_names(childrens)
+        layer_names=[x.layer_name for x in childrens]
+        self.layer_names=layer_names
+        return layer_names
     #####  Training specs #####
     #exm_per_class = 100  # examples per class
     batch_size_train = 64
@@ -60,7 +68,11 @@ class params:
 # Creating tags for training paradigm
 data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
              {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)} ]
+
+
+
 train_configuration = []
+
 for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
@@ -147,8 +159,6 @@ for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag,n_proj in itertools.prod
     analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,randomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep,n_project=n_proj))
 
 #[analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]
-
-
 
 analyze_pool={}
 # create the pool
