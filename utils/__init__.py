@@ -70,7 +70,6 @@ data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_b
              {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)} ]
 
 
-
 train_configuration = []
 
 for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):

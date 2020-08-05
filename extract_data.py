@@ -7,11 +7,11 @@ import torch
 import argparse
 import os
 
-parser = argparse.ArgumentParser(description='extract and save activations')
-parser.add_argument('task_id', type=int,default=1)
-parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
-parser.add_argument('analyze_id', type=str,default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
-args = parser.parse_args()
+#parser = argparse.ArgumentParser(description='extract and save activations')
+#parser.add_argument('task_id', type=int,default=1)
+#parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
+#parser.add_argument('analyze_id', type=str,default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
+#args = parser.parse_args()
 
 if __name__ == '__main__':
     # get identifier,
@@ -22,19 +22,25 @@ if __name__ == '__main__':
 
     # STEP 1. get the variables
 
-    task_id = args.task_id
-    model_identifier = args.model_id
-    analyze_identifier= args.analyze_id
+   # task_id = args.task_id
+    #model_identifier = args.model_id
+    #analyze_identifier= args.analyze_id
+    #
+    task_id=1
+    model_identifier='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]'
+    analyze_identifier='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]'
+    save_dir='/Users/eghbalhosseini/MyData/neural_manifolds/network_training_on_synthetic/'
     # STEP 2. load model and analysis parameters
     #
     params = train_pool[model_identifier]()
+    layer_names=params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
-    pickle_file = save_dir + 'master_'+model_identifier_for_saving+'.pkl'
+    pickle_file = os.path.join(save_dir , 'master_'+model_identifier_for_saving+'.pkl')
     #
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
-    generated_files_txt = open(save_dir + 'master_' + model_identifier_for_saving + '.txt', 'r')
+    generated_files_txt = open(os.path.join(save_dir , 'master_' + model_identifier_for_saving + '.txt'), 'r')
     weight_files = generated_files_txt.read().splitlines()
     weight_file = os.path.join(save_dir, weight_files[task_id])
 
@@ -75,11 +81,11 @@ if __name__ == '__main__':
 
     # STEP 7. save the file
     projection_file = weight_file.replace(".pth", '')
-    projection_file = projection_file + '_extracted.pkl'
-    d_master = {'projection_results': projection_cell,
-                'analyze_identifier': analyze_identifier,
-                'files_generated': projection_file}
-
-
-    save_dict(d_master, projection_file)
+    for idx, x in enumerate(projection_cell):
+        projection_file = projection_file +'_'+layer_names[idx]+ '_extracted.pkl'
+        d_master = {'projection_results': x,
+                    'analyze_identifier': analyze_identifier,
+                    'layer_name':layer_names[idx],
+                    'files_generated': projection_file}
+        save_dict(d_master, projection_file)
     # projection step :
