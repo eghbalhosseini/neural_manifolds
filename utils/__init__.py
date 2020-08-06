@@ -6,8 +6,8 @@ Created on Wed Jul 22 11:08:09 2020
 """
 
 
-save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted'
-data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data'
+save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted/'
+data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data/'
 
 from utils.model_utils import sub_data, NN
 from utils import model_utils
