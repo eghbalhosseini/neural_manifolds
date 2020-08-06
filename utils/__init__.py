@@ -50,7 +50,8 @@ class params:
         childrens=[]
         leaf_traverse(self.model(),childrens)
         add_layer_names(childrens)
-        layer_names=[x.layer_name for x in childrens]
+        layer_names=['layer_0_Input']
+        [layer_names.append(x.layer_name) for x in childrens]
         self.layer_names=layer_names
         return layer_names
     #####  Training specs #####
