@@ -43,6 +43,7 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data = pickle.load(open(pickle_file, 'rb'))
     weight_file=weight_files[task_id]
+    weight_file=weight_file.replace('/om/group/evlab/Greta_Eghbal_manifolds/extracted','/om/group/evlab/Greta_Eghbal_manifolds/extracted/')
     weight_data = pickle.load(open(weight_file, 'rb'))
 
     # STEP 4. create the dataset for testing
