@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
-PTH_FILE="master_NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-test_performance.txt"
-MODEL_ID='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]'
+PTH_FILE="master_NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed.txt"
+MODEL_ID='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
 ANALYZE_ID='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]'
 
 FULL_FILE="${ROOT_DIR}/${PTH_FILE}"
