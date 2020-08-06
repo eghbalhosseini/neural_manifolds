@@ -91,7 +91,8 @@ if __name__ == '__main__':
                     'layer_name': name,
                     'files_generated': projection_file}
         save_dict(d_master, projection_file)
-        sio.savemat(projection_file,{'activation':d_master})
+        mat_file_name=projection_file.replace(".pkl", '.mat')
+        sio.savemat(mat_file_name,{'activation':d_master})
         projection_file_list.append(projection_file+'\n')
     # write to text file
     if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt')):
