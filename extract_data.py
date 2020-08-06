@@ -6,6 +6,7 @@ import pickle
 import torch
 import argparse
 import os
+import scipy.io as sio
 
 parser = argparse.ArgumentParser(description='extract and save activations')
 parser.add_argument('task_id', type=int,default=1)
@@ -58,9 +59,10 @@ if __name__ == '__main__':
         dat_hier = []
         [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
         hier_dataset.append(dat_hier)
+    # TODO make_manifold_data should output labels too:x
+
     hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
-                                            examples_per_class=analyze_params.exm_per_class,
-                                            seed=0,
+                                            examples_per_class=analyze_params.exm_per_class,seed=0,
                                             randomize=analyze_params.randomize) for idx, x in enumerate(hier_dataset)]
 
     hier_sample_mtmfa = [[d.to(device) for d in data] for data in hier_sample_mtmfa]
@@ -89,6 +91,7 @@ if __name__ == '__main__':
                     'layer_name': name,
                     'files_generated': projection_file}
         save_dict(d_master, projection_file)
+        sio.savemat(projection_file,{'activation':d_master})
         projection_file_list.append(projection_file+'\n')
     # write to text file
     if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt')):
