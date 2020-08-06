@@ -97,4 +97,4 @@ if __name__ == '__main__':
     else:
         extracted_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt'),'w')
         extracted_files_txt.writelines(projection_file_list)
-
+    print('done')
