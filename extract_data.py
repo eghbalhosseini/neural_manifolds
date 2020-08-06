@@ -42,8 +42,8 @@ if __name__ == '__main__':
     # STEP 3. load the dataset
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data = pickle.load(open(pickle_file, 'rb'))
-    weight_file=weight_files[task_id]
-    weight_file=weight_file.replace('/om/group/evlab/Greta_Eghbal_manifolds/extracted','/om/group/evlab/Greta_Eghbal_manifolds/extracted/')
+    weight_file = weight_files[task_id]
+    weight_file = weight_file.replace('/om/group/evlab/Greta_Eghbal_manifolds/extracted','/om/group/evlab/Greta_Eghbal_manifolds/extracted/')
     weight_data = pickle.load(open(weight_file, 'rb'))
 
     # STEP 4. create the dataset for testing
@@ -77,6 +77,7 @@ if __name__ == '__main__':
     for x in projection_cell:
         assert(len(layer_names)==len(x))
     # reorder files based on the layer
+    projection_file_list=[]
     for name in layer_names:
         layer_proj_cell = [{name:x[name]} for x in projection_cell]
         # STEP 7. save the file
@@ -88,3 +89,12 @@ if __name__ == '__main__':
                     'layer_name': name,
                     'files_generated': projection_file}
         save_dict(d_master, projection_file)
+        projection_file_list.append(projection_file)
+    # write to text file
+    if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt')):
+        extracted_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt'), 'w')
+        extracted_files_txt.writelines(projection_file_list)
+    else:
+        extracted_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt'),'w')
+        extracted_files_txt.writelines(projection_file_list)
+
