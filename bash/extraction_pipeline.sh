@@ -14,10 +14,10 @@ ARRAY_INDEX=0
 # separate data to batch of 100 and run them.
 while read line; do
 	LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-	if [ "$(expr ${LINE_COUNT} % 100)" = "0" ]
+	if [ "$(expr ${LINE_COUNT} % 50)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-		sbatch --array=1-100 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+		sbatch --array=1-50 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 		#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 		START_INDEX=$(expr ${LINE_COUNT} + 1)
 		ARRAY_INDEX=$(expr ${ARRAY_INDEX} + 1)

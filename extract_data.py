@@ -80,7 +80,7 @@ if __name__ == '__main__':
         layer_proj_cell = [{name:x[name]} for x in projection_cell]
         # STEP 7. save the file
         projection_file = weight_file.replace(".pth", '')
-        projection_file = projection_file +'_'+name+ '_extracted.pkl'
+        projection_file = projection_file + '_' + name + '_extracted.pkl'
         d_master = {'projection_results': layer_proj_cell,
                     'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
