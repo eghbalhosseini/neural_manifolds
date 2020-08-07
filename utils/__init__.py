@@ -68,7 +68,10 @@ class params:
 
 # Creating tags for training paradigm
 data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
-             {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)} ]
+             {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
+               {'data_file':'synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
+               {'data_file':'synth_tree_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)}]
+
 
 
 train_configuration = []
