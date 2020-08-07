@@ -31,7 +31,8 @@ print(user)
 # args=parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'  # TODO args
+    model_identifer = '[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
+    # model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'  # TODO args
     params = train_pool[model_identifer]()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -86,7 +87,7 @@ if __name__ == '__main__':
     # Tensorboard
     access_rights = 0o755
     current_time = datetime.now().strftime('%b%d_%H-%M-%S')
-    log_dir = os.path.join(save_dir, 'runs', current_time + '_' + socket.gethostname())
+    log_dir = os.path.join(save_dir, model_identifier_for_saving, 'runs', current_time + '_' + socket.gethostname())
 
     writer = SummaryWriter(log_dir=log_dir)
     writer.add_hparams(hparam_dict=train_spec, metric_dict={})
@@ -130,17 +131,16 @@ if __name__ == '__main__':
                     num_batches_lst.append(batch_idx)
 
             files = []
-            generated_files_txt = open(save_dir + '/master_' + model_identifier_for_saving + '.txt', 'w')
+            generated_files_csv = open(save_dir + '/' + model_identifier_for_saving + '/master_' + model_identifier_for_saving + '.csv', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = save_dir + '/' + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(
-                        b) + '.pth'
+                    pth_file = save_dir + '/' + model_identifier_for_saving + '/' + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
                     files.append(pth_file)
 
-                    # Write to txt file
-                    generated_files_txt.writelines(pth_file + '\n')
+                    # Write to csv file
+                    generated_files_csv.writelines(pth_file + '\n')
 
-            generated_files_txt.close()
+            generated_files_csv.close()
 
             d_master = {'test_loader': test_loader,
                         'model_untrained_weights': model_untrained,
@@ -148,7 +148,7 @@ if __name__ == '__main__':
                         'optimizer_structure': optimizer_initialized,
                         'files_generated': files}
 
-            save_dict(d_master, save_dir + 'master_' + model_identifier_for_saving + '.pkl')
+            save_dict(d_master, save_dir + '/' + model_identifier_for_saving + '/master_' + model_identifier_for_saving + '.pkl')
 
             break  # Break statement in case the end was not reached (test accuracy termination)
 

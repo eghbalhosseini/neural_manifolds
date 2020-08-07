@@ -52,13 +52,13 @@ class params:
     epochs = 3
     momentum = 0.5
     lr = 0.01
-    log_interval = 15 # when to save, extract, and test the data
+    log_interval = 200 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
 
 # Creating tags for training paradigm
-data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
+data_config = [{'data_file':'synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
              {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)} ]
 train_configuration = []
 for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):

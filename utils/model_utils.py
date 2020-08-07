@@ -197,8 +197,24 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 
             # Define file names for saving
             fname = train_spec['model_identifier'] + '-epoch=' + str(epoch) + '-batchidx=' + str(batch_idx) + '.pth'
-            torch.save(state, os.path.join(save_dir, fname))
+            torch.save(state, os.path.join(save_dir, train_spec['model_identifier'], fname))
             print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
+
+            # Print train and test accuracies
+            if os.path.exists(save_dir + '/' + train_spec['model_identifier'] + '/acc_train_' + train_spec['model_identifier'] + '.csv'):
+                append_write = 'a'  # append if already exists
+            else:
+                append_write = 'w'  # make a new file if not
+
+            train_acc_txt = open(
+                save_dir + '/' + train_spec['model_identifier'] + '/acc_train_' + train_spec['model_identifier'] + '.csv', append_write)
+            train_acc_txt.writelines(str(accuracy_train) + '\n')
+            train_acc_txt.close()
+
+            test_acc_txt = open(
+                save_dir + '/' + train_spec['model_identifier'] + '/acc_test_' + train_spec['model_identifier'] + '.csv', append_write)
+            test_acc_txt.writelines(str(accuracy_test) + '\n')
+            test_acc_txt.close()
 
     return test_accuracies
 
