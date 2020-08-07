@@ -7,7 +7,7 @@ import os
 import argparse
 parser = argparse.ArgumentParser(description='run mftma and save results')
 parser.add_argument('task_id', type=int,default=1)
-parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
+parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=;50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
 parser.add_argument('analyze_id', type=str,default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
 args = parser.parse_args()
 
