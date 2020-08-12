@@ -99,9 +99,9 @@ if __name__ == '__main__':
         projection_file_list.append(projection_file+'\n')
     # write to text file
     if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.txt')):
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.txt'), 'w')
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.csv'), 'w')
         extracted_files_txt.writelines(projection_file_list)
     else:
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.txt'),'a')
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.csv'),'a')
         extracted_files_txt.writelines(projection_file_list)
     print('done')
