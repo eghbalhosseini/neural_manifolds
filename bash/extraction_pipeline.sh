@@ -1,11 +1,12 @@
 #!/bin/bash
 
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
-PTH_FILE="master_NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed.txt"
+MODEL_DIR=NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed
+PTH_FILE="master_NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed.csv"
 MODEL_ID='[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
 ANALYZE_ID='[mftma]-[exm_per_class=50]-[proj=False]-[rand=False]-[kappa=0]-[n_t=300]-[n_rep=1]'
 
-FULL_FILE="${ROOT_DIR}/${PTH_FILE}"
+FULL_FILE="${ROOT_DIR}/${MODEL_DIR}/${PTH_FILE}"
 echo $FULL_FILE
 
 LINE_COUNT=0
