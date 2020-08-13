@@ -20,7 +20,7 @@ while read line; do
 	if [ "$(expr ${LINE_COUNT} % 50)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-		sbatch --array=1-50 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+		sbatch --array=0-49 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 		#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 		START_INDEX=$(expr ${LINE_COUNT} + 1)
 		ARRAY_INDEX=$(expr ${ARRAY_INDEX} + 1)
@@ -31,6 +31,6 @@ if [ "${LINE_COUNT}" -ge "${START_INDEX}" ]
 then
 	DIFF=$(expr ${LINE_COUNT} - ${START_INDEX} + 1)
 	echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-	sbatch --array=1-${DIFF} --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+	sbatch --array=0-${DIFF} --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi
