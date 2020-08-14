@@ -10,16 +10,13 @@ save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted/'
 data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data/'
 analyze_dir='/om/group/evlab/Greta_Eghbal_manifolds/analyze/'
 
-from utils.model_utils import sub_data, NN
+from utils.model_utils import sub_data, NN, leaf_traverse, add_layer_names
 from utils import model_utils
 import itertools
 import copy
 import os
 import re
 from importlib import import_module
-from mftma.utils.activation_extractor import leaf_traverse, add_layer_names
-
-
 
 def load_train(train_name):
     return train_pool[train_name]()

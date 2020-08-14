@@ -289,3 +289,24 @@ def show_cov(dataset, frac=50):
     plt.figure()
     plt.imshow(cov)
     plt.savefig(save_dir + 'cov_' + fname_split[-1][:-4] + '.pdf')
+
+def leaf_traverse(root, flat_children):
+    '''
+    Get all the layers of the model
+    '''
+    if len(list(root.children())) == 0:
+        flat_children.append(root)
+    else:
+        for child in root.children():
+            leaf_traverse(child, flat_children)
+
+def add_layer_names(flat_children):
+    '''
+    Count the layers in the model and add names to them
+    '''
+    count = 1
+    for child in flat_children:
+        name = "layer_" + str(count) + "_" + child._get_name()
+        child.__setattr__('layer_name', name)
+        count += 1
+

@@ -27,15 +27,14 @@ except:
 user = getpass.getuser()
 print(user)
 
-parser = argparse.ArgumentParser(description='neural manifold train network')
-parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description='neural manifold train network')
+# parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
+# args = parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifer = args.model_identifier
-    # model_identifer = '[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
-    params = train_pool[model_identifer]()
-    model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+    # model_identifer = args.model_identifier
+    model_identifier = 'NN-tree_nclass=50_nobj=50000_nhier=3_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed'
+    params = train_pool[model_identifier]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ##### DATA ####
@@ -60,7 +59,7 @@ if __name__ == '__main__':
     test_loader = torch.utils.data.DataLoader(dataset, batch_size=params.batch_size_test, sampler=test_sampler)
 
     # Define train specs and model
-    train_spec = {'model_identifier': model_identifier_for_saving,
+    train_spec = {'model_identifier': model_identifier,
                   'train_batch_size': params.batch_size_train,
                   'test_batch_size': params.batch_size_test,
                   'num_epochs': params.epochs,
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     # Tensorboard
     access_rights = 0o755
     current_time = datetime.now().strftime('%b%d_%H-%M-%S')
-    log_dir = os.path.join(save_dir, model_identifier_for_saving, 'runs', current_time + '_' + socket.gethostname())
+    log_dir = os.path.join(save_dir, model_identifier, 'runs', current_time + '_' + socket.gethostname())
 
     writer = SummaryWriter(log_dir=log_dir)
     writer.add_hparams(hparam_dict=train_spec, metric_dict={})
@@ -132,10 +131,10 @@ if __name__ == '__main__':
                     num_batches_lst.append(batch_idx)
 
             files = []
-            generated_files_csv = open(save_dir + '/' + model_identifier_for_saving + '/master_' + model_identifier_for_saving + '.csv', 'w')
+            generated_files_csv = open(save_dir + '/' + model_identifier + '/master_' + model_identifier + '.csv', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = save_dir + '/' + model_identifier_for_saving + '/' + model_identifier_for_saving + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
+                    pth_file = save_dir + '/' + model_identifier + '/' + model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
                     files.append(pth_file)
 
                     # Write to csv file
@@ -149,7 +148,7 @@ if __name__ == '__main__':
                         'optimizer_structure': optimizer_initialized,
                         'files_generated': files}
 
-            save_dict(d_master, save_dir + '/' + model_identifier_for_saving + '/master_' + model_identifier_for_saving + '.pkl')
+            save_dict(d_master, save_dir + '/' + model_identifier + '/master_' + model_identifier + '.pkl')
 
             break  # Break statement in case the end was not reached (test accuracy termination)
 
