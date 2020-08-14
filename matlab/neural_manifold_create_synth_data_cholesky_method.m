@@ -35,6 +35,7 @@ is_norm=ops.norm;
 % first level 
 adj=(adjacency(gr_output.full_graph));
 n_latent=gr_output.full_graph.numnodes-n_ent;
+n_hier=size(gr_output.class_ids,2);
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent,n_feat); 
 V = spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent);
@@ -65,8 +66,8 @@ ops_out.n_latent=n_latent;
 ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
-
-data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nfeat_%d_beta_%1.2f_sigma_%1.2f_norm_%d.mat',ops.structure,n_ent,n_cl,n_feat,beta,sigma,is_norm));
+ops_out.n_hier=n_hier;
+data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.2f_sigma_%1.2f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm));
 save(data_loc,'ops_out','-v7.3');
 fprintf('saved data in %s \n',data_loc);
 end
