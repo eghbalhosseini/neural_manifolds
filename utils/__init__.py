@@ -25,7 +25,7 @@ def load_train(train_name):
     return train_pool[train_name]()
 #############TRAINING ###########################
 class params:
-    def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,
+    def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
                  shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance'):
         ##### DATA ####
         self.datafile=datafile
@@ -34,6 +34,7 @@ class params:
         self.sigma=sigma
         self.nclass=nclass
         self.nobj=nobj
+        self.nhier=nhier
         self.shape=shape
         self.structure=structure
         # TODO make this a method and only save the path here
@@ -68,25 +69,25 @@ class params:
     random_seed = 1
 
 # Creating tags for training paradigm
-data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_tree_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_tree_nobj_100000_nclass_100_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat','shape':(1,3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)}]
+data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_50000_nclass_50_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
+                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
+                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
+                {'data_file':'synth_tree_nobj_50000_nclass_50_nhier_3_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
+                {'data_file':'synth_tree_nobj_100000_nclass_100_nhier_4_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
+               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
+               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)}]
 
 
 
@@ -95,6 +96,8 @@ train_configuration = []
 for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
+    s = re.findall('nhier_\d+', dataset['data_file'])[0]
+    nhier = int(s.split('_')[1])
     s = re.findall('synth_\w+_nobj', dataset['data_file'])[0]
     structure = (s.split('_')[1])
     s = re.findall('beta_\d+\.\d+', dataset['data_file'])[0]
@@ -105,9 +108,10 @@ for dataset , model, train_type, stop_type in itertools.product(data_config,['NN
     nobj = int(s.split('_')[1])
     s = re.findall('nfeat_\d+', dataset['data_file'])[0]
     nfeat = int(s.split('_')[1])
-    train_identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]-[{stop_type}]"
+    train_identifier=f"[{model}]-[{structure}/nclass={nclass}/nobj={nobj}/nhier={nhier}/beta={beta}/sigma={sigma}/nfeat={nfeat}]-[{train_type}]-[{stop_type}]"
+    train_identifier=train_identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     train_configuration.append(dict(identifier=train_identifier,dataset=dataset['data_file'],shape=dataset['shape'],
-                                    nclass=nclass,nobj=nobj,sigma=sigma,beta=beta,model=model,train_type=train_type,
+                                    nclass=nclass,nobj=nobj,nhier=nhier,sigma=sigma,beta=beta,model=model,train_type=train_type,
                                     structure=structure,nfeat=nfeat,stop_criteria=stop_type))
 train_pool={}
 # create the pool
@@ -127,6 +131,7 @@ for config in train_configuration:
                            sigma=configure['sigma'],
                            nclass=configure['nclass'],
                            nobj=configure['nobj'],
+                           nhier=configure['nhier'],
                            structure=configure['structure'],
                            nfeat=configure['nfeat'],
                            stop_criteria=configure['stop_criteria'])
