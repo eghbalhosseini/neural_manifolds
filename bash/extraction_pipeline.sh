@@ -1,7 +1,9 @@
 #!/bin/bash
 
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
+# TODO make the naming without brackets in init
 MODEL_DIR=NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed
+# TODO make the pth file constructed from MODEL_DIR varaible
 PTH_FILE="master_NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed.csv"
 MODEL_ID='[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
 ANALYZE_ID='[mftma]-[exm_per_class=50]-[proj=False]-[rand=False]-[kappa=0]-[n_t=300]-[n_rep=1]'
@@ -31,6 +33,7 @@ if [ "${LINE_COUNT}" -ge "${START_INDEX}" ]
 then
 	DIFF=$(expr ${LINE_COUNT} - ${START_INDEX} + 1)
 	echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
+	# TODO make the DIFF to DIFF -1
 	sbatch --array=0-${DIFF} --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi

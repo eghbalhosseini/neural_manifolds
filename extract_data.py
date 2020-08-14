@@ -19,13 +19,10 @@ if __name__ == '__main__':
     # get model
     # get sub_data
     # create hierarchical version of the data
-    #
-
     # STEP 1. get the variables
-
     task_id = args.task_id
     model_identifier = args.model_id
-    analyze_identifier= args.analyze_id
+    analyze_identifier = args.analyze_id
     #
     # STEP 2. load model and analysis parameters
     #
@@ -39,12 +36,13 @@ if __name__ == '__main__':
     #
     generated_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '.csv'), 'r')
     weight_files = generated_files_txt.read().splitlines()
+    weight_file = weight_files[args.task_id]
+    weight_data = pickle.load(open(weight_file, 'rb'))
 
     # STEP 3. load the dataset
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data = pickle.load(open(pickle_file, 'rb'))
-    weight_file = weight_files[task_id]
-    weight_data = pickle.load(open(weight_file, 'rb'))
+
 
     # STEP 4. create the dataset for testing
     data_loader = data['test_loader']
@@ -59,7 +57,7 @@ if __name__ == '__main__':
         [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
         hier_dataset.append(dat_hier)
     # TODO make_manifold_data should output labels too:x
-    # TODO save train and test accuracy
+    # TODO save train and test accuracy in the output of extraction
 
     hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
                                             examples_per_class=analyze_params.exm_per_class,seed=0,
@@ -70,18 +68,19 @@ if __name__ == '__main__':
     model = data['model_structure']
     model = model.to(device)
     model.load_state_dict(torch.load(weight_file)['state_dict'])
-
+    model = model.eval()
     # STEP 6. create projection dataset
     projection_data_ = {'projection_results': []}
     extract = mftma_extractor()
     activations_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
     projection_cell = [extract.project(x, max_dim=analyze_params.n_project) for x in activations_cell]
     for x in projection_cell:
-        assert(len(layer_names)==len(x))
+        assert(len(layer_names) == len(x))
     # reorder files based on the layer
-    projection_file_list=[]
+    projection_file_list = []
+    # TODO make the number of hierarchies a part of projection results.
     for name in layer_names:
-        layer_proj_cell = [{name:x[name]} for x in projection_cell]
+        layer_proj_cell = [{name: x[name]} for x in projection_cell]
         # STEP 7. save the file
         projection_file = weight_file.replace(".pth", '')
         projection_file = projection_file + '_' + name + '_extracted.pkl'
@@ -94,14 +93,14 @@ if __name__ == '__main__':
                     'layer_name': name,
                     'files_generated': projection_file}
         save_dict(d_master, projection_file)
-        mat_file_name=projection_file.replace(".pkl", '.mat')
-        sio.savemat(mat_file_name,{'activation':d_master})
+        mat_file_name = projection_file.replace(".pkl", '.mat')
+        sio.savemat(mat_file_name, {'activation': d_master})
         projection_file_list.append(projection_file+'\n')
     # write to text file
-    if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.txt')):
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.csv'), 'w')
+    if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.txt')):
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'w')
         extracted_files_txt.writelines(projection_file_list)
     else:
         extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.csv'),'a')
         extracted_files_txt.writelines(projection_file_list)
-    print('done')
+    print('done!')
