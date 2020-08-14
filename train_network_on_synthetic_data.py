@@ -13,6 +13,7 @@ import getpass
 import numpy as np
 from utils import save_dir, train_pool
 import re
+import argparse
 
 print('__cuda available ', torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
@@ -26,13 +27,13 @@ except:
 user = getpass.getuser()
 print(user)
 
-# parser = argparse.ArgumentParser(description='neural manifold train network')
-# parser.add_argument('datafile', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat",help='')
-# args=parser.parse_args()
+parser = argparse.ArgumentParser(description='neural manifold train network')
+parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
+args = parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifer = '[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
-    # model_identifer = '[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'  # TODO args
+    model_identifer = args.model_identifier
+    # model_identifer = '[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
     params = train_pool[model_identifer]()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

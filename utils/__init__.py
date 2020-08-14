@@ -114,7 +114,7 @@ train_pool={}
 for config in train_configuration:
     configuration=copy.deepcopy(config)
     train_identifier=configuration['identifier']
-    def train_instantiation(identfier=train_identifier,configure=frozenset(configuration.items())):
+    def train_instantiation(configure=frozenset(configuration.items())):
         configure = dict(configure)
         module = import_module('utils.model_utils')
         model=getattr(module,configure['model'])
