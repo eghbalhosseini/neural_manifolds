@@ -67,7 +67,9 @@ if __name__ == '__main__':
     # STEP 5. load the model and weights
     model = data['model_structure']
     model = model.to(device)
+
     model.load_state_dict(torch.load(weight_file)['state_dict'])
+    weight_data=torch.load(weight_file)
     model = model.eval()
     # STEP 6. create projection dataset
     projection_data_ = {'projection_results': []}
@@ -91,7 +93,12 @@ if __name__ == '__main__':
                     'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
                     'layer_name': name,
-                    'files_generated': projection_file}
+                    'files_generated': projection_file,
+                    'train_acc':weight_data['train_acc'],
+                    'test_acc':weight_data['test_acc'],
+                    'epoch':weight_data['epoch'],
+                    'batchidx':weight_data['batchidx']
+                    }
         save_dict(d_master, projection_file)
         mat_file_name = projection_file.replace(".pkl", '.mat')
         sio.savemat(mat_file_name, {'activation': d_master})

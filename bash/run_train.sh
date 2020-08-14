@@ -8,9 +8,9 @@
 
 # create a list of config names
 i=0
-for model in [NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed] \
-             [NN]-[partition/nclass=100/nobj=100000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance] \
-             [NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed] ; do
+for model in NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed \
+             NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-test_performance \
+             NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed ; do
                # combine configs
                     model_list[$i]="$model"
                     i=$i+1
@@ -27,6 +27,6 @@ export XDG_CACHE_HOME
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36_fz.simg python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python_36_fz.simg python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
 
 #NOBATCH --gres=gpu:1 --constraint=high-capacity
