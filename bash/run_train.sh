@@ -8,9 +8,9 @@
 
 # create a list of config names
 i=0
-for model in [NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed] \
-             [NN]-[partition/nclass=100/nobj=100000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance] \
-             [NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed] ; do
+for model in NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed \
+             NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-test_performance \
+             NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed ; do
                # combine configs
                     model_list[$i]="$model"
                     i=$i+1
