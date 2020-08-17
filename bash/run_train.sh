@@ -27,6 +27,6 @@ export XDG_CACHE_HOME
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python_36_fz.simg python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36_fz.simg python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
 
 #NOBATCH --gres=gpu:1 --constraint=high-capacity
