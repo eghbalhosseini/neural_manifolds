@@ -1,4 +1,4 @@
-function ops_out=neural_manifold_create_synth_data_cholesky_method(varargin)
+function ops_out=create_synth_data_cholesky_method(varargin)
 % create synthetic structured dataset based on gaussian prior 
 % ref: Kemp, Charles, and Joshua B. Tenenbaum. 2008. ?The Discovery of Structural Form.? PNAS.
 % note for tree case it creates a fractal patten tree. 
