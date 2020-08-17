@@ -7,6 +7,11 @@
 #SBATCH --exclude node017,node018
 
 # create a list of config names
+
+ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/data
+chmod g+w -R "${ROOT_DIR}"
+
+
 i=0
 for model in NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed \
              NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-test_performance \
