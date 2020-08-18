@@ -103,11 +103,11 @@ if __name__ == '__main__':
         mat_file_name = projection_file.replace(".pkl", '.mat')
         sio.savemat(mat_file_name, {'activation': d_master})
         projection_file_list.append(projection_file+'\n')
-    # write to text file
+    # write to csv file
     if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv')):
         extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'w')
         extracted_files_txt.writelines(projection_file_list)
     else:
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_extracted.csv'),'a')
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'a')
         extracted_files_txt.writelines(projection_file_list)
     print('done!')
