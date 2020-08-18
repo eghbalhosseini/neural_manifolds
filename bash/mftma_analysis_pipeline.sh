@@ -1,11 +1,12 @@
 #!/bin/bash
 
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
-EXT_FILE="master_NN-tree_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed_extracted.txt"
-MODEL_ID='[NN]-[tree/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[fixed]'
-ANALYZE_ID='[mftma]-[exm_per_class=50]-[proj=False]-[rand=False]-[kappa=0]-[n_t=300]-[n_rep=1]'
+MODEL_DIR=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed
+EXT_FILE="master_${MODEL_DIR}_extracted.csv"
+MODEL_ID=$MODEL_DIR
+ANALYZE_ID='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 
-FULL_FILE="${ROOT_DIR}/${EXT_FILE}"
+FULL_FILE="${ROOT_DIR}/${MODEL_DIR}/${EXT_FILE}"
 echo $FULL_FILE
 LINE_COUNT=0
 START_INDEX=1
