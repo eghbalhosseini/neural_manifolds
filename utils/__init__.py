@@ -177,6 +177,7 @@ randomize=[True,False]
 analyze_configuration=[]
 for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag,n_proj in itertools.product(analyze_method,n_ts,n_reps,kappas,exm_per_class,projection_flag,randomize,n_projs):
     identifier=f"[{method}]-[exm_per_class={exm}]-[proj={proj_flag}]-[rand={rand_flag}]-[kappa={kappa}]-[n_t={n_t}]-[n_rep={n_rep}]"
+    identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,randomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep,n_project=n_proj))
 
 #[analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]

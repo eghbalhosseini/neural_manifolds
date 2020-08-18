@@ -10,8 +10,8 @@ import scipy.io as sio
 
 parser = argparse.ArgumentParser(description='extract and save activations')
 parser.add_argument('task_id', type=int,default=1)
-parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
-parser.add_argument('analyze_id', type=str,default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
+parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
+parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -94,10 +94,10 @@ if __name__ == '__main__':
                     'model_identifier': model_identifier,
                     'layer_name': name,
                     'files_generated': projection_file,
-                    'train_acc':weight_data['train_acc'],
-                    'test_acc':weight_data['test_acc'],
-                    'epoch':weight_data['epoch'],
-                    'batchidx':weight_data['batchidx']
+                    'train_acc': weight_data['train_acc'],
+                    'test_acc': weight_data['test_acc'],
+                    'epoch': weight_data['epoch'],
+                    'batchidx': weight_data['batchidx']
                     }
         save_dict(d_master, projection_file)
         mat_file_name = projection_file.replace(".pkl", '.mat')
