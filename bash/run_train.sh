@@ -8,8 +8,8 @@
 
 # create a list of config names
 
-ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/
-chmod g+w -R "${ROOT_DIR}"
+#ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/
+#chmod g+w -R "${ROOT_DIR}"
 
 
 i=0
