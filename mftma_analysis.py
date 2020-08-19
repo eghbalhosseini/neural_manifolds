@@ -40,7 +40,7 @@ if __name__=='__main__':
     # run mftma
     mftma_results = run_mftma(projection_data_,kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
     # save results:
-    mftma_file = extracted_file.replace("_extracted.pkl", '_mftma_analysis_pkl')
+    mftma_file = extracted_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
 
     d_master = {'mftma_results': mftma_results,
                 'analyze_identifier': analyze_identifier,
