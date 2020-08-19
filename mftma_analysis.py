@@ -28,7 +28,7 @@ if __name__=='__main__':
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
-    generated_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.txt'), 'r')
+    generated_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'r')
     extracted_files = generated_files_txt.read().splitlines()
     extracted_file = extracted_files[task_id]
     extracted_file = extracted_file.replace('/om/group/evlab/Greta_Eghbal_manifolds/extracted',
@@ -49,10 +49,10 @@ if __name__=='__main__':
                 'files_generated': mftma_file}
     save_dict(d_master, mftma_file)
 
-    if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.txt')):
-        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.txt'), 'w')
+    if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
+        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'w')
         mftma_analysis_files_txt.write(mftma_file+'\n')
     else:
-        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.txt'),'a')
+        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'a')
         mftma_analysis_files_txt.write(mftma_file + '\n')
     print('done')
