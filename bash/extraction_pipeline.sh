@@ -1,9 +1,7 @@
 #!/bin/bash
 MODEL_DIR=$1
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
-# TODO make the naming without brackets in init
 #MODEL_DIR=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed
-# TODO make the pth file constructed from MODEL_DIR varaible
 PTH_FILE="master_${MODEL_DIR}.csv"
 MODEL_ID=$MODEL_DIR
 ANALYZE_ID='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'

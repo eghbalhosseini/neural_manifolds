@@ -24,7 +24,7 @@ if __name__ == '__main__':
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     # find layers
-    extracted_files = glob.glob(os.path.join(save_dir, model_identifier_for_saving + '*_mftma_analysis*'))
+    extracted_files = glob.glob(os.path.join(save_dir,model_identifier_for_saving, model_identifier_for_saving + '*_mftma_analysis*'))
 
     # find epochs
     s=[re.findall('-batchidx=\d+', x)[0] for x in extracted_files]
@@ -55,7 +55,7 @@ if __name__ == '__main__':
             layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx[id_file], batch=batchidx[id_file],
                  seq=id_file))
 
-        pool_file = os.path.join(save_dir, f'{model_identifier_for_saving}_{layer}_mftma_pooled.pkl')
+        pool_file = os.path.join(save_dir,model_identifier_for_saving, f'{model_identifier_for_saving}_{layer}_mftma_pooled.pkl')
         d_master = {'layer_results': layer_results,
                     'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
