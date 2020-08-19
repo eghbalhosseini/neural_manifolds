@@ -46,13 +46,16 @@ if __name__=='__main__':
                 'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'layer_name': extracted_data['layer_name'],
+                'train_acc': extracted_data['train_acc'],
+                'test_acc': extracted_data['test_acc'],
+                'epoch': extracted_data['epoch'],
                 'files_generated': mftma_file}
     save_dict(d_master, mftma_file)
 
-    if not os.path.exists(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
-        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'w')
+    if not os.path.exists(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
+        mftma_analysis_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'w')
         mftma_analysis_files_txt.write(mftma_file+'\n')
     else:
-        mftma_analysis_files_txt = open(os.path.join(save_dir, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'a')
+        mftma_analysis_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'a')
         mftma_analysis_files_txt.write(mftma_file + '\n')
     print('done')
