@@ -25,7 +25,7 @@ for model in NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfe
                     model_list[$i]="$model"
 
                     echo "Running model:  ${model_list[$i]}"
-                    bash extraction_pipeline $model
+                    bash extraction_pipeline.sh $model
                     wait
                     i=$i+1
 done
