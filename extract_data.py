@@ -28,13 +28,12 @@ if __name__ == '__main__':
     #
     params = train_pool[model_identifier]()
     layer_names=params.get_layer_names()
-    model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
-    pickle_file = os.path.join(save_dir,model_identifier_for_saving, 'master_'+model_identifier_for_saving+'.pkl')
+    pickle_file = os.path.join(save_dir,model_identifier, 'master_'+model_identifier+'.pkl')
     #
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
-    generated_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '.csv'), 'r')
+    generated_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '.csv'), 'r')
     weight_files = generated_files_txt.read().splitlines()
     weight_file = weight_files[args.task_id]
     weight_data = pickle.load(open(weight_file, 'rb'))
@@ -86,9 +85,10 @@ if __name__ == '__main__':
         # STEP 7. save the file
         projection_file = weight_file.replace(".pth", '')
         projection_file = projection_file + '_' + name + '_extracted.pkl'
-        projection_file = projection_file.replace(os.path.join(save_dir, model_identifier_for_saving) + '/',
-                                          os.path.join(save_dir, model_identifier_for_saving) + '/' + str(task_id).zfill(4) + '_')
 
+        projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
+                                          os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(4) + '_')
+        print(projection_file)
         d_master = {'projection_results': layer_proj_cell,
                     'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
@@ -104,10 +104,10 @@ if __name__ == '__main__':
         sio.savemat(mat_file_name, {'activation': d_master})
         projection_file_list.append(projection_file+'\n')
     # write to csv file
-    if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv')):
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'w')
+    if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
         extracted_files_txt.writelines(projection_file_list)
     else:
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'a')
+        extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
         extracted_files_txt.writelines(projection_file_list)
     print('done!')

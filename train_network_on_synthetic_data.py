@@ -134,7 +134,9 @@ if __name__ == '__main__':
             generated_files_csv = open(save_dir + '/' + model_identifier + '/master_' + model_identifier + '.csv', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = save_dir + '/' + model_identifier + '/' + model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
+                    #pth_file = save_dir + '/' + model_identifier + '/' + model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
+                    pth_file = os.path.join(save_dir, model_identifier,
+                                 model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth')
                     files.append(pth_file)
 
                     # Write to csv file
