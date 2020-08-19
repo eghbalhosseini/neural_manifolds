@@ -15,7 +15,7 @@ ARRAY_INDEX=0
 # separate data to batch of 100 and run them.
 while read line; do
 	LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-	if [ "$(expr ${LINE_COUNT} % 50)" = "0" ]
+	if [ "$(expr ${LINE_COUNT} % 100)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
 		sbatch --array=0-49 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
