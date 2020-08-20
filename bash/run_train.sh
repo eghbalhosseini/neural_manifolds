@@ -8,7 +8,7 @@
 
 # create a list of config names
 
-#ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/
+ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted/
 #chmod g+w -R "${ROOT_DIR}"
 
 
@@ -38,6 +38,7 @@ for model in NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat
                # combine configs
                     model_list[$i]="$model"
                     i=$i+1
+		    
 done
 # define singularity paths
 module add openmind/singularity
@@ -52,5 +53,8 @@ echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
 singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+wait
+# Grant access
+chmod g+w -R ${ROOT_DIR}${model_list[$SLURM_ARRAY_TASK_ID]}
 
 #NOBATCH --gres=gpu:1 --constraint=high-capacity
