@@ -1,0 +1,24 @@
+export HOME=/om/user/gretatu
+
+module add mit/matlab/2017b
+module add openmind/xjview/9.7
+module add openmind/freesurfer/6.0.0
+module add openmind/singularity
+
+export FREESURFER_HOME=/cm/shared/openmind/freesurfer/6.0.0
+export SUBJECTS_DIR=/cm/shared/openmind/freesurfer/6.0.0/subjects
+source $FREESURFER_HOME/SetUpFreeSurfer.sh
+export SUBJECTS_DIR="/mindhive/evlab/u/gretatu/mri-space2/studies/FS"
+export LIBGL_ALWAYS_INDIRECT=y
+
+alias mh="cd /mindhive/evlab/u/gretatu/"
+
+umask 002 # newly created files permissions
+
+# Create directory shortcuts
+alias mh="cd /mindhive/evlab/u/gretatu/"
+
+# Check nodes
+alias sinfo='sinfo -N -o "%N, %c, %C, %e, %E, %G, %m, %T, %z"'
+alias squeuefull='squeue -o "%22i,%.12j,%.8u,%25R,%22b,%.7m,%6q,%6Q,%t,%V,%.S,%e,%l,%L,%M"'
+
