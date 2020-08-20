@@ -2,19 +2,17 @@
 #
 #SBATCH -n 1 # one core
 #SBATCH -N 1 # on one node
-#SBATCH -t 5000
+#SBATCH -t 2:00:00
 
 ARRAY_ID=$1
 MODEL_ID=$2
 ANALYZE_ID=$3
 #
-let FILE_LINE=(100*$ARRAY_ID + $SLURM_ARRAY_TASK_ID)
+let FILE_LINE=(50*$ARRAY_ID + $SLURM_ARRAY_TASK_ID)
 echo "Line ${FILE_LINE}"
 
 module add openmind/singularity
 export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
-RESULTCACHING_HOME=/om/user/`whoami`/.result_caching
-export RESULTCACHING_HOME
 XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
