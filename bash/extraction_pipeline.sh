@@ -1,11 +1,10 @@
 #!/bin/bash
 MODEL_DIR=$1
+ANALYZE=$2
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
-#MODEL_DIR=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed
 PTH_FILE="master_${MODEL_DIR}.csv"
 MODEL_ID=$MODEL_DIR
-ANALYZE_ID='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
-#chmod g+w -R "${ROOT_DIR}/${MODEL_DIR}"
+ANALYZE_ID=$ANALYZE
 FULL_FILE="${ROOT_DIR}/${MODEL_DIR}/${PTH_FILE}"
 echo $FULL_FILE
 
@@ -15,7 +14,7 @@ ARRAY_INDEX=0
 # separate data to batch of 100 and run them.
 while read line; do
 	LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-	if [ "$(expr ${LINE_COUNT} % 100)" = "0" ]
+	if [ "$(expr ${LINE_COUNT} % 50)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
 		sbatch --array=0-49 --mem 8G -p normal extraction_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
