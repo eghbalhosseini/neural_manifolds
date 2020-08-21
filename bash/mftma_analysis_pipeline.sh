@@ -35,3 +35,4 @@ then
 	sbatch --array=1-${DIFF} --mem 8G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi
+wait
