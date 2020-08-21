@@ -33,7 +33,7 @@ if [ "${LINE_COUNT}" -ge "${START_INDEX}" ]
 then
 	DIFF=$(expr ${LINE_COUNT} - ${START_INDEX} + 1)
 	echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-	sbatch --array=1-${DIFF} -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+	sbatch --array=0-$(expr ${DIFF} - 1) -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi
 

@@ -2,7 +2,7 @@
 #
 #SBATCH -c 16
 #SBATCH --mem=10G
-#SBATCH --exclude node[017-092]
+#SBATCH --exclude node[017-018]
 #SBATCH -t 2:00:00
 
 ARRAY_ID=$1
