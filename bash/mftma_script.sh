@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH -c 16
+#SBATCH -c 8
 #SBATCH --mem=10G
 #SBATCH --exclude node[017-018]
 #SBATCH -t 2:00:00
