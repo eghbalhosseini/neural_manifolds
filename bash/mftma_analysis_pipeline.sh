@@ -25,6 +25,7 @@ while read line; do
 		#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 		START_INDEX=$(expr ${LINE_COUNT} + 1)
 		ARRAY_INDEX=$(expr ${ARRAY_INDEX} + 1)
+		wait
 	fi
 done < $FULL_FILE
 # run the remaining files
@@ -35,4 +36,4 @@ then
 	sbatch --array=1-${DIFF} --mem 8G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi
-wait
+

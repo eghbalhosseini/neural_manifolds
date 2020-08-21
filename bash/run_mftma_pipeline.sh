@@ -10,6 +10,7 @@ for model in NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat
                     echo "Running model:  ${model_list[$i]}"
                     echo "Running analysis:  $analyze"
                     bash mftma_analysis_pipeline.sh $model $analyze
+                    wait
                     i=$i+1
 done
 i=0
@@ -17,4 +18,4 @@ for model in ${model_list[@]} ; do
     chmod g+w -R ${ROOT_DIR}$model
     i=$i+1
 done
-wait
+
