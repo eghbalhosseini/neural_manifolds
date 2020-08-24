@@ -2,13 +2,13 @@
 #
 #SBATCH -c 8
 #SBATCH --exclude node[017-018]
-#SBATCH -t 4:00:00
+#SBATCH -t 9:00:00
 
 ARRAY_ID=$1
 MODEL_ID=$2
 ANALYZE_ID=$3
 #
-let FILE_LINE=(100*$ARRAY_ID + $SLURM_ARRAY_TASK_ID)
+let FILE_LINE=(250*$ARRAY_ID + $SLURM_ARRAY_TASK_ID)
 echo "Line ${FILE_LINE}"
 
 module add openmind/singularity

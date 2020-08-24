@@ -18,10 +18,10 @@ ARRAY_INDEX=0
 # separate data to batch of 100 and run them.
 while read line; do
 	LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-	if [ "$(expr ${LINE_COUNT} % 100)" = "0" ]
+	if [ "$(expr ${LINE_COUNT} % 250)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-		sbatch --array=0-99 --mem 5G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+		sbatch --array=0-249 --mem 5G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
 		wait
 		#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 		START_INDEX=$(expr ${LINE_COUNT} + 1)
