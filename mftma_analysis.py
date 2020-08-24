@@ -6,9 +6,9 @@ import pickle
 import os
 import argparse
 parser = argparse.ArgumentParser(description='run mftma and save results')
-parser.add_argument('task_id', type=int,default=1)
-parser.add_argument('model_id', type=str,default='[NN]-[partition/nclass=;50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
-parser.add_argument('analyze_id', type=str,default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
+parser.add_argument('task_id', type=int, default=1)
+parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=;50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
+parser.add_argument('analyze_id', type=str, default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
 args = parser.parse_args()
 
 if __name__=='__main__':
@@ -31,14 +31,12 @@ if __name__=='__main__':
     generated_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'r')
     extracted_files = generated_files_txt.read().splitlines()
     extracted_file = extracted_files[task_id]
-    extracted_file = extracted_file.replace('/om/group/evlab/Greta_Eghbal_manifolds/extracted',
-                                      '/om/group/evlab/Greta_Eghbal_manifolds/extracted/')
     extracted_data = pickle.load(open(extracted_file, 'rb'))
     projection_data_ = extracted_data['projection_results']
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # run mftma
-    mftma_results = run_mftma(projection_data_,kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
+    mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
     # save results:
     mftma_file = extracted_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
 
