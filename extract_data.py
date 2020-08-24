@@ -9,7 +9,7 @@ import os
 import scipy.io as sio
 
 parser = argparse.ArgumentParser(description='extract and save activations')
-parser.add_argument('task_id', type=int,default=1)
+parser.add_argument('task_id', type=int,default=0)
 parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
 parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
 args = parser.parse_args()
@@ -56,7 +56,6 @@ if __name__ == '__main__':
         [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
         hier_dataset.append(dat_hier)
     # TODO make_manifold_data should output labels too:x
-    # TODO save train and test accuracy in the output of extraction
 
     hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
                                             examples_per_class=analyze_params.exm_per_class,seed=0,
@@ -79,7 +78,6 @@ if __name__ == '__main__':
         assert(len(layer_names) == len(x))
     # reorder files based on the layer
     projection_file_list = []
-    # TODO make the number of hierarchies a part of projection results.
     for name in layer_names:
         layer_proj_cell = [{name: x[name]} for x in projection_cell]
         # STEP 7. save the file

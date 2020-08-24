@@ -9,9 +9,8 @@ for model in NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat
                     echo "Running model:  ${model_list[$i]}"
                     echo "Running analysis:  $analyze"
                     bash extraction_pipeline.sh $model $analyze
+                    wait
                     i=$i+1
 done
-
-wait
 # Grant access
 chmod g+w -R ${ROOT_DIR}${model_list[$SLURM_ARRAY_TASK_ID]}
