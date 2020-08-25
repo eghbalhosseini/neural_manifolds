@@ -15,7 +15,7 @@ if __name__=='__main__':
     # get identifier,
     # get model
     # get sub_data
-    # create hierarchical version of the data
+    # create hierarchical version: of the data
     #
     task_id = args.task_id
     model_identifier = args.model_id
@@ -31,6 +31,7 @@ if __name__=='__main__':
     generated_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'r')
     extracted_files = generated_files_txt.read().splitlines()
     extracted_file = extracted_files[task_id]
+    print(extracted_file)
     extracted_data = pickle.load(open(extracted_file, 'rb'))
     projection_data_ = extracted_data['projection_results']
     #

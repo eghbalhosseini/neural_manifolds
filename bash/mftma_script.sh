@@ -2,7 +2,7 @@
 #
 #SBATCH -c 8
 #SBATCH --exclude node[017-018]
-#SBATCH -t 9:00:00
+#SBATCH -t 23:00:00
 
 ARRAY_ID=$1
 MODEL_ID=$2
