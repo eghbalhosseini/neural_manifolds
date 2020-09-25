@@ -53,6 +53,9 @@ assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
 KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
+assert(KNN_data ~= [], 'KNN files empty - no files found!')
+display(strcat('Searching for KNN files in: ', (strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))))
+
 file = load(KNN_data{1}).activation;
 e = file.projection_results{1, hier_level}.( layer );
 
