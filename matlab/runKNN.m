@@ -56,8 +56,9 @@ KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name
 assert(~isempty(KNN_data{1,1}), 'KNN files empty - no files found!')
 disp(strcat('Searching for KNN files in: ', (strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))))
 
-file = load(KNN_data{1}).activation;
-e = file.projection_results{1, hier_level}.( layer );
+file = load(KNN_data{1});
+file1 = file.activation;
+e = file1.projection_results{1, hier_level}.( layer );
 
 data_size = size(e);
 num_classes = data_size(1);
