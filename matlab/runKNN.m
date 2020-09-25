@@ -41,17 +41,18 @@ addpath('utils')
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 % Manual input
-% model_identifier = 'NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
+% data_dir = '/Users/gt/pCloud Drive/Previous/GitHub_GitLab/GitHub_from_Dell_09072020/neural_manifolds/local/'
+% model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
 % layer = 'layer_3_Linear'
 
-KNN_files = dir(strcat(data_dir, model_identifier, '\*', layer, '_extracted.mat'))
+KNN_files = dir(strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))
 
 %% 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);
 assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
-KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder,'/',KNN_files(x).name)}, 1:length(KNN_files));
+KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
 file = load(KNN_data{1}).activation;
 e = file.projection_results{1, hier_level}.( layer );
 
