@@ -2,6 +2,7 @@
 
 MODEL_DIR=$1
 ANALYZE=$2
+OVERWRITE=$3
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
 
 EXT_FILE="master_${MODEL_DIR}_extracted.csv"
@@ -21,7 +22,7 @@ while read line; do
 	if [ "$(expr ${LINE_COUNT} % 250)" = "0" ]
 	then
 		echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-		sbatch --array=0-249 --mem 5G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+		sbatch --array=0-249 --mem 5G -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID} ${OVERWRITE}
 		wait
 		#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 		START_INDEX=$(expr ${LINE_COUNT} + 1)
@@ -33,7 +34,7 @@ if [ "${LINE_COUNT}" -ge "${START_INDEX}" ]
 then
 	DIFF=$(expr ${LINE_COUNT} - ${START_INDEX} + 1)
 	echo "New Array For Parameters from ${START_INDEX} to ${LINE_COUNT}"
-	sbatch --array=0-$(expr ${DIFF} - 1) -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID}
+	sbatch --array=0-$(expr ${DIFF} - 1) -p normal mftma_script.sh ${ARRAY_INDEX} ${MODEL_ID} ${ANALYZE_ID} ${OVERWRITE}
 	#bash extraction_script.sh ${ARRAY_INDEX} ${FULL_FILE} ${PKL_FILE} ${ROOT_DIR}
 fi
 
