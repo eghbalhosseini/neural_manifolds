@@ -2,7 +2,7 @@ function params_out = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
 addParameter(p, 'model_identifier', 'NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed');
-addParameter(p, 'layer', 'layer_3_Linear');
+addParameter(p, 'layer', 'layer_1_Linear');
 addParameter(p, 'hier_level', 1);
 addParameter(p, 'k', 50);
 addParameter(p, 'dist_metric', 'euclidean');
@@ -43,7 +43,7 @@ addpath('utils')
 % Manual input
 % data_dir = '/Users/gt/pCloud Drive/Previous/GitHub_GitLab/GitHub_from_Dell_09072020/neural_manifolds/local/'
 % model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-% layer = 'layer_3_Linear'
+% layer = 'layer_1_Linear'
 
 KNN_files = dir(strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))
 
@@ -53,8 +53,8 @@ assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
 KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
-assert(KNN_data ~= [], 'KNN files empty - no files found!')
-display(strcat('Searching for KNN files in: ', (strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))))
+assert(~isempty(KNN_data{1,1}), 'KNN files empty - no files found!')
+disp(strcat('Searching for KNN files in: ', (strcat(data_dir, model_identifier, filesep, '*', layer, '_extracted.mat'))))
 
 file = load(KNN_data{1}).activation;
 e = file.projection_results{1, hier_level}.( layer );
