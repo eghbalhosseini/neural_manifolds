@@ -6,8 +6,8 @@ addParameter(p, 'layer', 'layer_3_Linear');
 addParameter(p, 'hier_level', 1);
 addParameter(p, 'k', 50);
 addParameter(p, 'dist_metric', 'euclidean');
-addParameter(p, 'num_subsamples', 60);
 addParameter(p, 'save_fig', true);
+% addParameter(p, 'num_subsamples', 60);
 
 parse(p, varargin{:});
 params = p.Results;
@@ -33,11 +33,17 @@ set(groot, 'DefaultAxesTickDirMode', 'manual');
 set(gcf,'color','w');
 
 %% Directories
-data_dir = 'C:\Users\greta\Documents\GitHub\neural_manifolds\local\';
+tmp = matlab.desktop.editor.getActive;
+cd(fileparts(tmp.Filename));
+
+addpath('utils')
+
 % Load the generated mat files, session of interest: (input, the model identifier)
-model_identifier = 'NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-%model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-layer = 'layer_3_Linear'
+
+% Manual input
+% model_identifier = 'NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
+% layer = 'layer_3_Linear'
+
 KNN_files = dir(strcat(data_dir, model_identifier, '\*', layer, '_extracted.mat'))
 
 %% 
@@ -56,10 +62,9 @@ num_examples = data_size(3);
 
 %% Manual params for testing
 num_subsamples = num_classes*2; % Per point in time, i.e. per batch idx
-hier_level = 1;
+% hier_level = 1;
+% dist_metric = 'euclidean';
 k = num_classes*2;
-dist_metric = 'euclidean';
-
 
 %% Assert that subsampling across time is possible 
 assert(num_subsamples <= num_classes * num_examples, 'Too many subsamples specified')
