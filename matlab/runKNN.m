@@ -1,7 +1,7 @@
 function params_out = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
-addParameter(p, 'model_identifier', 'NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-test_performance-epoch=1-batchidx=600');
+addParameter(p, 'model_identifier', 'NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');
 addParameter(p, 'hier_level', 1);
 addParameter(p, 'k', 50);
