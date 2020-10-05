@@ -1,6 +1,6 @@
 from utils.analysis_utils import run_mftma
 from utils.model_utils import save_dict
-from utils import save_dir, data_dir, analyze_pool, train_pool
+from utils import save_dir, data_dir,analyze_dir, analyze_pool, train_pool
 import torch
 import pickle
 import os
@@ -8,7 +8,7 @@ import argparse
 import re
 parser = argparse.ArgumentParser(description='run mftma and save results')
 parser.add_argument('task_id', type=int, default=1)
-parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=;50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
+parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
 parser.add_argument('analyze_id', type=str, default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
 parser.add_argument('overwrite',type=str,default='True')
 args = parser.parse_args()
