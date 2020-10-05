@@ -3,11 +3,12 @@ p=inputParser();
 addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');
-addParameter(p, 'hier_level', 5);
 addParameter(p, 'dist_metric', 'euclidean');
 addParameter(p, 'save_fig', true);
 addParameter(p, 'k', 100);
 addParameter(p, 'num_subsamples', 100);
+%addParameter(p, 'hier_level', 5);
+
 
 parse(p, varargin{:});
 params = p.Results;
@@ -60,9 +61,20 @@ assert(~isempty(KNN_data), 'KNN files empty - no files found!')
 
 file = load(KNN_data{1});
 file = file.activation;
-e = file.projection_results{1, params.hier_level}.( params.layer );
 
-data_size = size(e);
+% Iterate over all hierarchies in the file 
+nhier_idx = strfind(model_identifier,'nhier');
+nhier_level = str2num(model_identifier(nhier_idx + length('nhier') + 1));
+
+% Generate cell for saving the maps of results
+cell_map = {};
+
+for hier_level = 1:nhier_level
+    
+% Load sample file to get correct dimensions for each hierarchy
+sample_file = file.projection_results{1, hier_level}.( params.layer );
+
+data_size = size(sample_file);
 num_classes = data_size(1);
 num_features = data_size(2);
 num_examples = data_size(3);
@@ -89,7 +101,7 @@ trainAcc = [];
 for i = 1:length(KNN_data)
     file = load(KNN_data{i})
     file = file.activation;
-    f = file.projection_results{1, params.hier_level}.( params.layer );
+    f = file.projection_results{1, hier_level}.( params.layer );
     
     % Subsample and construct a data matrix 
     f_perm = permute(f, [3 1 2]);
@@ -162,8 +174,8 @@ relTime = productionTime./max(productionTime);
 
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
-saveStr = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(params.hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
-saveStrMat = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(params.hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+saveStr = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+saveStrMat = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 colorsEpoch = magma(max(epoch) +1); % 3 colors
 % colorsEpoch = colorsEpoch(2:end, :);
 colorsTarget = magma(max(num_classes));
@@ -388,16 +400,26 @@ end
 %% Save variables
 
 %% First across all subsamples, then averaged - pairwise
-keySet = {'params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
+keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
     'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
     'stdNormNN', 'meanTimeStdNormNN'};
 
-valueSet = {params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
+valueSet = {hier_level, params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
     dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
      stdNormNN, meanTimeStdNormNN};
+ 
 M = containers.Map(keySet,valueSet,'UniformValues',false);
+% Get vals
+% M('params')
 
-save('saveStrMat', 'M')
+cell_map{1, hier_level} = M;
+
+% Clear variables for saving the next hierarchy results
+clear keySet valueSet M 
+
+end % End hierarchy loop
+
+save('saveStrMat', 'cell_map')
 
 end
 
