@@ -7,6 +7,7 @@ ARRAY_ID=$1
 MODEL_ID=$2
 ANALYZE_ID=$3
 #
+# this is where we put those lines ,
 let FILE_LINE=(100*$ARRAY_ID + $SLURM_ARRAY_TASK_ID)
 echo "Line ${FILE_LINE}"
 
