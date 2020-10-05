@@ -1,4 +1,4 @@
-function params_out = runKNN(varargin)
+function M = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
