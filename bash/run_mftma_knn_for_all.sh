@@ -6,7 +6,7 @@ overwrite='False'
 i=0
 LINE_COUNT=0
 GRAND_FILE="${ANALYSIS_DIR}/Grand_pool_${analyze}.csv"
-touch GRAND_FILE
+touch $GRAND_FILE
 for model in NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed \
              NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed ; do
                # combine configs
@@ -20,7 +20,7 @@ for model in NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-
 	                    LINE_COUNT=$(expr ${LINE_COUNT} + 1)
 	                    all_analysis_files[$LINE_COUNT]=$line
 
-	                    printf "%s\n" "$line" >> GRAND_FILE
+	                    printf "%s\n" "$line" >> $GRAND_FILE
 
 	                  done <$FULL_FILE
 
