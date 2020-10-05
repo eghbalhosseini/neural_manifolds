@@ -163,6 +163,7 @@ relTime = productionTime./max(productionTime);
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
 saveStr = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(params.hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+saveStrMat = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(params.hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 colorsEpoch = magma(max(epoch) +1); % 3 colors
 % colorsEpoch = colorsEpoch(2:end, :);
 colorsTarget = magma(max(num_classes));
@@ -394,7 +395,9 @@ keySet = {'params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsampl
 valueSet = {params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
     dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
      stdNormNN, meanTimeStdNormNN};
-M = containers.Map(keySet,valueSet,'UniformValues',false)
+M = containers.Map(keySet,valueSet,'UniformValues',false);
+
+save('saveStrMat', 'M')
 
 end
 
