@@ -20,7 +20,8 @@ for model in NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-
 	                    LINE_COUNT=$(expr ${LINE_COUNT} + 1)
 	                    all_analysis_files[$LINE_COUNT]=$line
 	                  done <$FULL_FILE
-	            done
+
+	                  printf "%d\n" "$line" >> GRAND_FILE
+done
 
 
-all_analysis_files > GRAND_FILE
