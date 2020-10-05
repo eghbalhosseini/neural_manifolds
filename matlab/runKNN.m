@@ -1,13 +1,13 @@
 function params_out = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
-addParameter(p, 'model_identifier', 'NN-partition_nclass=50_nobj=50000_beta=0.01_sigma=1.5_nfeat=3072-train_test-test_performance-epoch=1-batchidx=600');
+addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');
-addParameter(p, 'hier_level', 1);
-addParameter(p, 'k', 50);
+addParameter(p, 'hier_level', 5);
 addParameter(p, 'dist_metric', 'euclidean');
-addParameter(p, 'num_subsamples', 60);
 addParameter(p, 'save_fig', true);
+addParameter(p, 'k', 100);
+addParameter(p, 'num_subsamples', 100);
 
 parse(p, varargin{:});
 params = p.Results;
@@ -33,21 +33,34 @@ set(groot, 'DefaultAxesTickDirMode', 'manual');
 set(gcf,'color','w');
 
 %% Directories
-data_dir = 'C:\Users\greta\Documents\GitHub\neural_manifolds\local\';
+tmp = matlab.desktop.editor.getActive;
+cd(fileparts(tmp.Filename));
+
+addpath('utils')
+
 % Load the generated mat files, session of interest: (input, the model identifier)
-model_identifier = 'NN-partition_nclass=96_nobj=96000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-%model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-layer = 'layer_3_Linear'
-KNN_files = dir(strcat(data_dir, model_identifier, '\*', layer, '_extracted.mat'))
+
+% Manual input
+% data_dir = '/Users/gt/pCloud Drive/Previous/GitHub_GitLab/GitHub_from_Dell_09072020/neural_manifolds/local/'
+% model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
+% layer = 'layer_1_Linear'
+% 
+% file_dir = strcat(params.data_dir, params.model_identifier, filesep);
+% cd(file_dir)
+KNN_files = dir(strcat(params.data_dir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
 
 %% 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);
 assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
-KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder,'/',KNN_files(x).name)}, 1:length(KNN_files));
-file = load(KNN_data{1}).activation;
-e = file.projection_results{1, hier_level}.( layer );
+KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
+disp(strcat('Searching for KNN files in: ', (strcat(params.data_dir, params.model_identifier))))
+assert(~isempty(KNN_data), 'KNN files empty - no files found!')
+
+file = load(KNN_data{1});
+file = file.activation;
+e = file.projection_results{1, params.hier_level}.( params.layer );
 
 data_size = size(e);
 num_classes = data_size(1);
@@ -55,15 +68,14 @@ num_features = data_size(2);
 num_examples = data_size(3);
 
 %% Manual params for testing
-num_subsamples = num_classes*2; % Per point in time, i.e. per batch idx
-hier_level = 1;
-k = num_classes*2;
-dist_metric = 'euclidean';
-
+% num_subsamples = num_classes*2; % Per point in time, i.e. per batch idx
+% hier_level = 1;
+% dist_metric = 'euclidean';
+% k = num_classes*2;
 
 %% Assert that subsampling across time is possible 
-assert(num_subsamples <= num_classes * num_examples, 'Too many subsamples specified')
-assert(num_subsamples >= num_classes, 'Number of subsamples has to be equal to or larger than number of classes')
+assert(params.num_subsamples <= num_classes * num_examples, 'Too many subsamples specified')
+assert(params.num_subsamples >= num_classes, 'Number of subsamples has to be equal to or larger than number of classes')
 
 %% Iterate over all files
 
@@ -75,8 +87,9 @@ testAcc = [];
 trainAcc = [];
 
 for i = 1:length(KNN_data)
-    file = load(KNN_data{i}).activation;
-    f = file.projection_results{1, hier_level}.( layer );
+    file = load(KNN_data{i})
+    file = file.activation;
+    f = file.projection_results{1, params.hier_level}.( params.layer );
     
     % Subsample and construct a data matrix 
     f_perm = permute(f, [3 1 2]);
@@ -101,8 +114,8 @@ for i = 1:length(KNN_data)
     idx_cat = sub' + add_array; % Indices for subsampling per category
 
     % Add more indices
-    if num_subsamples ~= num_classes
-        num_remaining_sub = num_subsamples - num_classes;
+    if params.num_subsamples ~= num_classes
+        num_remaining_sub = params.num_subsamples - num_classes;
         draw = [1:num_examples*num_classes]; % possible indices to draw from
         draw_array = setdiff(draw, idx_cat); % subtract the ones already used for the category requirement
 
@@ -113,7 +126,7 @@ for i = 1:length(KNN_data)
 
     final_idx = horzcat(idx_cat, more_idx)';
 
-    assert(length(final_idx) == num_subsamples, 'Subsampling index does not match')
+    assert(length(final_idx) == params.num_subsamples, 'Subsampling index does not match')
 
     % Subsample
     subsampled_data = f_res(final_idx,:); % Checked that it correspond to the first idx in the sub list
@@ -121,10 +134,10 @@ for i = 1:length(KNN_data)
     
     % get batch/epoch 
     batchidx_cell = file.batchidx;
-    batchs = repmat(batchidx_cell, num_subsamples, 1);
+    batchs = repmat(batchidx_cell, params.num_subsamples, 1);
     
     epoch_cell = file.epoch;
-    epochs = repmat(epoch_cell, num_subsamples, 1);
+    epochs = repmat(epoch_cell, params.num_subsamples, 1);
     
     % Get accuracies
     test_a = file.test_acc;
@@ -142,15 +155,15 @@ for i = 1:length(KNN_data)
 end
 
 % Find log interval:
-logInt = abs(subEpoch(num_subsamples) - subEpoch(num_subsamples*2));
+logInt = abs(subEpoch(params.num_subsamples) - subEpoch(params.num_subsamples*2));
 productionTime = (1:length(epoch))'; 
 time = [1:length(KNN_files)];
 relTime = productionTime./max(productionTime);
 
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
-saveStr = strcat(model_identifier,'_',layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(num_subsamples),'_k_',num2str(k),'.pdf');
-colorsEpoch = magma(max(epoch))% +1); % 3 colors
+saveStr = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(params.hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+colorsEpoch = magma(max(epoch) +1); % 3 colors
 % colorsEpoch = colorsEpoch(2:end, :);
 colorsTarget = magma(max(num_classes));
 colorsTargetViridis = viridis(max(num_classes));
@@ -175,14 +188,14 @@ incrSubEpoch = subEpoch((incrSubEpochTrial));
 %% Test/train accuracy
 
 % Test acc for each subsample - if overlay on the other plots
-testAccSubsample = repmat(testAcc, 1, num_subsamples);
+testAccSubsample = repmat(testAcc, 1, params.num_subsamples);
 testAccSubsamples = reshape(testAccSubsample', [], 1);
 
 % Train acc for each subsample - if overlay on the other plots
-trainAccSubsample = repmat(trainAcc, 1, num_subsamples);
+trainAccSubsample = repmat(trainAcc, 1, params.num_subsamples);
 trainAccSubsamples = reshape(trainAccSubsample', [], 1);
 
-if save_fig
+if params.save_fig
     % Plot test accuracy
     figure;
     ax=axes()
@@ -210,7 +223,7 @@ end
 dataNorm = vecnorm(data');
 
 % Epoch coloring
-if save_fig
+if params.save_fig
     figure;
     hold on
     arrayfun(@(i) scatter(productionTime(epochLoc{i})', dataNorm(epochLoc{i})', 2, colorsEpoch(i,:), 'filled', 'o'), [1:max(epoch)])
@@ -224,7 +237,7 @@ if save_fig
 end 
 
 % Target coloring
-if save_fig
+if params.save_fig
     figure;
     hold on
     arrayfun(@(i) scatter(productionTime(targetLoc{i})', dataNorm(targetLoc{i})', 8, colorsTarget(i,:), 'filled', 'o'), [1:max(targets)])
@@ -238,17 +251,17 @@ if save_fig
 end 
 
 %% Vector norm - meaned across samples
-y = reshape(dataNorm, num_subsamples, length(KNN_files));
+y = reshape(dataNorm, params.num_subsamples, length(KNN_files));
 meanTimeDataNorm = mean(y, 1);
 
 % figure;scatter([1:237],meanTimeDataNorm)
 
 %% Nearest neighbors
-NNids_self = knnsearch(data, data, 'K', k, 'Distance', dist_metric); 
+NNids_self = knnsearch(data, data, 'K', params.k, 'Distance', params.dist_metric); 
 NNids_self = NNids_self./max(NNids_self(:,1)); % normalized NNids
 NNids = NNids_self(:, 2:end); 
 
-if save_fig
+if params.save_fig
     figure;
     imagesc(NNids)
     hold on
@@ -261,14 +274,14 @@ if save_fig
     saveas(gcf, strcat(pwd,filesep,'figures',filesep,'NearestNeighbors_',saveStr));
 end  
 
-y1 = reshape(NNids, num_subsamples, length(KNN_files), k-1); % num subsamples x num points in time x num k-1
+y1 = reshape(NNids, params.num_subsamples, length(KNN_files), params.k-1); % num subsamples x num points in time x num k-1
 meanTimeNNids = squeeze(mean(y1, 1));
 % figure;imagesc(meanTimeNNids)
 
 %% Compute norm of neighbors
-normNN = zeros(k - 1, length(epoch));
+normNN = zeros(params.k - 1, length(epoch));
 
-for i=2:k
+for i=2:params.k
     normNN(i-1, :)=(abs(NNids_self(:,1) - NNids_self(:,i)));%.^2;
 end
 
@@ -276,16 +289,16 @@ meanNormNN = mean(normNN,1);
 stdNormNN = std(normNN,1);
 
 %% Mean vector norms over samples at the same time 
-y2 = reshape(meanNormNN, num_subsamples, length(KNN_files));
+y2 = reshape(meanNormNN, params.num_subsamples, length(KNN_files));
 meanTimeNormNN = mean(y2, 1);
 
-y3 = reshape(meanStdNN, num_subsamples, length(KNN_files));
+y3 = reshape(stdNormNN, params.num_subsamples, length(KNN_files));
 meanTimeStdNormNN = mean(y3, 1);
 
 %% Plot vector norm - according to epochs colors
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
 
-if save_fig
+if params.save_fig
     figure;
     hold on
     arrayfun(@(i) scatter(productionTime(epochLoc{i})', meanNormNN(epochLoc{i})', 1, colorsEpoch(i,:), 'filled', 'o'), [1:max(epoch)])
@@ -299,28 +312,28 @@ if save_fig
 end
 
 
-%% Plot vector norm - according to data point colors
+%% Plot vector norm - according to data point colors - OBS HEAVY PLOT
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
 colorsNormNN = magma(length(meanNormNN)); 
-
-if save_fig
-    figure;
-    hold on
-    arrayfun(@(i) scatter(productionTime(i)', meanNormNN(i)', 10, colorsNormNN(i,:), 'filled', 'o'), [1:length(meanNormNN)])
-    ylabel('Neighbor distance') % (unit: training time)
-    hold on
-    set(gca,'XTick',downsample(productionTime, round(size(relTime,1)/10)))
-    set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
-    xlabel('Relative time in training')
-    axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanNormNN_indColors_',saveStr));
-end
+% 
+% if params.save_fig
+%     figure;
+%     hold on
+%     arrayfun(@(i) scatter(productionTime(i)', meanNormNN(i)', 10, colorsNormNN(i,:), 'filled', 'o'), [1:length(meanNormNN)])
+%     ylabel('Neighbor distance') % (unit: training time)
+%     hold on
+%     set(gca,'XTick',downsample(productionTime, round(size(relTime,1)/10)))
+%     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
+%     xlabel('Relative time in training')
+%     axis tight
+%     saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanNormNN_indColors_',saveStr));
+% end
 
 %% Plot vector norm - according to data point colors - meaned over time
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
 colorsMeanTimeNormNN = magma(length(meanTimeNormNN)); 
 
-if save_fig
+if params.save_fig
     figure;
     hold on
     arrayfun(@(i) scatter(time(i)', meanTimeNormNN(i)', 30, colorsMeanTimeNormNN(i,:), 'filled', 'o'), [1:length(meanTimeNormNN)])
@@ -336,7 +349,7 @@ end
 
 %% KNN Vector norm and std in same plot
 
-if save_fig
+if params.save_fig
     figure;
     scatter(productionTime', meanNormNN', 1, colorsEpoch(1,:), 'filled', 'o')
     hold on
@@ -354,7 +367,7 @@ end
 
 %% Target coloring
 
-if save_fig
+if params.save_fig
     figure;
     hold on
     arrayfun(@(i) scatter(productionTime(targetLoc{i})', meanNormNN(targetLoc{i})', 1, colorsTarget(i,:), 'filled', 'o'), [1:max(targets)])
@@ -376,11 +389,11 @@ end
 %% First across all subsamples, then averaged - pairwise
 keySet = {'params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
     'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
-    'meanStdNN', 'meanTimeStdNormNN'};
+    'stdNormNN', 'meanTimeStdNormNN'};
 
 valueSet = {params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
     dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
-     meanStdNN, meanTimeStdNormNN};
+     stdNormNN, meanTimeStdNormNN};
 M = containers.Map(keySet,valueSet,'UniformValues',false)
 
 end
