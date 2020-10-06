@@ -18,18 +18,18 @@ fi
 echo "${GRAND_FILE}"
 
 while IFS=, read -r line_count model analyze analyze_file ; do
-  echo "line_count ${model}"
-#  if [ $JID == $line_count ]
-#    then
-#      echo "found the right match"
-#      run_model=$model
-#      run_analyze=$analyze
-#      run_file=$analyze_file
-#      do_run=true
-#    else
-#      do_run=false
-#      echo "didnt the right match"
-#  fi
+  #echo "line_count ${model}"
+  if [ $JID == $line_count ]
+    then
+      echo "found the right match ${line_count}"
+      run_model=$model
+      run_analyze=$analyze
+      run_file=$analyze_file
+      do_run=true
+    else
+      do_run=false
+      echo "didnt the right match"
+  fi
 
 done <"${GRAND_FILE}"
 
