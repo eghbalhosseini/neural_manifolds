@@ -42,3 +42,39 @@ def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):
             data_['correlations'] = correlations
             mftmas_cell.append(data_)
     return mftmas_cell
+
+class mftmaAnalysis:
+    def __init__(self,analyze_method=None,exm_per_class=None,identifier=None,n_t=None,kappa=None,n_rep=None,randomize=None,project=None,n_project=5000,save_mat=False):
+        ##### DATA ####
+        self.analyze_method=analyze_method
+        self.exm_per_class=exm_per_class
+        self.randomize=randomize
+        self.project=project
+        self.n_project=n_project
+        self.identifier=identifier
+        self.n_t=n_t
+        self.kappa=kappa
+        self.n_rep=n_rep
+        self.save_mat=save_mat
+
+
+
+
+
+class knnAnalysis:
+    def __init__(self,identifier=None,save_fig=True,k=100,num_subsamples=100):
+        ##### DATA ####
+        self.identifier=identifier
+        self.k=k
+        self.num_subsamples=num_subsamples
+        self.save_fig=save_fig
+
+
+    #####  Training specs #####
+    #batch_size_train = 64
+    #batch_size_test = 64
+    #epochs = 3
+    #log_interval = 15 # when to save, extract, and test the data
+    #test_split = .2
+    #shuffle_dataset = True
+    #random_seed = 1

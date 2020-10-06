@@ -4,14 +4,13 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-
-
 save_dir='/om/group/evlab/Greta_Eghbal_manifolds/extracted/'
 data_dir='/om/group/evlab/Greta_Eghbal_manifolds/data/'
 analyze_dir='/om/group/evlab/Greta_Eghbal_manifolds/analyze/'
 
 from utils.model_utils import sub_data, NN, leaf_traverse, add_layer_names
 from utils import model_utils
+from utils.analysis_utils import mftmaAnalysis, knnAnalysis
 import itertools
 import copy
 import os
@@ -139,31 +138,8 @@ for config in train_configuration:
 
 #############ANALYSIS ###########################
 # Creating tags for analysis paradigms
-class analyze_params:
-    def __init__(self,analyze_method=None,exm_per_class=None,identifier=None,n_t=None,kappa=None,n_rep=None,randomize=None,project=None,n_project=5000,save_mat=False):
-        ##### DATA ####
-        self.analyze_method=analyze_method
-        self.exm_per_class=exm_per_class
-        self.randomize=randomize
-        self.project=project
-        self.n_project=n_project
-        self.identifier=identifier
-        self.n_t=n_t
-        self.kappa=kappa
-        self.n_rep=n_rep
-        self.save_mat=save_mat
-
-
-    #####  Training specs #####
-    batch_size_train = 64
-    batch_size_test = 64
-    epochs = 3
-    log_interval = 15 # when to save, extract, and test the data
-    test_split = .2
-    shuffle_dataset = True
-    random_seed = 1
-
 analyze_pool={}
+
 analyze_method=['mftma']
 n_ts=[300]
 kappas=[0]
@@ -180,24 +156,47 @@ for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag,n_proj in itertools.prod
     identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,randomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep,n_project=n_proj))
 
-#[analyze_pool.update({x['identifier']:x}) for x in analyze_configuration]
 
-analyze_pool={}
 # create the pool
 for config in analyze_configuration:
     configuration=copy.deepcopy(config)
     analyze_identifier=configuration['identifier']
     def analyze_instantiation(identfier=analyze_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        analyze_param=analyze_params(analyze_method=configure['method'],
-                           exm_per_class=configure['exm_per_class'],
-                           identifier=configure['identifier'],
+        analyze_param=knnAnalysis(analyze_method=configure['method'],
+                           k=configure['exm_per_class'],
+                           num_subsamples=configure['identifier'],
                            n_t=configure['n_t'],
                            kappa=configure['kappa'],
                            n_rep=configure['n_rep'],
                            randomize=configure['randomize'],
                            project=configure['project'],
                           n_project=configure['n_project'])
+        return analyze_param
+
+    analyze_pool[analyze_identifier] = analyze_instantiation
+
+
+analyze_configuration=[]
+analyze_method=['knn']
+ks=[100]
+nums_subsamples=[20,50,100]
+for method , k,num_subsamples in itertools.product(analyze_method,ks,nums_subsamples):
+    identifier=f"[{method}]-[k={k}]-[num_subsamples={num_subsamples}]"
+    identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+    analyze_configuration.append(dict(identifier=identifier,k=k,num_subsamples=num_subsamples))
+
+
+
+# create the pool
+for config in analyze_configuration:
+    configuration=copy.deepcopy(config)
+    analyze_identifier=configuration['identifier']
+    def analyze_instantiation(identfier=analyze_identifier,configure=frozenset(configuration.items())):
+        configure = dict(configure)
+        analyze_param=knnAnalysis(identifier=configure['identifier'],
+                           k=configure['k'],
+                           num_subsamples=configure['num_subsamples'])
         return analyze_param
 
     analyze_pool[analyze_identifier] = analyze_instantiation
