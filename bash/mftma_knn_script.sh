@@ -26,6 +26,7 @@ while IFS=, read -r line_count model analyze analyze_file ; do
       run_analyze=$analyze
       run_file=$analyze_file
       do_run=true
+      break
     else
       do_run=false
       echo "didnt the right match"
@@ -33,6 +34,9 @@ while IFS=, read -r line_count model analyze analyze_file ; do
 
 done <"${GRAND_FILE}"
 
+echo "model ${run_model}"
+echo "analyze ${run_analyze}"
+echo "file to analyze ${run_file}"
 #if [ "$do_run" = true ] ; then
 #  echo 'correct parsing'
 #fi
