@@ -31,7 +31,7 @@ while IFS=, read -r line_count model analyze analyze_file ; do
 #      echo "didnt the right match"
 #  fi
 
-done <GRAND_FILE
+done <$GRAND_FILE
 
 #if [ "$do_run" = true ] ; then
 #  echo 'correct parsing'
