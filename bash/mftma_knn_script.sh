@@ -15,7 +15,7 @@ if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
 else
   JID=$1        # Taking the task ID as an input parameter.
 fi
-echo "Line ${GRAND_FILE}"
+echo "${GRAND_FILE}"
 
 while IFS=, read -r line_count model analyze analyze_file ; do
   echo "line_count ${model}"
@@ -31,7 +31,7 @@ while IFS=, read -r line_count model analyze analyze_file ; do
 #      echo "didnt the right match"
 #  fi
 
-done <$GRAND_FILE
+done <"${GRAND_FILE}"
 
 #if [ "$do_run" = true ] ; then
 #  echo 'correct parsing'
