@@ -15,10 +15,10 @@ if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
 else
   JID=$1        # Taking the task ID as an input parameter.
 fi
-echo "Line ${JID}"
+echo "Line ${GRAND_FILE}"
 
 while IFS=, read -r line_count model analyze analyze_file ; do
-  echo "line_count ${line_count}"
+  echo "line_count ${model}"
 #  if [ $JID == $line_count ]
 #    then
 #      echo "found the right match"
