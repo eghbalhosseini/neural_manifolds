@@ -17,25 +17,25 @@ else
 fi
 echo "Line ${JID}"
 
-while IFS=',' read -r line_count model analyze analyze_file ; do
+while IFS=, read -r line_count model analyze analyze_file ; do
   echo "line_count ${line_count}"
-  if [ $JID == $line_count ]
-    then
-      echo "found the right match"
-      run_model=$model
-      run_analyze=$analyze
-      run_file=$analyze_file
-      do_run=true
-    else
-      do_run=false
-      echo "didnt the right match"
-  fi
+#  if [ $JID == $line_count ]
+#    then
+#      echo "found the right match"
+#      run_model=$model
+#      run_analyze=$analyze
+#      run_file=$analyze_file
+#      do_run=true
+#    else
+#      do_run=false
+#      echo "didnt the right match"
+#  fi
 
 done <GRAND_FILE
 
-if [ "$do_run" = true ] ; then
-  echo 'correct parsing'
-fi
+#if [ "$do_run" = true ] ; then
+#  echo 'correct parsing'
+#fi
 #module add openmind/singularity
 #export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
 #XDG_CACHE_HOME=/om/user/`whoami`/st
