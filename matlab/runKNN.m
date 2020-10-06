@@ -1,6 +1,7 @@
 function M = runKNN(varargin)
 p=inputParser();
-addParameter(p, 'data_dir', '/om/group/evlab/Greta_Eghbal_manifolds/extracted/');
+addParameter(p, 'root_dir', '/om/group/evlab/Greta_Eghbal_manifolds/');
+addParameter(p, 'analyze_identifier', 'knn');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');
 addParameter(p, 'dist_metric', 'euclidean');
@@ -48,7 +49,12 @@ addpath('utils')
 % 
 % file_dir = strcat(params.data_dir, params.model_identifier, filesep);
 % cd(file_dir)
-KNN_files = dir(strcat(params.data_dir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
+
+dataDir = strcat(params.root_dir, '/extracted/');
+analyzeDir = strcat(params.root_dir, '/analyze/', params.analyze_identifier, filesep);
+resultDir = strcat(params.root_dir, '/result/', params.analyze_identifier, filesep);
+
+KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
 
 %% 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);
@@ -56,7 +62,7 @@ assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
 KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
-disp(strcat('Searching for KNN files in: ', (strcat(params.data_dir, params.model_identifier))))
+disp(strcat('Searching for KNN files in: ', (strcat(dataDir, params.model_identifier))))
 assert(~isempty(KNN_data), 'KNN files empty - no files found!')
 
 file = load(KNN_data{1});
@@ -174,8 +180,11 @@ relTime = productionTime./max(productionTime);
 
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
-saveStr = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
-saveStrMat = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+% Save directories
+saveStrResult = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+saveStrAnalyze = strcat(params.root_dir,'/analyze/',params.analyze_identifier,filesep,params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+
+% Colors
 colorsEpoch = magma(max(epoch) +1); % 3 colors
 % colorsEpoch = colorsEpoch(2:end, :);
 colorsTarget = magma(max(num_classes));
@@ -220,7 +229,7 @@ if params.save_fig
     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
     xlabel('Relative time in training')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'test_acc_',saveStr));
+    saveas(gcf, strcat(resultDir,'testAcc_',saveStrResult));
     
     % If label using subepoch indexing:
 %     set(gca,'XTick',downsample(incrSubEpochTrial,15))
@@ -246,7 +255,7 @@ if params.save_fig
     xlabel('Relative time in training')
     ylabel('Norm')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'norm_epochColor_',saveStr));
+    saveas(gcf, strcat(resultDir,'norm_epochColor_',saveStrResult));
 end 
 
 % Target coloring
@@ -260,7 +269,7 @@ if params.save_fig
     xlabel('Relative time in training')
     ylabel('Norm')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'norm_targetColor_',saveStr));
+    saveas(gcf, strcat(resultDir,'norm_targetColor_',saveStrResult));
 end 
 
 %% Vector norm - meaned across samples
@@ -284,7 +293,7 @@ if params.save_fig
     ylabel('Relative time in training')
     colorbar()
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'NearestNeighbors_',saveStr));
+    saveas(gcf, strcat(resultDir,'nearestNeighbors_',saveStrResult));
 end  
 
 y1 = reshape(NNids, params.num_subsamples, length(KNN_files), params.k-1); % num subsamples x num points in time x num k-1
@@ -321,7 +330,7 @@ if params.save_fig
     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
     xlabel('Relative time in training')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanNormNN_',saveStr));
+    saveas(gcf, strcat(resultDir,'meanNormNN_',saveStrResult));
 end
 
 
@@ -356,7 +365,7 @@ if params.save_fig
     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
     xlabel('Relative time in training')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanTimeNormNN_',saveStr));
+    saveas(gcf, strcat(resultDir,'meanTimeNormNN_',saveStrResult));
 end
 
 
@@ -375,7 +384,7 @@ if params.save_fig
     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
     xlabel('Relative time in training')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanStdTimeNormNN_',saveStr));
+    saveas(gcf, strcat(resultDir,'meanStdTimeNormNN_',saveStrResult));
 end
 
 %% Target coloring
@@ -394,12 +403,13 @@ if params.save_fig
     set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
     xlabel('Relative time in training')
     axis tight
-    saveas(gcf, strcat(pwd,filesep,'figures',filesep,'meanStdTimeNormNN_targetColor_',saveStr));
+    saveas(gcf, strcat(resultDir,'meanStdTimeNormNN_targetColor_',saveStrResult));
 end
 
 %% Save variables
 
 %% First across all subsamples, then averaged - pairwise
+
 keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
     'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
     'stdNormNN', 'meanTimeStdNormNN'};
@@ -419,7 +429,7 @@ clear keySet valueSet M
 
 end % End hierarchy loop
 
-save('saveStrMat', 'cell_map')
+save('saveStrAnalyze', 'cell_map');
 
 end
 
