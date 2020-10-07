@@ -7,7 +7,7 @@
 GRAND_FILE=$1
 #MODEL_ID=$2
 #ANALYZE_ID=$3
-#OVERWRITE=$4
+OVERWRITE='true'
 #
 
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
@@ -29,7 +29,7 @@ while IFS=, read -r line_count model analyze analyze_file ; do
       break
     else
       do_run=false
-      echo "didnt the right match"
+      #echo "didnt the right match"
   fi
 
 done <"${GRAND_FILE}"
@@ -37,14 +37,11 @@ done <"${GRAND_FILE}"
 echo "model ${run_model}"
 echo "analyze ${run_analyze}"
 echo "file to analyze ${run_file}"
-#if [ "$do_run" = true ] ; then
-#  echo 'correct parsing'
-#fi
-#module add openmind/singularity
-#export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
-#XDG_CACHE_HOME=/om/user/`whoami`/st
-#export XDG_CACHE_HOME
+module add openmind/singularity
+export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
+XDG_CACHE_HOME=/om/user/`whoami`/st
+export XDG_CACHE_HOME
 
 # Get the relevant line from the parameters
-#singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_analysis.py ${FILE_LINE} ${MODEL_ID} ${ANALYZE_ID} ${OVERWRITE}
+singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_analysis.py ${run_file} ${run_model} ${run_analyze} ${OVERWRITE}
 
