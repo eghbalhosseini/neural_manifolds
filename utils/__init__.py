@@ -163,9 +163,9 @@ for config in analyze_configuration:
     analyze_identifier=configuration['identifier']
     def analyze_instantiation(identfier=analyze_identifier,configure=frozenset(configuration.items())):
         configure = dict(configure)
-        analyze_param=knnAnalysis(analyze_method=configure['method'],
-                           k=configure['exm_per_class'],
-                           num_subsamples=configure['identifier'],
+        analyze_param=mftmaAnalysis(analyze_method=configure['method'],
+                           exm_per_class=configure['exm_per_class'],
+                           identifier=configure['identifier'],
                            n_t=configure['n_t'],
                            kappa=configure['kappa'],
                            n_rep=configure['n_rep'],
