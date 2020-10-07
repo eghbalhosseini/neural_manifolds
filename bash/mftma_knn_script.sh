@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#SBATCH -c 1
+#SBATCH -c 8
 #SBATCH --exclude node[017-018]
-#SBATCH -t 1:00:00
+#SBATCH -t 3:00:00
 
 GRAND_FILE=$1
 #MODEL_ID=$2
