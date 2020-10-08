@@ -9,9 +9,11 @@ import os
 import scipy.io as sio
 
 parser = argparse.ArgumentParser(description='extract and save activations')
+parser.add_argument('file_id', type=str,default=' ')
 parser.add_argument('task_id', type=int,default=0)
 parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
-parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
+parser.add_argument('overwrite',type=str,default='True')
+
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -20,27 +22,38 @@ if __name__ == '__main__':
     # get sub_data
     # create hierarchical version of the data
     # STEP 1. get the variables
+    file_id = args.file_id
     task_id = args.task_id
     model_identifier = args.model_id
     analyze_identifier = args.analyze_id
+    overwrite = args.overwrite
     #
     # STEP 2. load model and analysis parameters
     #
     params = train_pool[model_identifier]()
     layer_names=params.get_layer_names()
-    pickle_file = os.path.join(save_dir,model_identifier, 'master_'+model_identifier+'.pkl')
+    model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+
+    pickle_file = os.path.join(save_dir,model_identifier_for_saving, 'master_'+model_identifier+'.pkl')
+    data = pickle.load(open(pickle_file, 'rb'))
     #
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
-    generated_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '.csv'), 'r')
-    weight_files = generated_files_txt.read().splitlines()
-    weight_file = weight_files[args.task_id]
-    weight_data = pickle.load(open(weight_file, 'rb'))
+    # check if path exists
+    if not os.path.exists(os.path.join(save_dir,model_identifier_for_saving)):
+        os.mkdir(os.path.join(save_dir,model_identifier_for_saving))
+
+    file_parts = file_id.split('/')
+    weight_data = pickle.load(open(file_id, 'rb'))
+    #generated_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '.csv'), 'r')
+    #weight_files = generated_files_txt.read().splitlines()
+    #weight_file = weight_files[args.task_id]
+    #weight_data = pickle.load(open(weight_file, 'rb'))
 
     # STEP 3. load the dataset
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pickle.load(open(pickle_file, 'rb'))
+
 
 
     # STEP 4. create the dataset for testing
@@ -66,8 +79,8 @@ if __name__ == '__main__':
     model = data['model_structure']
     model = model.to(device)
 
-    model.load_state_dict(torch.load(weight_file)['state_dict'])
-    weight_data=torch.load(weight_file)
+    model.load_state_dict(torch.load(file_id)['state_dict'])
+    weight_data=torch.load(file_id)
     model = model.eval()
     # STEP 6. create projection dataset
     projection_data_ = {'projection_results': []}
@@ -81,7 +94,8 @@ if __name__ == '__main__':
     for name in layer_names:
         layer_proj_cell = [{name: x[name]} for x in projection_cell]
         # STEP 7. save the file
-        projection_file = weight_file.replace(".pth", '')
+        projection_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
+        projection_file = projection_file.replace(".pth", '')
         projection_file = projection_file + '_' + name + '_extracted.pkl'
 
         projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',

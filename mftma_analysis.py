@@ -35,37 +35,32 @@ if __name__=='__main__':
     # check if path exists
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier)):
         os.mkdir(os.path.join(analyze_dir,analyze_identifier))
-    #generated_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_extracted.csv'), 'r')
-    #extracted_files = generated_files_txt.read().splitlines()
-    #extracted_file = extracted_files[task_id]
-    #print(extracted_file)
+
     file_parts=file_id.split('/')
     extracted_data = pickle.load(open(file_id, 'rb'))
     projection_data_ = extracted_data['projection_results']
+    # create outputfile
+    mftma_file=os.path.join(analyze_dir,analyze_identifier,file_parts[-1])
+    mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # check whether file exist
-    # do_analysis=True
-    # if 'False' in overwrite:
-    #     if os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
-    #         mftma_analysis_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,
-    #                                                  'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'r')
-    #         pattern = re.compile(extracted_file.replace("_extracted.pkl", '_mftma_analysis.pkl'))
-    #         for line in mftma_analysis_files_txt:
-    #             for match in re.finditer(pattern,line):
-    #                 do_analysis=False
-    #     else:
-    #         do_analysis=True
+    do_analysis=True
+    if 'False' in overwrite:
+         if os.path.exists(mftma_file):
+            do_analysis=False
+         else:
+             do_analysis=True
     #
-    # if do_analysis:
+    if do_analysis:
     # run mftma
-    mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
+        mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
         # save results:
-    mftma_file=os.path.join(analyze_dir,analyze_identifier,file_parts[-1])
-    mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
+        mftma_file=os.path.join(analyze_dir,analyze_identifier,file_parts[-1])
+        mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
         #print(mftma_file)
     #
-    d_master = {'mftma_results': mftma_results,
+        d_master = {'mftma_results': mftma_results,
                  'analyze_identifier': analyze_identifier,
                  'model_identifier': model_identifier,
                  'layer_name': extracted_data['layer_name'],
@@ -73,7 +68,7 @@ if __name__=='__main__':
                  'test_acc': extracted_data['test_acc'],
                  'epoch': extracted_data['epoch'],
                  'files_generated': mftma_file}
-    save_dict(d_master, mftma_file)
+        save_dict(d_master, mftma_file)
     #     if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
     #         mftma_analysis_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'w')
     #         mftma_analysis_files_txt.write(mftma_file+'\n')
