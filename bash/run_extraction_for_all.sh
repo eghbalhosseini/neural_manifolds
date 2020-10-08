@@ -27,6 +27,6 @@ for model in NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-
 done
 
 
-#nohup /cm/shared/admin/bin/submit-many-jobs LINE_COUNT 1300 1500 200 new_extraction_script.sh $GRAND_FILE
+nohup /cm/shared/admin/bin/submit-many-jobs LINE_COUNT 1300 1500 200 new_extraction_script.sh $GRAND_FILE
 
 
