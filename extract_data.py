@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description='extract and save activations')
 parser.add_argument('file_id', type=str,default=' ')
 parser.add_argument('task_id', type=int,default=0)
 parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
+parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
 parser.add_argument('overwrite',type=str,default='True')
 
 args = parser.parse_args()
