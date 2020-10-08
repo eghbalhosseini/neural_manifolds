@@ -1,8 +1,9 @@
 #!/bin/bash
 #
 #SBATCH -n 1 # one core
-#SBATCH -N 1 # on one node
+#SBATCH --mem=8000
 #SBATCH -t 2:00:00
+
 GRAND_FILE=$1
 OVERWRITE='true'
 #
