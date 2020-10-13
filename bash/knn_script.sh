@@ -41,5 +41,5 @@ echo "file to analyze ${run_file}"
 
 
 module add mit/matlab/2020a
-matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));knn_analysis;quit;"
+matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));knn_analysis(${run_file},${run_model},${run_analyze});quit;"
 
