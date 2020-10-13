@@ -3,8 +3,7 @@ set(0,'defaultfigurecolor',[1 1 1])
 
 %%
 % do one to get the within and between identifier 
-ops=neural_manifold_create_synth_data_cholesky_method_gt('n_class',20,'n_feat',100,'exm_per_class',10,'save_path',join([pwd,'\synth_datasets']))
-
+ops=create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'save_path',join([pwd,'\synth_datasets']))
 % n_class (20)*exm_per_class (10) = 200 data points, 100 features each.
 
 figure;imagesc(ops.data)
@@ -27,11 +26,17 @@ figure;imagesc(within_class)
 figure;imagesc(between_class)
 
 %% Function for visualizing various aspects of the data
-plot_decomp(data)
+plot_decomp(ops.data)
 
 %% 
-beta_range=linspace(1e-10,.05,10);
-sigma_range=linspace(1e-5,2.5,10);
+% beta_range=linspace(1e-10,.05,10);
+% sigma_range=linspace(1e-5,2.5,10);
+
+beta_range=linspace(1e-10,.05, 4);
+sigma_range=linspace(1e-5,2.5, 4);
+
+% beta_range=linspace(1e-10,5,10); % does not provide more info 
+% sigma_range=linspace(1e-10,5,10); % does not provide more info
 
 [Beta,Sigma]=meshgrid(beta_range,sigma_range);
 
@@ -49,7 +54,7 @@ WTH_pdist=c_ratio;
 
 
 for i=1:(length(Beta(:)))
-    ops=neural_manifold_create_synth_data_cholesky_method_gt('n_class',20,'n_feat',100,'exm_per_class',10,'beta',Beta(i),'sigma',Sigma(i));
+    ops=create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'beta',Beta(i),'sigma',Sigma(i));
     c=cov(transpose(ops.data));
     
 %     figure;imagesc(c);

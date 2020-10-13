@@ -67,7 +67,7 @@ ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
 ops_out.n_hier=n_hier;
-data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.2f_sigma_%1.2f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm));
+data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm));
 save(data_loc,'ops_out','-v7.3');
 fprintf('saved data in %s \n',data_loc);
 end

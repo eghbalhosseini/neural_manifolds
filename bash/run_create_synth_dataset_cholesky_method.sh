@@ -13,10 +13,10 @@
 
 
 i=0
-for beta_id in 1 2 ; do
-  for sigma_id in 1 2 ; do
+for beta_id in 1 2 3 4; do
+  for sigma_id in 1 2 3 4; do
     for struct_id in 1 2 ; do
-      for n_class in 50 64 96 100 ; do
+      for n_class in 64 96 ; do
         struct_list[$i]=$struct_id
         beta_list[$i]=$beta_id
         sigma_list[$i]=$sigma_id
@@ -32,12 +32,12 @@ echo "Running n_class ${n_class_list[$SLURM_ARRAY_TASK_ID]}"
 echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 
 module add mit/matlab/2020a
-matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);addpath('/home/ehoseini/MyCodes/neural_manifolds/');\
-addpath(genpath('/om/user/ehoseini/neural_manifolds/'));\
+matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
+addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
 save_path='/om/group/evlab/Greta_Eghbal_manifolds/data/';\
 structures={'partition','tree'};\
-betas=[1e-10,0.0222];\
-sigmas=[0.8333,2.5];\
+betas=[1e-10, 0.016, 0.033,	0.05];\
+sigmas=[1e-05	0.833, 1.667,	2.5];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
 n_class=${n_class_list[$SLURM_ARRAY_TASK_ID]};\
