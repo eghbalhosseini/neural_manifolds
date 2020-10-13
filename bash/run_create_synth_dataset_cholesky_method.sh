@@ -36,8 +36,8 @@ matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
 save_path='/om/group/evlab/Greta_Eghbal_manifolds/data/';\
 structures={'partition','tree'};\
-betas=[1e-10, 0.016, 0.033,	0.05];\
-sigmas=[1e-05	0.833, 1.667,	2.5];\
+betas=[1e-10,0.016,0.033,0.05];\
+sigmas=[1e-05,0.833,1.667,2.5];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
 n_class=${n_class_list[$SLURM_ARRAY_TASK_ID]};\
