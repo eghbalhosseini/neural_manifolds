@@ -180,13 +180,13 @@ for config in analyze_configuration:
 analyze_configuration=[]
 analyze_method=['knn']
 ks=[100]
-nums_subsamples=[20,50,100]
-for method , k,num_subsamples in itertools.product(analyze_method,ks,nums_subsamples):
-    identifier=f"[{method}]-[k={k}]-[num_subsamples={num_subsamples}]"
+nums_subsamples=[100,200,500]
+dist_metric=['euclidean','cosine']
+
+for method , k,dist_m,num_subsamples in itertools.product(analyze_method,ks,dist_metric,nums_subsamples):
+    identifier=f"[{method}]-[k={k}]-[dist_metric={dist_m}]-[num_subsamples={num_subsamples}]"
     identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
-    analyze_configuration.append(dict(identifier=identifier,k=k,num_subsamples=num_subsamples))
-
-
+    analyze_configuration.append(dict(identifier=identifier,k=k,dist_metric=dist_m,num_subsamples=num_subsamples))
 
 # create the pool
 for config in analyze_configuration:
@@ -196,7 +196,8 @@ for config in analyze_configuration:
         configure = dict(configure)
         analyze_param=knnAnalysis(identifier=configure['identifier'],
                            k=configure['k'],
-                           num_subsamples=configure['num_subsamples'])
+                           num_subsamples=configure['num_subsamples'],
+                                  distance_metric=configure['dist_metric'])
         return analyze_param
 
     analyze_pool[analyze_identifier] = analyze_instantiation

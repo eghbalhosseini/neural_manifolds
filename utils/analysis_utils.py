@@ -62,10 +62,11 @@ class mftmaAnalysis:
 
 
 class knnAnalysis:
-    def __init__(self,identifier=None,save_fig=True,k=100,num_subsamples=100):
+    def __init__(self,identifier=None,save_fig=True,distance_metric=None,k=100,num_subsamples=100):
         ##### DATA ####
         self.identifier=identifier
         self.k=k
+        self.distance_metric=distance_metric
         self.num_subsamples=num_subsamples
         self.save_fig=save_fig
 
