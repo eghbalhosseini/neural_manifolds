@@ -12,6 +12,7 @@ ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted/
 #chmod g+w -R "${ROOT_DIR}"
 
 
+
 i=0
 for model in NN-partition_nclass=100_nobj=100000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed \
              NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed \

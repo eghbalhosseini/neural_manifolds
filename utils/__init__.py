@@ -63,29 +63,17 @@ class params:
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
-
+data_config=[]
 # Creating tags for training paradigm
-data_config = [{'data_file':'synth_partition_nobj_100000_nclass_100_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_50000_nclass_50_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_64000_nclass_64_nhier_1_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_partition_nobj_96000_nclass_96_nhier_1_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-                {'data_file':'synth_tree_nobj_50000_nclass_50_nhier_3_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
-                {'data_file':'synth_tree_nobj_100000_nclass_100_nhier_4_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape':(1,3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.00_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.00_sigma_2.50_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.02_sigma_0.83_norm_1.mat','shape': (1, 3072)},
-               {'data_file': 'synth_tree_nobj_96000_nclass_96_nhier_6_nfeat_3072_beta_0.02_sigma_2.50_norm_1.mat','shape': (1, 3072)}]
-
-
+data_structure=[dict(struct='partition',nclass=64,n_hier=1),
+                dict(struct='partition',nclass=96,n_hier=1),
+                dict(struct='tree',nclass=64,n_hier=6),
+                dict(struct='tree',nclass=96,n_hier=6)]
+for idx, structure in enumerate(data_structure):
+    for beta in ['0.0000','0.0160','0.0330','0.0500']:
+        for sigma in ['0.0000','0.8330','1.6670','2.5000']:
+            data_file=f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_3072_beta_{beta}_sigma_{sigma}_norm_1.mat"
+            data_config.append(dict(data_file=data_file,shape=(1,3072)))
 
 train_configuration = []
 
