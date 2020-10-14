@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=run_train
 #SBATCH -t 8:00:00
-#SBATCH --array=0
+#SBATCH --array=0-63
 #SBATCH --mem=80000
 #SBATCH --exclude node017,node018
 
@@ -17,7 +17,7 @@ struct_arr=($struct_list)
 hier_arr=($hier_list)
 
 i=0
-for beta in 0.05 0.033 0.016 0.0 ; do
+for beta in 0.0 0.016 0.033 0.05 ; do
   for sigma in 0.0 0.833 1.667 2.5 ; do
     for nclass in 64 96 ; do
       for idx in 0 1 ; do
@@ -31,18 +31,18 @@ for beta in 0.05 0.033 0.016 0.0 ; do
   done
 done
 # define singularity paths
-#module add openmind/singularity
+module add openmind/singularity
 # TODO : check whether this is correct
-#SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
-#export SINGULARITY_CACHEDIR
+SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
+export SINGULARITY_CACHEDIR
 #
-#XDG_CACHE_HOME=/om/user/`whoami`/st
-#export XDG_CACHE_HOME
+XDG_CACHE_HOME=/om/user/`whoami`/st
+export XDG_CACHE_HOME
 # run training
-#echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
-#echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
+echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
+echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-#singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
 #wait
 # Grant access
 #chmod g+w -R ${ROOT_DIR}${model_list[$SLURM_ARRAY_TASK_ID]}
