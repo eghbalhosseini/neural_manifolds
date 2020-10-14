@@ -11,7 +11,7 @@ OVERWRITE='true'
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
   JID=$SLURM_ARRAY_TASK_ID    # Taking the task ID in a job array as an input parameter.
 else
-  JID=$1        # Taking the task ID as an input parameter.
+  JID=$2        # Taking the task ID as an input parameter.
 fi
 echo "${GRAND_FILE}"
 echo $JID
