@@ -5,6 +5,7 @@ overwrite='False'
 i=0
 LINE_COUNT=0
 GRAND_FILE="${ROOT_DIR}/Grand_pool_${analyze}_extracted.csv"
+rm -f $GRAND_FILE
 touch $GRAND_FILE
 
 struct_list="partition tree"
