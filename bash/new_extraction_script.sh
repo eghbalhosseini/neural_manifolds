@@ -2,6 +2,7 @@
 #
 #SBATCH -n 1 # one core
 #SBATCH -t 1:00:00
+#SBATCH --mem=8000
 
 GRAND_FILE=$1
 OVERWRITE='true'
