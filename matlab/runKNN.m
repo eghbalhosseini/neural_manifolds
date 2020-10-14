@@ -56,6 +56,10 @@ dataDir = strcat(params.root_dir, '/extracted/');
 analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep);
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep);
 
+% Make directories according to analyzeID
+mkdir(analyzeDir)
+mkdir(resultDir)
+
 KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
 disp('Found KNN files!')
 
