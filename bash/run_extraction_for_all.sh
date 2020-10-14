@@ -26,7 +26,6 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-                echo $LINE_COUNT
 	      done <$FULL_FILE
 
         i=$i+1
@@ -36,7 +35,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 done
 
 
-
-nohup /cm/shared/admin/bin/submit-many-jobs LINE_COUNT 1300 1500 200 new_extraction_script.sh $GRAND_FILE
+echo $LINE_COUNT
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 new_extraction_script.sh $GRAND_FILE
 
 
