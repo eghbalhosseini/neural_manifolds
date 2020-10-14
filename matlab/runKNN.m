@@ -72,8 +72,8 @@ file = load(KNN_data{1});
 file = file.activation;
 
 % Iterate over all hierarchies in the file 
-nhier_idx = strfind(model_identifier,'nhier');
-nhier_level = str2num(model_identifier(nhier_idx + length('nhier') + 1));
+nhier_idx = strfind(params.model_identifier,'nhier');
+nhier_level = str2num(params.model_identifier(nhier_idx + length('nhier') + 1));
 
 % Generate cell for saving the maps of results
 cell_map = {};
