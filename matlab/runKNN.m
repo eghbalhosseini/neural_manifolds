@@ -35,10 +35,12 @@ set(groot, 'DefaultAxesTickDirMode', 'manual');
 set(gcf,'color','w');
 
 %% Directories
-tmp = matlab.desktop.editor.getActive;
-cd(fileparts(tmp.Filename));
+% tmp = matlab.desktop.editor.getActive;
+% cd(fileparts(tmp.Filename));
 
-addpath('utils')
+addpath(strcat('/om/user/gretatu/neural_manifolds/matlab/utils/')
+addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/')
+
 
 % Load the generated mat files, session of interest: (input, the model identifier)
 
@@ -55,6 +57,7 @@ analyzeDir = strcat(params.root_dir, '/analyze/', params.analyze_identifier, fil
 resultDir = strcat(params.root_dir, '/result/', params.analyze_identifier, filesep);
 
 KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
+disp('Found KNN files!')
 
 %% 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);

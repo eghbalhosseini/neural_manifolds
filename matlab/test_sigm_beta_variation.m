@@ -29,6 +29,9 @@ figure;imagesc(between_class)
 plot_decomp(ops.data)
 
 %% 
+betas=[1e-10,0.016,0.033,0.05];
+sigmas=[1.667,2.5];
+
 % beta_range=linspace(1e-10,.05,10);
 % sigma_range=linspace(1e-5,2.5,10);
 
