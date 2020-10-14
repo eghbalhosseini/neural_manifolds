@@ -3,7 +3,8 @@ import pickle
 import sys
 import os
 from mftma.manifold_analysis_correlation import manifold_analysis_corr
-
+import copy
+import itertools
 def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):
     mfmta_data_ = {'mftma_results': []}
     # run mftma on all layers and hierarchies
@@ -58,9 +59,6 @@ class mftmaAnalysis:
         self.save_mat=save_mat
 
 
-
-
-
 class knnAnalysis:
     def __init__(self,identifier=None,save_fig=True,distance_metric=None,k=100,num_subsamples=100):
         ##### DATA ####
@@ -79,3 +77,70 @@ class knnAnalysis:
     #test_split = .2
     #shuffle_dataset = True
     #random_seed = 1
+
+
+#############ANALYSIS ###########################
+# Creating tags for analysis paradigms
+analyze_pool={}
+
+analyze_method=['mftma']
+n_ts=[300]
+kappas=[0]
+n_reps=[1]
+n_projs=[5000]
+
+exm_per_class=[20,50,100]
+projection_flag=[False,True]
+randomize=[True,False]
+
+analyze_configuration=[]
+for method , n_t,n_rep, kappa, exm ,proj_flag,rand_flag,n_proj in itertools.product(analyze_method,n_ts,n_reps,kappas,exm_per_class,projection_flag,randomize,n_projs):
+    identifier=f"[{method}]-[exm_per_class={exm}]-[proj={proj_flag}]-[rand={rand_flag}]-[kappa={kappa}]-[n_t={n_t}]-[n_rep={n_rep}]"
+    identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+    analyze_configuration.append(dict(identifier=identifier,exm_per_class=exm,method=method,project=proj_flag,randomize=rand_flag,kappa=kappa,n_t=n_t,n_rep=n_rep,n_project=n_proj))
+
+
+# create the pool
+for config in analyze_configuration:
+    configuration=copy.deepcopy(config)
+    analyze_identifier=configuration['identifier']
+    def analyze_instantiation(identfier=analyze_identifier,configure=frozenset(configuration.items())):
+        configure = dict(configure)
+        analyze_param=mftmaAnalysis(analyze_method=configure['method'],
+                           exm_per_class=configure['exm_per_class'],
+                           identifier=configure['identifier'],
+                           n_t=configure['n_t'],
+                           kappa=configure['kappa'],
+                           n_rep=configure['n_rep'],
+                           randomize=configure['randomize'],
+                           project=configure['project'],
+                          n_project=configure['n_project'])
+        return analyze_param
+
+    analyze_pool[analyze_identifier] = analyze_instantiation
+
+
+analyze_configuration=[]
+analyze_method=['knn']
+ks=[100]
+nums_subsamples=[100,200,500]
+dist_metric=['euclidean','cosine']
+
+for method , k,dist_m,num_subsamples in itertools.product(analyze_method,ks,dist_metric,nums_subsamples):
+    identifier=f"[{method}]-[k={k}]-[dist_metric={dist_m}]-[num_subsamples={num_subsamples}]"
+    identifier=identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+    analyze_configuration.append(dict(identifier=identifier,k=k,dist_metric=dist_m,num_subsamples=num_subsamples))
+
+# create the pool
+for config in analyze_configuration:
+    configuration=copy.deepcopy(config)
+    analyze_identifier=configuration['identifier']
+    def analyze_instantiation(identfier=analyze_identifier,configure=frozenset(configuration.items())):
+        configure = dict(configure)
+        analyze_param=knnAnalysis(identifier=configure['identifier'],
+                           k=configure['k'],
+                           num_subsamples=configure['num_subsamples'],
+                                  distance_metric=configure['dist_metric'])
+        return analyze_param
+
+    analyze_pool[analyze_identifier] = analyze_instantiation
