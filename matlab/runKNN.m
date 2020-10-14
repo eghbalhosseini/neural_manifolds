@@ -57,8 +57,14 @@ analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, file
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep);
 
 % Make directories according to analyzeID
-mkdir(analyzeDir)
-mkdir(resultDir)
+if ~exist(analyzeDir, 'dir')
+   mkdir(analyzeDir)
+end
+
+if ~exist(resultDir, 'dir')
+   mkdir(resultDir)
+end
+
 
 KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
 disp('Found KNN files!')
@@ -436,6 +442,7 @@ clear keySet valueSet M
 
 end % End hierarchy loop
 
+disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
 save('saveStrAnalyze', 'cell_map');
 
 end
