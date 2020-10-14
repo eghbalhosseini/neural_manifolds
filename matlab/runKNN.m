@@ -38,8 +38,8 @@ set(gcf,'color','w');
 % tmp = matlab.desktop.editor.getActive;
 % cd(fileparts(tmp.Filename));
 
-addpath(strcat('/om/user/gretatu/neural_manifolds/matlab/utils/')
-addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/')
+addpath(strcat('/om/user/gretatu/neural_manifolds/matlab/utils/'))
+addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 
 
 % Load the generated mat files, session of interest: (input, the model identifier)
