@@ -1,6 +1,7 @@
 from utils.analysis_utils import run_mftma
 from utils.model_utils import save_dict
-from utils import save_dir, data_dir,analyze_dir, analyze_pool, train_pool
+from utils import save_dir, data_dir,analyze_dir, train_pool
+from utils.analysis_utils import analyze_pool
 import torch
 import pickle
 import os
