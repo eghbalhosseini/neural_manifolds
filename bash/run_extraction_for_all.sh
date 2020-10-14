@@ -7,13 +7,11 @@ LINE_COUNT=0
 GRAND_FILE="${ROOT_DIR}/Grand_pool_${analyze}_extracted.csv"
 touch $GRAND_FILE
 
-
 struct_list="partition tree"
 hier_list="1 6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-i=0
 for beta in 0.0 0.016 0.033 0.05 ; do
   for sigma in 0.0 0.833 1.667 2.5 ; do
     for nclass in 64 96 ; do
@@ -28,6 +26,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 MODEL_LINE=$(expr ${MODEL_LINE} + 1)
+                echo $LINE_COUNT
 	      done <$FULL_FILE
 
         i=$i+1
