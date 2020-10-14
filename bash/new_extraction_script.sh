@@ -1,8 +1,7 @@
 #!/bin/bash
 #
 #SBATCH -n 1 # one core
-#SBATCH --mem=8000
-#SBATCH -t 2:00:00
+#SBATCH -t 1:00:00
 
 GRAND_FILE=$1
 OVERWRITE='true'
@@ -15,6 +14,7 @@ else
   JID=$1        # Taking the task ID as an input parameter.
 fi
 echo "${GRAND_FILE}"
+echo $JID
 
 while IFS=, read -r line_count model_line model analyze analyze_file ; do
   #echo "line_count ${model}"
