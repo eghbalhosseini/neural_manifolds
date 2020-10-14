@@ -53,8 +53,8 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % cd(file_dir)
 
 dataDir = strcat(params.root_dir, '/extracted/');
-analyzeDir = strcat(params.root_dir, '/analyze/', params.analyze_identifier, filesep);
-resultDir = strcat(params.root_dir, '/result/', params.analyze_identifier, filesep);
+analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep);
+resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep);
 
 KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
 disp('Found KNN files!')
