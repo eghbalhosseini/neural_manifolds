@@ -445,7 +445,7 @@ end % End hierarchy loop
 disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
 
 cd(analyzeDir)
-save('knntestsave', 'cell_map');
+save('knntestsave.mat', 'cell_map');
 save('saveStrAnalyze', 'cell_map');
 
 end
