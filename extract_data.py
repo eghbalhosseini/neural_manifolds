@@ -72,12 +72,13 @@ if __name__ == '__main__':
         # write the files if they dont exist in extraction
         projection_done_file_list=[x+'\n' for x in projection_done_file_list]
         if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w',os.O_NONBLOCK)
 
             extracted_files_txt.writelines(projection_done_file_list)
+            extracted_files_txt.flush()
             print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
         else:
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a+',os.O_NONBLOCK)
             already_written=extracted_files_txt.readlines()
             print(f" {len(already_written)} are already written")
             temp=intersection(already_written,projection_done_file_list)
@@ -85,7 +86,7 @@ if __name__ == '__main__':
                 projection_done_file_list.remove(k)
             print(f"adding {len(projection_done_file_list)} remaining files to extracted.csv")
             extracted_files_txt.writelines(projection_done_file_list)
-
+            extracted_files_txt.flush()
     # based on layers decide to run the files
     print(layer_extraction)
     do_extraction=False
@@ -161,15 +162,17 @@ if __name__ == '__main__':
             projection_file_list.append(projection_file+'\n')
         # write to csv file
         if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w',os.O_NONBLOCK)
             extracted_files_txt.writelines(projection_file_list)
             print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
+            extracted_files_txt.flush()
         else:
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a+',os.O_NONBLOCK)
             already_written = extracted_files_txt.readlines()
             temp = intersection(already_written, projection_file_list)
             for k in temp:
                 projection_done_file_list.remove(k)
             print(f"adding {len(projection_done_file_list)} remaining files to extracted.csv")
             extracted_files_txt.writelines(projection_done_file_list)
+            extracted_files_txt.flush()
         print('done!')
