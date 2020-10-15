@@ -52,11 +52,13 @@ if __name__ == '__main__':
     file_parts = file_id.split('/')
     layer_extraction=[True for k in layer_names]
     projection_done_file_list=[]
+    print(f"overwriting {overwrite}")
     if 'false' in overwrite:
         for idx, name in enumerate(layer_names):
             projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
             projection_file = projection_file.replace(".pth", '')
             projection_file = projection_file + '_' + name + '_extracted.pkl'
+            print(f"looking for {projection_file}")
             if os.path.exists(projection_file):
                 # file exist already , write it and set layer_analysis to false
                 print(f"{projection_file} already exists")
