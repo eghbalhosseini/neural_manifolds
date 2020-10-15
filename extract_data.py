@@ -14,9 +14,12 @@ parser.add_argument('file_id', type=str,default=' ')
 parser.add_argument('task_id', type=int,default=0)
 parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
 parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
-parser.add_argument('overwrite',type=str,default='True')
+parser.add_argument('overwrite',type=str,default='false')
 
 args = parser.parse_args()
+
+def intersection(lst1, lst2):
+    return list(set(lst1) & set(lst2))
 
 if __name__ == '__main__':
     # get identifier,
@@ -47,81 +50,105 @@ if __name__ == '__main__':
         os.mkdir(os.path.join(save_dir,model_identifier_for_saving))
 
     file_parts = file_id.split('/')
-    weight_data = pickle.load(open(file_id, 'rb'))
-    #generated_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '.csv'), 'r')
-    #weight_files = generated_files_txt.read().splitlines()
-    #weight_file = weight_files[args.task_id]
-    #weight_data = pickle.load(open(weight_file, 'rb'))
+    layer_extraction=[True for k in layer_names]
+    projection_done_file_list=[]
+    if 'false' in overwrite:
+        for idx, name in enumerate(layer_names):
+            projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+            projection_file = projection_file.replace(".pth", '')
+            projection_file = projection_file + '_' + name + '_extracted.pkl'
+            if os.path.exists(projection_file):
+                # file exist already , write it and set layer_analysis to false
+                layer_extraction[idx]=False
+                projection_done_file_list.append(projection_file)
+                # check if file exist in master
+        # write the files if they dont exist in extraction
+        if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
+            extracted_files_txt.writelines(projection_done_file_list)
+        else:
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
+            already_written=extracted_files_txt.readlines()
+            remaining=intersection(already_written,projection_done_file_list)
+            extracted_files_txt.writelines(remaining)
 
-    # STEP 3. load the dataset
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # based on layers decide to run the files
+    do_extraction=False
+    if True in layer_extraction:
+        do_extraction=True
+    else:
+        do_extraction=False
 
+    if do_extraction:
+        weight_data = pickle.load(open(file_id, 'rb'))
+        # STEP 3. load the dataset
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # STEP 4. create the dataset for testing
+        data_loader = data['test_loader']
+        num_hierarchy = len(data_loader.dataset.hierarchical_target)
+        sample_idx = data_loader.sampler.indices
+        hier_classes = [x.astype(int) for x in data_loader.dataset.hierarchical_target]
+        hier_n_class = [int(max(x) + 1) for x in hier_classes]
+        hier_dataset = []
+        exm_per_class = analyze_params.exm_per_class
+        for idx, x in enumerate(hier_classes):
+            dat_hier = []
+            [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
+            hier_dataset.append(dat_hier)
+        # TODO make_manifold_data should output labels too:x
 
-
-    # STEP 4. create the dataset for testing
-    data_loader = data['test_loader']
-    num_hierarchy = len(data_loader.dataset.hierarchical_target)
-    sample_idx = data_loader.sampler.indices
-    hier_classes = [x.astype(int) for x in data_loader.dataset.hierarchical_target]
-    hier_n_class = [int(max(x) + 1) for x in hier_classes]
-    hier_dataset = []
-    exm_per_class = analyze_params.exm_per_class
-    for idx, x in enumerate(hier_classes):
-        dat_hier = []
-        [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
-        hier_dataset.append(dat_hier)
-    # TODO make_manifold_data should output labels too:x
-
-    hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
+        hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
                                             examples_per_class=analyze_params.exm_per_class,seed=0,
                                             randomize=analyze_params.randomize) for idx, x in enumerate(hier_dataset)]
 
-    hier_sample_mtmfa = [[d.to(device) for d in data] for data in hier_sample_mtmfa]
-    # STEP 5. load the model and weights
-    model = data['model_structure']
-    model = model.to(device)
+        hier_sample_mtmfa = [[d.to(device) for d in data] for data in hier_sample_mtmfa]
+        # STEP 5. load the model and weights
+        model = data['model_structure']
+        model = model.to(device)
 
-    model.load_state_dict(torch.load(file_id)['state_dict'])
-    weight_data=torch.load(file_id)
-    model = model.eval()
-    # STEP 6. create projection dataset
-    projection_data_ = {'projection_results': []}
-    extract = mftma_extractor()
-    activations_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
-    projection_cell = [extract.project(x, max_dim=analyze_params.n_project) for x in activations_cell]
-    for x in projection_cell:
-        assert(len(layer_names) == len(x))
-    # reorder files based on the layer
-    projection_file_list = []
-    for name in layer_names:
-        layer_proj_cell = [{name: x[name]} for x in projection_cell]
-        # STEP 7. save the file
-        projection_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
-        projection_file = projection_file.replace(".pth", '')
-        projection_file = projection_file + '_' + name + '_extracted.pkl'
+        model.load_state_dict(torch.load(file_id)['state_dict'])
+        weight_data=torch.load(file_id)
+        model = model.eval()
+        # STEP 6. create projection dataset
+        projection_data_ = {'projection_results': []}
+        extract = mftma_extractor()
+        activations_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
+        projection_cell = [extract.project(x, max_dim=analyze_params.n_project) for x in activations_cell]
+        for x in projection_cell:
+            assert(len(layer_names) == len(x))
+        # reorder files based on the layer
+        projection_file_list = []
+        for name in layer_names:
+            layer_proj_cell = [{name: x[name]} for x in projection_cell]
+            # STEP 7. save the file
+            projection_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
+            projection_file = projection_file.replace(".pth", '')
+            projection_file = projection_file + '_' + name + '_extracted.pkl'
 
-        projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
+            projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
                                           os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(4) + '_')
-        print(projection_file)
-        d_master = {'projection_results': layer_proj_cell,
-                    'analyze_identifier': analyze_identifier,
-                    'model_identifier': model_identifier,
-                    'layer_name': name,
-                    'files_generated': projection_file,
-                    'train_acc': weight_data['train_acc'],
-                    'test_acc': weight_data['test_acc'],
-                    'epoch': weight_data['epoch'],
-                    'batchidx': weight_data['batchidx']
-                    }
-        save_dict(d_master, projection_file)
-        mat_file_name = projection_file.replace(".pkl", '.mat')
-        sio.savemat(mat_file_name, {'activation': d_master})
-        projection_file_list.append(projection_file+'\n')
-    # write to csv file
-    if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
-        extracted_files_txt.writelines(projection_file_list)
-    else:
-        extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
-        extracted_files_txt.writelines(projection_file_list)
-    print('done!')
+            print(projection_file)
+            d_master = {'projection_results': layer_proj_cell,
+                        'analyze_identifier': analyze_identifier,
+                        'model_identifier': model_identifier,
+                        'layer_name': name,
+                        'files_generated': projection_file,
+                        'train_acc': weight_data['train_acc'],
+                        'test_acc': weight_data['test_acc'],
+                        'epoch': weight_data['epoch'],
+                        'batchidx': weight_data['batchidx']
+                        }
+            save_dict(d_master, projection_file)
+            mat_file_name = projection_file.replace(".pkl", '.mat')
+            sio.savemat(mat_file_name, {'activation': d_master})
+            projection_file_list.append(projection_file+'\n')
+        # write to csv file
+        if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
+            extracted_files_txt.writelines(projection_file_list)
+        else:
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
+            already_written = extracted_files_txt.readlines()
+            remaining = intersection(already_written, projection_file_list)
+            extracted_files_txt.writelines(remaining)
+        print('done!')

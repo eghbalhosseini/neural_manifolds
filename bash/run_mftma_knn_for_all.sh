@@ -29,6 +29,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         FULL_FILE="${ROOT_DIR}/${model}/${EXT_FILE}"
         echo $FULL_FILE
         MODEL_LINE=0
+        #TODO make pkl to .mat transformation
         while read line; do
 	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$line" >> $GRAND_MFTMA_FILE
 	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_knn" "$line" >> $GRAND_KNN_FILE
