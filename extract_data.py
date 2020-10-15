@@ -70,8 +70,10 @@ if __name__ == '__main__':
                 projection_done_file_list.append(projection_file)
                 # check if file exist in master
         # write the files if they dont exist in extraction
+        projection_done_file_list=[x+'\n' for x in projection_done_file_list]
         if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
+
             extracted_files_txt.writelines(projection_done_file_list)
             print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
         else:
