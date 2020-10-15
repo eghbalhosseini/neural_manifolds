@@ -66,18 +66,22 @@ if __name__ == '__main__':
         if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
             extracted_files_txt.writelines(projection_done_file_list)
+            print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
         else:
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
             already_written=extracted_files_txt.readlines()
             remaining=intersection(already_written,projection_done_file_list)
+            print(f"adding {len(remaining)} remaining files to extracted.csv")
             extracted_files_txt.writelines(remaining)
 
     # based on layers decide to run the files
     do_extraction=False
     if True in layer_extraction:
         do_extraction=True
+        print('extracting data')
     else:
         do_extraction=False
+        print('not extracting data')
 
     if do_extraction:
         weight_data = pickle.load(open(file_id, 'rb'))
@@ -146,9 +150,11 @@ if __name__ == '__main__':
         if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
             extracted_files_txt.writelines(projection_file_list)
+            print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
         else:
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
             already_written = extracted_files_txt.readlines()
             remaining = intersection(already_written, projection_file_list)
             extracted_files_txt.writelines(remaining)
+            print(f"adding {len(remaining)} remaining files to extracted.csv")
         print('done!')
