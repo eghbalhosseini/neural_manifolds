@@ -7,7 +7,7 @@ addParameter(p, 'layer', 'layer_3_Linear');
 addParameter(p, 'dist_metric', 'euclidean');
 addParameter(p, 'save_fig', true);
 addParameter(p, 'k', 100);
-addParameter(p, 'num_subsamples', 10);
+addParameter(p, 'num_subsamples', 100);
 %addParameter(p, 'hier_level', 5);
 
 
@@ -195,7 +195,7 @@ relTime = productionTime./max(productionTime);
 
 % Save directories
 saveStrResult = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
-saveStrAnalyze = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+saveStrAnalyze = strcat(params.model_identifier,'_',params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 
 % Colors
 colorsEpoch = magma(max(epoch) +1); % 3 colors
@@ -445,7 +445,6 @@ end % End hierarchy loop
 disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
 
 cd(analyzeDir)
-% save('knntestsave.mat', 'cell_map');
 save(saveStrAnalyze, 'cell_map');
 
 end
