@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description='run mftma and save results')
 parser.add_argument('file_id', type=str, default='')
 parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
 parser.add_argument('analyze_id', type=str, default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
-parser.add_argument('overwrite',type=str,default='True')
+parser.add_argument('overwrite',type=str,default='false')
 args = parser.parse_args()
 
 if __name__=='__main__':
@@ -36,18 +36,20 @@ if __name__=='__main__':
     # check if path exists
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier)):
         os.mkdir(os.path.join(analyze_dir,analyze_identifier))
+    if not os.path.exists(os.path.join(analyze_dir,analyze_identifier,model_identifier)):
+        os.mkdir(os.path.join(analyze_dir,analyze_identifier,model_identifier))
 
     file_parts=file_id.split('/')
     extracted_data = pickle.load(open(file_id, 'rb'))
     projection_data_ = extracted_data['projection_results']
     # create outputfile
-    mftma_file=os.path.join(analyze_dir,analyze_identifier,file_parts[-1])
+    mftma_file=os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
     mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # check whether file exist
     do_analysis=True
-    if 'False' in overwrite:
+    if 'false' in overwrite:
          if os.path.exists(mftma_file):
             do_analysis=False
          else:
@@ -70,14 +72,14 @@ if __name__=='__main__':
                  'epoch': extracted_data['epoch'],
                  'files_generated': mftma_file}
         save_dict(d_master, mftma_file)
-    #     if not os.path.exists(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv')):
-    #         mftma_analysis_files_txt = open(os.path.join(save_dir,model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'w')
-    #         mftma_analysis_files_txt.write(mftma_file+'\n')
-    #     else:
-    #         mftma_analysis_files_txt = open(os.path.join(save_dir, model_identifier_for_saving,'master_' + model_identifier_for_saving + '_mftma_analysis.csv'), 'a')
-    #         mftma_analysis_files_txt.write(mftma_file + '\n')
-    #     print('done')
-    # else:
-    #     print('file already exists, abort')
-    #     pass
+        if not os.path.exists(os.path.join(analyze_dir, analyze_identifier,model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv')):
+            mftma_analysis_files_txt = open(os.path.join(analyze_dir,analyze_identifier,model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv'), 'w')
+            mftma_analysis_files_txt.write(mftma_file+'\n')
+        else:
+            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier,model_identifier,'master_' + model_identifier + '_mftma_analysis.csv'), 'a')
+            mftma_analysis_files_txt.write(mftma_file + '\n')
+        print('done')
+    else:
+         print('file already exists, abort')
+         pass
 

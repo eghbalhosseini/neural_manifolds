@@ -4,6 +4,7 @@
 #SBATCH --exclude node[017-018]
 #SBATCH -t 3:00:00
 
+
 GRAND_FILE=$1
 #MODEL_ID=$2
 #ANALYZE_ID=$3
@@ -13,15 +14,16 @@ OVERWRITE='true'
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
   JID=$SLURM_ARRAY_TASK_ID    # Taking the task ID in a job array as an input parameter.
 else
-  JID=$1        # Taking the task ID as an input parameter.
+  JID=$2        # Taking the task ID as an input parameter.
 fi
 echo "${GRAND_FILE}"
 
-while IFS=, read -r line_count model analyze analyze_file ; do
+while IFS=, read -r line_count model_line model analyze analyze_file ; do
   #echo "line_count ${model}"
   if [ $JID == $line_count ]
     then
       echo "found the right match ${line_count}"
+      run_model_line=$model_line
       run_model=$model
       run_analyze=$analyze
       run_file=$analyze_file

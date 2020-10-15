@@ -1,7 +1,7 @@
 #!/bin/sh
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted/
 analyze='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
-overwrite='False'
+
 i=0
 LINE_COUNT=0
 GRAND_FILE="${ROOT_DIR}/Grand_pool_${analyze}_extracted.csv"
