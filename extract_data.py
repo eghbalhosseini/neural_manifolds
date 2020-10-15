@@ -66,6 +66,22 @@ if __name__ == '__main__':
             if os.path.exists(projection_file):
                 # file exist already , write it and set layer_analysis to false
                 print(f"{projection_file} already exists")
+                if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_'+name+'.csv')):
+                    knn_extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_'+name+'.csv'), 'w',os.O_NONBLOCK)
+                    knn_extracted_files_txt.writelines(projection_file+'\n')
+                    knn_extracted_files_txt.flush()
+                else:
+                    knn_extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_'+name+'.csv'), 'a+',os.O_NONBLOCK)
+                    knn_already_written = knn_extracted_files_txt.readlines()
+                    print(f" {len(knn_already_written)} are already written")
+                    temp = intersection(knn_already_written, [projection_file])
+                    for k in temp:
+                        [projection_file].remove(k)
+                    projection_done_list = [x + '\n' for x in [projection_file]]
+                    print(f"adding {len(projection_done_list)} remaining files to knn_extracted.csv")
+                    knn_extracted_files_txt.writelines(projection_done_list)
+                    knn_extracted_files_txt.flush()
+
                 layer_extraction[idx]=False
                 projection_done_file_list.append(projection_file)
                 # check if file exist in master
