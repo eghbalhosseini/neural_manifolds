@@ -79,6 +79,7 @@ if __name__ == '__main__':
         else:
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
             already_written=extracted_files_txt.readlines()
+            print(f" {len(already_written)} are already written")
             temp=intersection(already_written,projection_done_file_list)
             for k in temp:
                 projection_done_file_list.remove(k)
