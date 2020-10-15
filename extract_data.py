@@ -67,7 +67,7 @@ if __name__ == '__main__':
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
             extracted_files_txt.writelines(projection_done_file_list)
         else:
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
             already_written=extracted_files_txt.readlines()
             remaining=intersection(already_written,projection_done_file_list)
             extracted_files_txt.writelines(remaining)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
             extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w')
             extracted_files_txt.writelines(projection_file_list)
         else:
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a')
+            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'r+')
             already_written = extracted_files_txt.readlines()
             remaining = intersection(already_written, projection_file_list)
             extracted_files_txt.writelines(remaining)
