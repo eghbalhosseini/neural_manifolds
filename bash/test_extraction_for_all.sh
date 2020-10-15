@@ -37,6 +37,6 @@ done
 
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 200 350 50 new_extraction_script.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 160 200 40 new_extraction_script.sh $GRAND_FILE &
 
 

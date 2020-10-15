@@ -58,6 +58,10 @@ if __name__ == '__main__':
             projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
             projection_file = projection_file.replace(".pth", '')
             projection_file = projection_file + '_' + name + '_extracted.pkl'
+            projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
+                                                      os.path.join(save_dir, model_identifier) + '/' + str(
+                                                          task_id).zfill(4) + '_')
+
             print(f"looking for {projection_file}")
             if os.path.exists(projection_file):
                 # file exist already , write it and set layer_analysis to false
