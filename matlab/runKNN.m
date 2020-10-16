@@ -87,6 +87,9 @@ nhier_level = str2num(params.model_identifier(nhier_idx + length('nhier') + 1));
 
 % Generate cell for saving the maps of results
 cell_map = {};
+% Generate hier field names and structures in a list
+hier_field_names = [];
+hier_field_structs = [];
 
 for hier_level = 1:nhier_level
     
@@ -423,29 +426,65 @@ end
 
 %% First across all subsamples, then averaged - pairwise
 
-keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
-    'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
-    'stdNormNN', 'meanTimeStdNormNN'};
-
-valueSet = {hier_level, params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
-    dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
-     stdNormNN, meanTimeStdNormNN};
- 
-M = containers.Map(keySet,valueSet,'UniformValues',false);
-% Get vals
-% M('params')
-
-cell_map{1, hier_level} = M;
+%% If saving as map structure
+% keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
+%     'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
+%     'stdNormNN', 'meanTimeStdNormNN'};
+% 
+% valueSet = {hier_level, params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
+%     dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
+%      stdNormNN, meanTimeStdNormNN};
+%  
+% M = containers.Map(keySet,valueSet,'UniformValues',false);
+% % Get vals
+% % M('params')
+% 
+% cell_map{1, hier_level} = M;
 
 % Clear variables for saving the next hierarchy results
-clear keySet valueSet M 
+% clear keySet valueSet M 
+
+%% If saving as struct
+% Structs per hierarchy
+hier_struct = struct('hier_level', hier_level, ...
+                    'params', params_out, ...
+                    'targets', targets, ...
+                    'testAccSubsamples', testAccSubsamples, ...
+                    'testAcc', testAcc, ...
+                    'trainAccSubsamples', trainAccSubsamples, ...
+                    'trainAcc', trainAcc, ...
+                    'dataNorm', dataNorm, ...
+                    'meanTimeDataNorm', meanTimeDataNorm, ...
+                    'NNids', NNids, ...
+                    'meanTimeNNids', meanTimeNNids, ...
+                    'meanNormNN', meanNormNN, ...
+                    'meanTimeNormNN', meanTimeNormNN, ...
+                    'stdNormNN', stdNormNN, ...
+                    'meanTimeStdNormNN', meanTimeStdNormNN)
+
+hier_field_name = strcat('hier_', num2str(hier_level));
+
+% Append to array
+hier_field_names = [hier_field_names; hier_field_name]
+hier_field_structs = [hier_field_structs; hier_struct]
+
+% Clear variables for saving the next hierarchy results
+clear hier_field_name hier_field_struct 
 
 end % End hierarchy loop
+
+% Structs of structs
+% hier_field_names_cell = num2cell(hier_field_names);
+hier_field_structs_cell = num2cell(hier_field_structs);
+
+super_struct = cell2struct(hier_field_structs_cell, hier_field_names);
 
 disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
 
 cd(analyzeDir)
-save(saveStrAnalyze, 'cell_map');
+% save(saveStrAnalyze, 'cell_map');
+save(saveStrAnalyze, 'super_struct','-v7.3');
+
 
 end
 
