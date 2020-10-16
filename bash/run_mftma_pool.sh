@@ -6,14 +6,27 @@
 #SBATCH --exclude node017,node018
 
 ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted/
-analyze='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
+ANALYSIS_DIR=/om/group/evlab/Greta_Eghbal_manifolds/analyze/
+analyze_mftma='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 i=0
-for model in NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed \
-             NN-tree_nclass=96_nobj=96000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed; do
-               # combine configs
-                    model_list[$i]="$model"
-                    i=$[$i + 1]
+
+struct_list="partition tree"
+hier_list="1 6"
+struct_arr=($struct_list)
+hier_arr=($hier_list)
+
+for beta in 0.016 ; do
+  for sigma in 0.833 2.5 ; do
+    for nclass in 96 ; do
+      for idx in 1 ; do
+        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+        model_list[$i]="$model"
+        i=$i+1
+      done
+    done
+  done
 done
+
 
 module add openmind/singularity
 export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
@@ -21,6 +34,6 @@ XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
-echo "Running analysis:  f$analyze"
+echo "Running poolin for :  ${analyze_mftma}"
 
-singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/ls .py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze}
+singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze}

@@ -1,9 +1,8 @@
 from utils.model_utils import save_dict
-from utils import save_dir, data_dir, train_pool
+from utils import save_dir, data_dir, train_pool, analyze_dir
 from utils.analysis_utils import analyze_pool
 import pickle
 import os
-import glob
 import re
 import numpy as np
 import argparse
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     # find layers
-    analysis_files_csv = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'r')
+    analysis_files_csv = open(os.path.join(analyze_dir,analyze_params, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'r')
     analysis_files = analysis_files_csv.read().splitlines()
     s = [re.findall('/\d+', x)[0] for x in analysis_files]
     file_id = [int(x.split('/')[1]) for x in s]
@@ -45,7 +44,7 @@ if __name__ == '__main__':
             layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx, batch=batchidx,
                  seq=id_file,train_acc=data_['train_acc'],test_acc=data_['test_acc'] , file=file))
         mftma_pooled[layer]=layer_results
-    pool_file = os.path.join(save_dir,model_identifier_for_saving, f'{model_identifier_for_saving}_mftma_pooled.pkl')
+    pool_file = os.path.join(analyze_dir,analyze_params,model_identifier_for_saving, f'{model_identifier_for_saving}_mftma_pooled.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'mftma_results': mftma_pooled,
