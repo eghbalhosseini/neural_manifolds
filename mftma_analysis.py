@@ -43,7 +43,7 @@ if __name__=='__main__':
     extracted_data = pickle.load(open(file_id, 'rb'))
     projection_data_ = extracted_data['projection_results']
     # create outputfile
-    mftma_file=os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
+    mftma_file = os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
     mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -59,7 +59,7 @@ if __name__=='__main__':
     # run mftma
         mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
         # save results:
-        mftma_file=os.path.join(analyze_dir,analyze_identifier,file_parts[-1])
+        mftma_file=os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
         mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
         #print(mftma_file)
     #
@@ -73,11 +73,13 @@ if __name__=='__main__':
                  'files_generated': mftma_file}
         save_dict(d_master, mftma_file)
         if not os.path.exists(os.path.join(analyze_dir, analyze_identifier,model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv')):
-            mftma_analysis_files_txt = open(os.path.join(analyze_dir,analyze_identifier,model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv'), 'w')
+            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier, model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv'),'w',os.O_NONBLOCK)
             mftma_analysis_files_txt.write(mftma_file+'\n')
+            mftma_analysis_files_txt.flush()
         else:
-            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier,model_identifier,'master_' + model_identifier + '_mftma_analysis.csv'), 'a')
+            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier,model_identifier,'master_' + model_identifier + '_mftma_analysis.csv'),'a+',os.O_NONBLOCK)
             mftma_analysis_files_txt.write(mftma_file + '\n')
+            mftma_analysis_files_txt.flush()
         print('done')
     else:
          print('file already exists, abort')
