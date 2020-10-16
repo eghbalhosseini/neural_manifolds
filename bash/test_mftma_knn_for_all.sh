@@ -44,7 +44,7 @@ done
 
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 mftma_script.sh $GRAND_MFTMA_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 2000 2500 500 mftma_script.sh $GRAND_MFTMA_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 knn_script.sh $GRAND_KNN_FILE &
 
 
