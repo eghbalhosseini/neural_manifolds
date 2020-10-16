@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_pool
-#SBATCH --array=0-1
+#SBATCH --array=0-0
 #SBATCH --time=12:00:00
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
@@ -34,6 +34,6 @@ XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
-echo "Running poolin for :  ${analyze_mftma}"
+echo "Running pooling for :  ${analyze_mftma}"
 
-singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze}
+singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma}
