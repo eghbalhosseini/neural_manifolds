@@ -1,7 +1,7 @@
 #!/bin/bash
 MODEL_DIR=$1
 ANALYZE=$2
-ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
+ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted
 PTH_FILE="master_${MODEL_DIR}.csv"
 MODEL_ID=$MODEL_DIR
 ANALYZE_ID=$ANALYZE
