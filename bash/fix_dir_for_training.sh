@@ -4,6 +4,7 @@ ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 i=0
 LINE_COUNT=0
 
+
 struct_list="partition tree"
 hier_list="1 6"
 struct_arr=($struct_list)
@@ -26,8 +27,9 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 
         echo $FULL_FILE
         MODEL_LINE=0
+        correction="/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds"
         while read line; do
-              new_line="${line//om/group/evlab/Greta_Eghbal_manifolds//mindhive/evlab/u/Shared/Greta_Eghbal_manifolds}"
+              new_line="${line//om/group/evlab/Greta_Eghbal_manifolds/$correction}"
 	            printf "$new_line" >> $AUX_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 MODEL_LINE=$(expr ${MODEL_LINE} + 1)
