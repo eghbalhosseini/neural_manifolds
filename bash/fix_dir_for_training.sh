@@ -30,7 +30,8 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         correction="/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds"
         while read line; do
               new_line="${line//om/group/evlab/Greta_Eghbal_manifolds/$correction}"
-	            printf "$new_line" >> $AUX_FILE
+              printf "%s\n" "$new_line" >> $AUX_FILE
+
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE
