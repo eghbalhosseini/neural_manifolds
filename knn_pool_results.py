@@ -9,9 +9,14 @@ import scipy.io
 import mat73
 from glob import glob
 
+os.chdir('/Users/gt/Documents/GitHub/neural_manifolds')
 model_identifier = 'NN-tree_nclass=64_nobj=64000_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed'
+feature='testAcc'
+
 
 def getKNN(model_identifier, feature):
+    d_model = {}
+
     # cd into analyze identifier folder
 
     # find files corresponding to the correct model identifier
@@ -21,8 +26,14 @@ def getKNN(model_identifier, feature):
     sorted_model_files = np.sort(model_files)
     # extract per layer
 
+
     for layerFile in sorted_model_files:
         print(layerFile) # check that order corresponds
+        startIdx = sorted_model_files[0].index('layer')
+        endIdx = sorted_model_files[0].index('_numSub')
+
+        layerName = sorted_model_files[0][startIdx:endIdx]
+
         mat = mat73.loadmat(layerFile)
 
         superStruct = mat['super_struct']
@@ -33,6 +44,12 @@ def getKNN(model_identifier, feature):
             assert(hier == int(hierFile['hier_level']))
 
             featureOfInterest = hierFile[feature]
+
+            d_model[layerName] = featureOfInterest
+
+    return d_model
+
+
 
 
 

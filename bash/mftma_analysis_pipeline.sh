@@ -3,7 +3,7 @@
 MODEL_DIR=$1
 ANALYZE=$2
 OVERWRITE=$3
-ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted
+ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted
 
 EXT_FILE="master_${MODEL_DIR}_extracted.csv"
 MODEL_ID=$MODEL_DIR

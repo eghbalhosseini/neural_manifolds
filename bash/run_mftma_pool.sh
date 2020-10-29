@@ -5,8 +5,8 @@
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
 
-ROOT_DIR=/om/group/evlab/Greta_Eghbal_manifolds/extracted/
-ANALYSIS_DIR=/om/group/evlab/Greta_Eghbal_manifolds/analyze/
+ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
+ANALYSIS_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/
 analyze_mftma='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 i=0
 
