@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-#SBATCH -n 1 # one core
 #SBATCH -N 1 # on one node
 #SBATCH -t 2:00:00
 ARRAY_ID=$1
