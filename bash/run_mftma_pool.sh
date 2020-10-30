@@ -36,4 +36,4 @@ export XDG_CACHE_HOME
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 echo "Running pooling for :  ${analyze_mftma}"
 
-singularity exec -B /om:/om /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma}
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/mftma_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma}
