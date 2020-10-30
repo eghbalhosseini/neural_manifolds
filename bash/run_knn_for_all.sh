@@ -25,8 +25,13 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         FULL_FILE="${ROOT_DIR}/${model}/${EXT_FILE}"
         echo $FULL_FILE
         if [ -f "$FULL_FILE" ] ; then
+          # first create an auxilary with fix nulls
+          AUX_FILE="master_${model}_extracted_aux.csv"
+          FULL_AUX_FILE="${ROOT_DIR}/${model}/${AUX_FILE}"
+          tr < $FULL_FILE '\000' '\n' > $FULL_AUX_FILE
+
         # get layers :
-          Layers=$(grep -a -o "layer.*extracted" $FULL_FILE | sort -u)
+          Layers=$(grep -a -o "layer.*extracted" $FULL_AUX_FILE | sort -u)
           Layers=${Layers//_extracted/}
           MODEL_LINE=0
 
@@ -35,6 +40,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
             LINE_COUNT=$(expr ${LINE_COUNT} + 1)
             MODEL_LINE=$(expr ${MODEL_LINE} + 1)
           done
+          rm -f $FULL_AUX_FILE
         else
           echo "$FULL_FILE doesnt exist yet."
         fi
