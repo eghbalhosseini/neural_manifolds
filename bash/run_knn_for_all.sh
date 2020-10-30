@@ -26,7 +26,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         echo $FULL_FILE
         if [ -f "$FULL_FILE" ] ; then
         # get layers :
-          Layers=$(grep -o "layer.*extracted" $FULL_FILE | sort -u)
+          Layers=$(grep -a -o "layer.*extracted" $FULL_FILE | sort -u)
           Layers=${Layers//_extracted/}
           MODEL_LINE=0
 
