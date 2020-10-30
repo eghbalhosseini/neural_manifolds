@@ -10,6 +10,7 @@ GRAND_FILE=$1
 #ANALYZE_ID=$3
 OVERWRITE='false'
 #
+ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
   JID=$SLURM_ARRAY_TASK_ID    # Taking the task ID in a job array as an input parameter.
@@ -18,7 +19,7 @@ else
 fi
 echo "${GRAND_FILE}"
 
-while IFS=, read -r line_count model_line model analyze layer ; do
+while IFS=, read -r line_count model_line model analyze layer k dist_metric num_subsamples ; do
   #echo "line_count ${model}"
   if [ $JID == $line_count ]
     then
@@ -26,7 +27,10 @@ while IFS=, read -r line_count model_line model analyze layer ; do
       run_model_line=$model_line
       run_model=$model
       run_analyze=$analyze
-      layer_file=$layer
+      run_layer=$layer
+      run_k=$k
+      run_dist_metric=$dist_metric
+      run_num_subsamples=$num_subsamples
       do_run=true
       break
     else
@@ -36,12 +40,13 @@ while IFS=, read -r line_count model_line model analyze layer ; do
 
 done <"${GRAND_FILE}"
 
-echo "model ${run_model}"
+echo "model ${model}"
 echo "analyze ${run_analyze}"
-echo "layer to analyze ${layer_file}"
+echo "layer to analyze ${run_layer}"
 
 
 
 module add mit/matlab/2020a
-matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));knn_analysis(char(${run_file}),char(${run_model}),char(${run_analyze});quit;"
+matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));\
+runKNN(root_dir,${ROOT_DIR},analyze_identifier,${run_analyze},'model_identifier',{$run_model},'layer',{$run_layer},'dist_metric',{$run_dist_metric},'k',str2num({$run_k}),'num_subsamples',str2num({$run_num_subsamples}));quit;"
 
