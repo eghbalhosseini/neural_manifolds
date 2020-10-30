@@ -24,15 +24,20 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         EXT_FILE="master_${model}_extracted.csv"
         FULL_FILE="${ROOT_DIR}/${model}/${EXT_FILE}"
         echo $FULL_FILE
+        if [ -f "$FULL_FILE" ] ; then
         # get layers :
-        Layers=$(grep -o "layer.*extracted" $FULL_FILE | sort -u)
-        MODEL_LINE=0
-        #TODO make pkl to .mat transformation
-        for layer in ${Layers[@]} ; do
-          printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_knn" "$layer" >> $GRAND_KNN_FILE
-          LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-          MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-        done
+          Layers=$(grep -o "layer.*extracted" $FULL_FILE | sort -u)
+          Layers=${Layers//_extracted/}
+          MODEL_LINE=0
+
+          for layer in ${Layers[@]} ; do
+            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_knn" "$layer" >> $GRAND_KNN_FILE
+            LINE_COUNT=$(expr ${LINE_COUNT} + 1)
+            MODEL_LINE=$(expr ${MODEL_LINE} + 1)
+          done
+        else
+          echo "$FULL_FILE doesnt exist yet."
+        fi
         i=$i+1
       done
     done
