@@ -23,8 +23,6 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         AUX_FILE="${ROOT_DIR}/${model}/${AUX_PTH_FILE}"
         rm -f $AUX_FILE
         touch $AUX_FILE
-
-
         echo $FULL_FILE
         MODEL_LINE=0
         original="/om/group/evlab/Greta_Eghbal_manifolds"
@@ -32,6 +30,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 
         while read line; do
               new_line="${line/$original/$correction}"
+              echo "${line/$original/$correction}"
               printf "%s\n" "$new_line" >> $AUX_FILE
 
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
