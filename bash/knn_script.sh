@@ -18,7 +18,7 @@ else
 fi
 echo "${GRAND_FILE}"
 
-while IFS=, read -r line_count model_line model analyze analyze_file ; do
+while IFS=, read -r line_count model_line model analyze layer ; do
   #echo "line_count ${model}"
   if [ $JID == $line_count ]
     then
@@ -26,7 +26,7 @@ while IFS=, read -r line_count model_line model analyze analyze_file ; do
       run_model_line=$model_line
       run_model=$model
       run_analyze=$analyze
-      run_file=$analyze_file
+      layer_file=$layer
       do_run=true
       break
     else
@@ -38,7 +38,7 @@ done <"${GRAND_FILE}"
 
 echo "model ${run_model}"
 echo "analyze ${run_analyze}"
-echo "file to analyze ${run_file}"
+echo "layer to analyze ${layer_file}"
 
 
 
