@@ -1,6 +1,6 @@
 function M = runKNN(varargin)
 p=inputParser();
-addParameter(p, 'root_dir', '/om/group/evlab/Greta_Eghbal_manifolds/');
+addParameter(p, 'root_dir', '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/');
 addParameter(p, 'analyze_identifier', 'knn');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');

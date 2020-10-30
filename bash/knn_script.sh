@@ -8,7 +8,7 @@
 GRAND_FILE=$1
 #MODEL_ID=$2
 #ANALYZE_ID=$3
-OVERWRITE='true'
+OVERWRITE='false'
 #
 
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
