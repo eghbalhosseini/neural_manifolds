@@ -36,7 +36,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE
-        mov $AUX_file $FULL_FILE
+        mov $AUX_FILE $FULL_FILE
         i=$i+1
       done
     done
