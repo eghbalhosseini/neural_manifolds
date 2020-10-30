@@ -45,4 +45,4 @@ exm_per_class=1000;n_feat=3*32*32;\
 beta=betas(${beta_list[$SLURM_ARRAY_TASK_ID]});sigma=sigmas(${sigma_list[$SLURM_ARRAY_TASK_ID]});\
 create_synth_data_cholesky_method('structure',struct,'n_class',n_class,'exm_per_class',exm_per_class,'n_feat',n_feat,'save_path',save_path,'beta',beta,'sigma',sigma);\
 quit;"
-chmod g+w -R /om/group/evlab/Greta_Eghbal_manifolds/data
+chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data

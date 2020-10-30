@@ -64,7 +64,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
   done
 done
 
-
+chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze
 echo $LINE_COUNT
 nohup /cm/shared/admin/bin/submit-many-jobs 3 2 3 1 knn_script.sh $GRAND_KNN_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 knn_script.sh $GRAND_KNN_FILE &
