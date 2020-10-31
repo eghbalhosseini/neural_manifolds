@@ -77,7 +77,7 @@ for idx, structure in enumerate(data_structure):
 
 train_configuration = []
 
-for dataset , model, train_type, stop_type in itertools.product(data_config,['NN'],['train_test'],['fixed','test_performance']):
+for dataset , model, train_type, stop_type in itertools.product(data_config,['NN','linear_NN'],['train_test'],['fixed','test_performance']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
     s = re.findall('nhier_\d+', dataset['data_file'])[0]
