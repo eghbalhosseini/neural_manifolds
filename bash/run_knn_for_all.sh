@@ -50,7 +50,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
           MODEL_LINE=0
 
           for layer in ${Layers[@]} ; do
-            printf "%d, %d , %s, %s, %s, %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_knn" "$layer" "$k" "$dist_metric" "$num_subsamples" >> $GRAND_KNN_FILE
+            printf "%d,%d,%s,%s,%s,%s,%s,%s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_knn" "$layer" "$k" "$dist_metric" "$num_subsamples" >> $GRAND_KNN_FILE
             LINE_COUNT=$(expr ${LINE_COUNT} + 1)
             MODEL_LINE=$(expr ${MODEL_LINE} + 1)
           done

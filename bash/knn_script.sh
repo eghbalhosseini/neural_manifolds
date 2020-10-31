@@ -10,7 +10,7 @@ GRAND_FILE=$1
 #ANALYZE_ID=$3
 OVERWRITE='false'
 #
-ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
+ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/
 
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
   JID=$SLURM_ARRAY_TASK_ID    # Taking the task ID in a job array as an input parameter.
