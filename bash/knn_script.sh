@@ -48,5 +48,5 @@ echo "layer to analyze ${run_layer}"
 
 module add mit/matlab/2020a
 matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));\
-;quit;"
+root='$model';print(root);quit;"
 
