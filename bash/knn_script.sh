@@ -48,6 +48,6 @@ echo "layer to analyze ${run_layer}"
 
 module add mit/matlab/2020a
 matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));\
-root='$model';fprintf('$model');
-runKNN('root_dir','$ROOT_DIR','analyze_identifier','$run_analyze','model_identifier','$run_model','layer','$run_layer','dist_metric','$run_dist_metric','k',$run_k,'num_subsamples',$run_num_subsamples);quit;"
+runKNN('root_dir','$ROOT_DIR','analyze_identifier','$run_analyze','model_identifier','$run_model','layer','$run_layer','dist_metric','$run_dist_metric','k',$run_k,'num_subsamples',$run_num_subsamples);\
+fprintf('done');quit;"
 
