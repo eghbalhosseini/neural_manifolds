@@ -17,7 +17,7 @@ for beta in 0.0 0.016 0.033 0.05 ; do
   for sigma in 0.0 0.833 1.667 2.5 ; do
     for nclass in 64 96 ; do
       for idx in 0 1 ; do
-        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+        model="linear_NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
         model_list[$i]="$model"
         PTH_FILE="master_${model}.csv"
         FULL_FILE="${ROOT_DIR}/${model}/${PTH_FILE}"
