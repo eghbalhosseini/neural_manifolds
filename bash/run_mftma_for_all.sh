@@ -9,11 +9,15 @@ GRAND_MFTMA_FILE="${ANALYSIS_DIR}/Grand_pool_${analyze_mftma}_processed.csv"
 rm -f $GRAND_MFTMA_FILE
 touch $GRAND_MFTMA_FILE
 
+#
+
+
 struct_list="partition tree"
 hier_list="1 6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
-
+old="extracted.pkl"
+new="mftma_analysis.pkl"
 for beta in 0.0 0.016 0.033 0.05 ; do
   for sigma in 0.0 0.833 1.667 2.5 ; do
     for nclass in 64 96 ; do
@@ -25,9 +29,14 @@ for beta in 0.0 0.016 0.033 0.05 ; do
         echo $FULL_FILE
         MODEL_LINE=0
         while read line; do
+          # TODO : make the script check whether the file exists before adding it to the queue
+             # mftma_file=$line
+
+             # new_line="${mftma_file/$old/$new}"
 	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$line" >> $GRAND_MFTMA_FILE
-                LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-                MODEL_LINE=$(expr ${MODEL_LINE} + 1)
+
+              LINE_COUNT=$(expr ${LINE_COUNT} + 1)
+              MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE
         i=$i+1
       done
@@ -37,6 +46,6 @@ done
 
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 mftma_script.sh $GRAND_MFTMA_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 mftma_script.sh $GRAND_MFTMA_FILE &
 
 
