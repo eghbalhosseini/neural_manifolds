@@ -4,7 +4,7 @@ import copy
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from utils.model_utils import train, test, train_test, save_dict, NN, show_cov
+from utils.model_utils import train, train_test, save_dict, NN, show_cov
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
