@@ -220,7 +220,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 
 
 class NN(nn.Module):
-    def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
+    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208):
         super(NN, self).__init__()
         self.fc1 = nn.Linear(num_fc1, num_fc2)
         self.fc2 = nn.Linear(num_fc2, num_fc3)
@@ -234,7 +234,6 @@ class NN(nn.Module):
         x = torch.squeeze(x)
         # print(x.size())
         x_out = F.log_softmax(x, dim=1)
-        # print(yy.size())
 
         return x_out
 
@@ -242,7 +241,7 @@ class NN(nn.Module):
         # return torch.log_softmax(self.fc3(x))
 
 class linear_NN(nn.Module):
-    def __init__(self, num_classes=50, num_fc1=3072, num_fc2=1024, num_fc3=256):
+    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208):
         super(linear_NN, self).__init__()
         self.fc1 = nn.Linear(num_fc1, num_fc2)
         self.fc2 = nn.Linear(num_fc2, num_fc3)

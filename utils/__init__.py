@@ -19,6 +19,8 @@ from importlib import import_module
 
 def load_train(train_name):
     return train_pool[train_name]()
+
+
 #############TRAINING ###########################
 class params:
     def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
@@ -54,11 +56,11 @@ class params:
         return layer_names
     #####  Training specs #####
     #exm_per_class = 100  # examples per class
-    batch_size_train = 64
-    batch_size_test = 64
+    batch_size_train = 32
+    batch_size_test = 32
     epochs = 3
     momentum = 0.5
-    lr = 0.01
+    lr = 0.001
     log_interval = 15 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
