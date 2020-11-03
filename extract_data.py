@@ -130,7 +130,7 @@ if __name__ == '__main__':
             [dat_hier.append((data_loader.dataset[i][0], x[i])) for i in sample_idx]
             hier_dataset.append(dat_hier)
         # TODO make_manifold_data should output labels too:x
-
+        # TODO include hierarchical target label
         hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
                                             examples_per_class=analyze_params.exm_per_class,seed=0,
                                             randomize=analyze_params.randomize) for idx, x in enumerate(hier_dataset)]

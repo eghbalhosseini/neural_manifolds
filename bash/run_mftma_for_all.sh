@@ -8,10 +8,7 @@ LINE_COUNT=0
 GRAND_MFTMA_FILE="${ANALYSIS_DIR}/Grand_pool_${analyze_mftma}_processed.csv"
 rm -f $GRAND_MFTMA_FILE
 touch $GRAND_MFTMA_FILE
-
 #
-
-
 struct_list="partition tree"
 hier_list="1 6"
 struct_arr=($struct_list)
@@ -46,6 +43,6 @@ done
 
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 mftma_script.sh $GRAND_MFTMA_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 mftma_script.sh $GRAND_MFTMA_FILE &
 
 
