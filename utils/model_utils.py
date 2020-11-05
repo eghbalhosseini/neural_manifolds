@@ -39,7 +39,7 @@ class sub_data(Dataset):
     def __getitem__(self, idx):
         single_data = self.data[idx]
         single_target = self.targets[idx]
-
+        single_hier_target=[x[idx] for x in self.hierarchical_target]
         if self.transform is not None:
             single_data = self.transform(single_data)
 
@@ -49,8 +49,8 @@ class sub_data(Dataset):
 
         target_tensor = torch.from_numpy(np.array(single_target))
         target = target_tensor.long()
-
-        return data_tensor, target
+        target_dict=dict(target=single_target,hier_target=single_hier_target)
+        return data_tensor, target_dict
 
 
 def train(epoch, model, device, train_loader, test_loader, optimizer, train_spec):
@@ -130,7 +130,9 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
     train_accuracies = []
     log_interval = train_spec['log_interval']
 
-    for batch_idx, (data, target) in enumerate(train_loader):
+    for batch_idx, (data, target_dict) in enumerate(train_loader):
+        target=target_dict['target']
+        hier_target=target_dict['hier_target']
         # print('In training batch idx loop')
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -152,7 +154,9 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 
             # Extract independent test set during training
             iteration = iter(test_loader)
-            data_test, target_test = next(iteration)
+            data_test, target_test_dict = next(iteration)
+            target_test = target_test_dict['target']
+            hier_target_test = target_test_dict['hier_target']
 
             with torch.no_grad():  # don't save gradient
                 # Allow eval for test set inference
@@ -192,6 +196,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 'test_acc': accuracy_test,
                 'data_test': data_test,
                 'target_test': target_test,
+                'hier_target_test':hier_target_test,
                 'epoch': epoch,
                 'batchidx': batch_idx, }  # add test targets etc for starters
 
