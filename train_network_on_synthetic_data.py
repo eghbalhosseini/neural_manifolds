@@ -33,7 +33,7 @@ print(user)
 
 if __name__ == '__main__':
     # model_identifier = args.model_identifier
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=1_beta=0.016_sigma=0.0_nfeat=3072-train_test-fixed'
+    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.0_nfeat=3072-train_test-fixed'
 
     #model_identifier = 'NN-tree_nclass=50_nobj=50000_nhier=3_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed'
     params = train_pool[model_identifier]()

@@ -32,6 +32,21 @@ class sub_data(Dataset):
         self.n_latent = int(ops.n_latent)
         self.is_norm = bool(ops.norm)
         self.hierarchical_target = [x - 1 for x in ops.hierarchical_class_ids]
+        self.transformation_mats = self.create_hier_transform()
+
+    def create_hier_transform(self):
+        base_targets = self.hierarchical_target[0]
+        target_classes = [np.unique(x) for x in self.hierarchical_target]
+        target_index = [[np.argwhere(x == y) for y in np.unique(x)] for x in self.hierarchical_target]
+        target_base_assignment =[[np.unique(np.asarray([[base_targets[z]] for z in y])) for y in x ] for x in target_index]
+        tranformation_mats=[np.zeros((len(target_classes[0]),len(x))) for x in target_classes]
+
+        for matrix_idx, matrix in enumerate(target_base_assignment):
+            for column, row_array in enumerate(matrix):
+                for row in row_array:
+                    tranformation_mats[matrix_idx][int(row), column] = 1
+        return tranformation_mats
+
 
     def __len__(self):
         return len(self.targets)
@@ -48,8 +63,8 @@ class sub_data(Dataset):
         data_tensor = data_tensor.type(torch.FloatTensor)
 
         target_tensor = torch.from_numpy(np.array(single_target))
-        target = target_tensor.long()
-        target_dict=dict(target=single_target,hier_target=single_hier_target)
+        target_long = target_tensor.long()
+        target_dict = dict(target=target_long, hier_target=single_hier_target)
         return data_tensor, target_dict
 
 
@@ -131,7 +146,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
     log_interval = train_spec['log_interval']
 
     for batch_idx, (data, target_dict) in enumerate(train_loader):
-        target=target_dict['target']
+        target = target_dict['target']
         hier_target=target_dict['hier_target']
         # print('In training batch idx loop')
         data, target = data.to(device), target.to(device)
