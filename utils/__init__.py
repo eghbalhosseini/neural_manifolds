@@ -16,6 +16,7 @@ import copy
 import os
 import re
 from importlib import import_module
+import numpy as np
 
 def load_train(train_name):
     return train_pool[train_name]()
@@ -58,24 +59,23 @@ class params:
     #exm_per_class = 100  # examples per class
     batch_size_train = 32
     batch_size_test = 32
-    epochs = 3
+    epochs = 4
     momentum = 0.5
     lr = 0.001
-    log_interval = 15 # when to save, extract, and test the data
+    log_interval = 30 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
 data_config=[]
 # Creating tags for training paradigm
-data_structure=[dict(struct='partition',nclass=64,n_hier=1),
-                dict(struct='partition',nclass=96,n_hier=1),
-                dict(struct='tree',nclass=64,n_hier=6),
-                dict(struct='tree',nclass=96,n_hier=6)]
+data_structure=[dict(struct='partition',nclass=64,n_hier=1,shape=(1,936)),
+                dict(struct='tree',nclass=64,n_hier=6,shape=(1,936))]
 for idx, structure in enumerate(data_structure):
-    for beta in ['0.0000','0.0160','0.0330','0.0500']:
-        for sigma in ['0.0000','0.8330','1.6670','2.5000']:
-            data_file=f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_3072_beta_{beta}_sigma_{sigma}_norm_1.mat"
-            data_config.append(dict(data_file=data_file,shape=(1,3072)))
+    for beta in ['0.0160']: # ['0.0000','0.0160','0.0330','0.0500']
+        for sigma in ['0.8330']: # ['0.0000','0.8330','1.6670','2.5000']
+            nfeat=np.prod(structure['shape'])
+            data_file=f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_{nfeat}_beta_{beta}_sigma_{sigma}_norm_1.mat"
+            data_config.append(dict(data_file=data_file,shape=structure['shape']))
 
 train_configuration = []
 
