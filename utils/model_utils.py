@@ -166,14 +166,30 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
         optimizer.step()
 
         if (batch_idx % log_interval == 0) & (batch_idx != 0):
+
+            # Extract hierarchical probabilities
+            pred_nolog = np.exp(output.detach().numpy())
+            # np.sum(np.exp((F.log_softmax(x, dim=1)).detach().numpy()[1, 1:2]))
+
+            # get hierarchical probs for each sample:
+            hier_probs = [np.matmul(pred_nolog, hier) for hier in test_loader.dataset.transformation_mats]
+            hier_pred=[torch.tensor(x).argmax(dim=1,keepdim=True) for x in hier_probs]
+
+
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             # _, pred = (torch.max(output, 1)) # other way of computing max pred - better?
+
+            # Assert that hierarchical and normal target matches:
+            assert (np.array_equal(hier_pred[0], pred))
+
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
-
-            # Extract independent test set during training
+            # hier version
+            hier_correct=[x.eq(torch.tensor(hier_target[idx]).view_as(x)).sum().item() for idx, x in enumerate(hier_pred)]
+            hier_accuracy_train=[(100.*x/len(hier_target[idx])) for idx, x in enumerate(hier_correct)]
+             # Extract independent test set during training
             iteration = iter(test_loader)
             data_test, target_test_dict = next(iteration)
             target_test = target_test_dict['target']
@@ -184,6 +200,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 model.eval()
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
+                pred_nolog_test = np.exp(output_test.detach().numpy())
                 # output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
@@ -194,6 +211,13 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
             correct_test = pred_test.eq(target_test.view_as(pred_test)).sum().item()
             accuracy_test = (100. * correct_test / len(target_test))
             test_accuracies.append(accuracy_test)
+            # hierarchical test error
+            hier_probs_test = [np.matmul(pred_nolog_test, hier) for hier in test_loader.dataset.transformation_mats]
+            hier_pred_test = [torch.tensor(x).argmax(dim=1, keepdim=True) for x in hier_probs_test]
+
+            hier_correct_test = [x.eq(torch.tensor(hier_target_test[idx]).view_as(x)).sum().item() for idx, x in
+                            enumerate(hier_pred_test)]
+            hier_accuracy_test = [(100. * x / len(hier_target_test[idx])) for idx, x in enumerate(hier_correct_test)]
 
             print(
                 'Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}, Train Accuracy: ({:.0f}%), Test Accuracy: ({:.0f}%)'.format(
@@ -215,6 +239,8 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 'optimizer': optimizer.state_dict(),
                 'train_acc': accuracy_train,
                 'test_acc': accuracy_test,
+                'hier_train_acc': hier_accuracy_train,
+                'hier_test_acc': hier_accuracy_test,
                 'data_test': data_test,
                 'target_test': target_test,
                 'hier_target_test':hier_target_test,
