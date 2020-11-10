@@ -18,7 +18,7 @@ hier_arr=($hier_list)
 for beta in 0.016 ; do
   for sigma in 0.833 ; do
     for nclass in 64 96 ; do
-      for idx in 1 2 ; do
+      for idx in 0 1 ; do
         model="linear_NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
         model_list[$i]="$model"
         i=$i+1
