@@ -5,8 +5,8 @@ Created on Wed Jul 22 11:08:09 2020
 @author: greta
 """
 save_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
-#data_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
-data_dir='/Users/eghbalhosseini/Desktop/'
+data_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
+#data_dir='/Users/eghbalhosseini/Desktop/'
 analyze_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
 result_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/result/'
 
