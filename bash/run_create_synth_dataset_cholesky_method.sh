@@ -13,10 +13,10 @@
 
 
 i=0
-for beta_id in 1 2 3 4; do
-  for sigma_id in 1 2 3 4; do
+for beta_id in 1 ; do
+  for sigma_id in 1 ; do
     for struct_id in 1 2 ; do
-      for n_class in 64 96 ; do
+      for n_class in 64 ; do
         struct_list[$i]=$struct_id
         beta_list[$i]=$beta_id
         sigma_list[$i]=$sigma_id
