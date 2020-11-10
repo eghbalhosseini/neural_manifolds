@@ -69,8 +69,6 @@ if __name__ == '__main__':
             pair_assembly['index_pairs'].append(valid_pairs[:num_pair])
         ASSEMBLY[idx] = pair_assembly
 
-
-
     # create train test splits
     train_sampler = SubsetRandomSampler(train_indices)
     test_sampler = SubsetRandomSampler(test_indices)
