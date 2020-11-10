@@ -51,6 +51,26 @@ if __name__ == '__main__':
         np.random.seed(params.random_seed)
         np.random.shuffle(indices)
     train_indices, test_indices = indices[split:], indices[:split]
+    # create sample pairs for doing similarity between hierarchies (pine/oak ...)
+    num_pair = params.n_pairs
+    L=params.dataset.hierarchical_target
+    L=L[::-1] # backward
+    L_unique = [list(set(x)) for x in L ]
+    ASSEMBLY = dict()
+    for idx, level in enumerate(L_unique[:-1]):
+        pair_assembly = dict(n_hier=len(level), index_pairs=[])
+        for l in level:
+            indexes = np.squeeze(np.argwhere(np.asarray(L[idx]) == l))
+            valid_pairs = []
+            while len(valid_pairs) < num_pair:
+                pairs = [np.random.choice(indexes, 2, replace=True) for x in range(300)]
+                print(len(valid_pairs))
+                [valid_pairs.append(x) for x in pairs if L[idx + 1][x[0]] != L[idx + 1][x[1]]]
+            pair_assembly['index_pairs'].append(valid_pairs[:num_pair])
+        ASSEMBLY[idx] = pair_assembly
+
+
+
     # create train test splits
     train_sampler = SubsetRandomSampler(train_indices)
     test_sampler = SubsetRandomSampler(test_indices)
@@ -147,7 +167,8 @@ if __name__ == '__main__':
                         'model_untrained_weights': model_untrained,
                         'model_structure': model_initialized,
                         'optimizer_structure': optimizer_initialized,
-                        'files_generated': files}
+                        'files_generated': files,
+                        'distance_pair_index':ASSEMBLY}
 
             save_dict(d_master, save_dir + '/' + model_identifier + '/master_' + model_identifier + '.pkl')
 
