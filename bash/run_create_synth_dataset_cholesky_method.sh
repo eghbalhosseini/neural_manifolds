@@ -5,7 +5,7 @@
 #SBATCH --job-name=SYNTH
 #SBATCH -t 1:00:00
 #SBATCH -N 1
-#SBATCH --array=0-63
+#SBATCH --array=0-1
 #SBATCH -n 4
 #SBATCH --mem-per-cpu 32000
 #SBATCH --exclude node017,node018
@@ -36,12 +36,12 @@ matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
 save_path='/om/group/evlab/Greta_Eghbal_manifolds/data/';\
 structures={'partition','tree'};\
-betas=[1e-10,0.016,0.033,0.05];\
-sigmas=[1e-05,0.833,1.667,2.5];\
+betas=[0.016];\
+sigmas=[0.833];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
 n_class=${n_class_list[$SLURM_ARRAY_TASK_ID]};\
-exm_per_class=1000;n_feat=3*32*32;\
+exm_per_class=1000;n_feat=936;\
 beta=betas(${beta_list[$SLURM_ARRAY_TASK_ID]});sigma=sigmas(${sigma_list[$SLURM_ARRAY_TASK_ID]});\
 create_synth_data_cholesky_method('structure',struct,'n_class',n_class,'exm_per_class',exm_per_class,'n_feat',n_feat,'save_path',save_path,'beta',beta,'sigma',sigma);\
 quit;"

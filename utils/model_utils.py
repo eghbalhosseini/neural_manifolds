@@ -48,6 +48,12 @@ class sub_data(Dataset):
         return tranformation_mats
 
 
+    def create_hier_transorm(self):
+        base_targets=self.hierarchical_target[0]
+        target_classes=[x.unique() for x in self.hierarchical_target]
+        target_index=[[np.argwhere(x==y) for y in x.unique()] for x in self.hierarchical_target]
+        pass
+
     def __len__(self):
         return len(self.targets)
 
