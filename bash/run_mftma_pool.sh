@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=mftma_pool
-#SBATCH --array=0-1
+#SBATCH --array=0-3
 #SBATCH --time=12:00:00
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
