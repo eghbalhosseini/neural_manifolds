@@ -13,7 +13,7 @@ from random import sample
 from utils import save_dir
 
 class sub_data(Dataset):
-    def __init__(self, data_path, shape=(1, 3072), transform=None):
+    def __init__(self, data_path, shape=(1, 936), transform=None):
         self.data_path = data_path
         mat = mat73.loadmat(data_path)
         ops = mat['ops_out']

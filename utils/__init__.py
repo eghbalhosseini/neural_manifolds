@@ -26,7 +26,7 @@ def load_train(train_name):
 #############TRAINING ###########################
 class params:
     def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
-                 shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance'):
+                 shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance',n_pairs=200):
         ##### DATA ####
         self.datafile=datafile
         self.identifier=identifier
@@ -37,6 +37,7 @@ class params:
         self.nhier=nhier
         self.shape=shape
         self.structure=structure
+        self.n_pairs=n_pairs
         # TODO make this a method and only save the path here
         self.dataset_path=os.path.join(data_dir, self.datafile)
         #self.dataset=sub_data(data_path=os.path.join(data_dir, self.datafile))
