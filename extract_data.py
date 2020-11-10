@@ -66,12 +66,12 @@ if __name__ == '__main__':
             if os.path.exists(projection_file):
                 # file exist already , write it and set layer_analysis to false
                 print(f"{projection_file} already exists")
-                if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_.csv')):
-                    extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_.csv'), 'w',os.O_NONBLOCK)
+                if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
+                    extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w',os.O_NONBLOCK)
                     extracted_files_txt.writelines(projection_file+'\n')
                     extracted_files_txt.flush()
                 else:
-                    extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted_.csv'), 'a+',os.O_NONBLOCK)
+                    extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a+',os.O_NONBLOCK)
                     already_written = extracted_files_txt.readlines()
                     print(f" {len(already_written)} are already written")
                     temp = intersection(already_written, [projection_file])

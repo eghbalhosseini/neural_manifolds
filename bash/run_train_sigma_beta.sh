@@ -23,7 +23,7 @@ for beta in 0.016 ; do
       for idx in 0 1 ; do
         for nfeat in 936 ; do
 
-        model="linear_NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=${nfeat}-train_test-fixed"
+        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=${nfeat}-train_test-fixed"
         model_list[$i]="$model"
         i=$i+1
         done
