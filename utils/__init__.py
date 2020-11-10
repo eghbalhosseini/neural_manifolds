@@ -73,7 +73,9 @@ data_config=[]
 data_structure=[dict(struct='partition',nclass=64,n_hier=1,shape=(1,936)),
                 dict(struct='tree',nclass=64,n_hier=6,shape=(1,936)),
                 dict(struct='partition', nclass=64, n_hier=1, shape=(1, 3072)),
-                dict(struct='tree', nclass=64, n_hier=6, shape=(1, 3072))
+                dict(struct='tree', nclass=64, n_hier=6, shape=(1, 3072)),
+                dict(struct='partition', nclass=96, n_hier=1, shape=(1, 3072)),
+                dict(struct='tree', nclass=96, n_hier=6, shape=(1, 3072))
                 ]
 for idx, structure in enumerate(data_structure):
     for beta in ['0.0160']: # ['0.0000','0.0160','0.0330','0.0500']
