@@ -18,7 +18,7 @@ hier_arr=($hier_list)
 old="extracted.pkl"
 new="mftma_analysis.pkl"
 for beta in 0.0 ; do
-  for sigma in 0.833 1.667 ; do
+  for sigma in 0.833 ; do
     for nclass in 64 ; do
       for net in NN linear_NN ; do
         for idx in 0 ; do
