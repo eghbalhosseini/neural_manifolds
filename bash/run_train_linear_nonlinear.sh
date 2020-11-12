@@ -44,7 +44,7 @@ export XDG_CACHE_HOME
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-#singularity exec --nv -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
 #wait
 # Grant access
 #chmod g+w -R ${ROOT_DIR}${model_list[$SLURM_ARRAY_TASK_ID]}
