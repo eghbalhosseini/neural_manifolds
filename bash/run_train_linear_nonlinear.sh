@@ -32,6 +32,7 @@ for beta in 0.0 ; do
     done
   done
 done
+done
 # define singularity paths
 module add openmind/singularity
 SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
