@@ -61,10 +61,10 @@ class params:
     #exm_per_class = 100  # examples per class
     batch_size_train = 32
     batch_size_test = 32
-    epochs = 4
+    epochs = 12
     momentum = 0.5
     lr = 0.001
-    log_interval = 30 # when to save, extract, and test the data
+    log_interval = 60 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
