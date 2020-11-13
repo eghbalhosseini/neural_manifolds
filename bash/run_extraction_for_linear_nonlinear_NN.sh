@@ -39,6 +39,6 @@ done
 
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 extraction_script.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 extraction_script.sh $GRAND_FILE &
 
 
