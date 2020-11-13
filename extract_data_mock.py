@@ -8,6 +8,7 @@ import torch
 import argparse
 import os
 import scipy.io as sio
+import numpy as np
 
 # parser = argparse.ArgumentParser(description='extract and save activations')
 # parser.add_argument('file_id', type=str,default=' ')
@@ -35,7 +36,7 @@ if __name__ == '__main__':
 
 
 
-    file_id = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=3072-train_test-fixed/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=3072-train_test-fixed-epoch=1-batchidx=570.pth'
+    file_id = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed-epoch=1-batchidx=570.pth'
     task_id = 1
     model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
     analyze_identifier = 'mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
@@ -123,7 +124,8 @@ if __name__ == '__main__':
         print('not extracting data')
 
     if do_extraction:
-        weight_data = pickle.load(open(file_id, 'rb'))
+        # weight_data = pickle.load(open(file_id, 'rb'))
+        weight_data = torch.load(open(file_id, 'rb'))
         # STEP 3. load the dataset
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # STEP 4. create the dataset for testing
@@ -154,7 +156,18 @@ if __name__ == '__main__':
         model = model.eval()
 
         # STEP 5.5. extract hierarchical distances
+        data_mod=dict()
+        for i, x in enumerate(data['distance_pair_index'].keys()):
+            data_mod[len(data['distance_pair_index'])-1-i]=data['distance_pair_index'][x]
 
+        full_dataset = data['test_loader'].dataset.data
+        distance_pairs_in_data = dict() # Fetch data from the chosen distance pair indices
+
+        for hier_idx, value in data_mod.items():
+            index_pairs = value['index_pairs']
+            index_pairs2=[np.transpose(np.stack(x)).tolist() for x in index_pairs]
+            index_pairs3=full_dataset
+            distance_pairs_in_data[hier_idx] = [[full_dataset[x,:] for x in y] for y in index_pairs2]
 
         # STEP 6. create projection dataset
         projection_data_ = {'projection_results': []}
