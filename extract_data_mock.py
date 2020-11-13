@@ -168,7 +168,7 @@ if __name__ == '__main__':
             index_pairs2 = [np.transpose(np.stack(x)).tolist() for x in index_pairs] # separate out [a1,b1] pairs to two arrays of [a1,...,an] and [b1,...,bn]
             distance_pairs_in_data[hier_idx] = [[full_dataset[x,:] for x in y] for y in index_pairs2] # get the data representation
         extract = mftma_extractor()
-        distance_pair_activations=[[[extract.extractor(model,x) for x in y] for y in v] for k, v in distance_pairs_in_data.items()]
+        distance_pair_activations=[[[extract.extractor(model,x.to(device)) for x in y] for y in v] for k, v in distance_pairs_in_data.items()]
         # STEP 6. create projection dataset
         projection_data_ = {'projection_results': []}
         d_master = {'results': distance_pair_activations,
