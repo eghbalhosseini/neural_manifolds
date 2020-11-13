@@ -164,10 +164,9 @@ if __name__ == '__main__':
         distance_pairs_in_data = dict() # Fetch data from the chosen distance pair indices
 
         for hier_idx, value in data_mod.items():
-            index_pairs = value['index_pairs']
-            index_pairs2=[np.transpose(np.stack(x)).tolist() for x in index_pairs]
-            index_pairs3=full_dataset
-            distance_pairs_in_data[hier_idx] = [[full_dataset[x,:] for x in y] for y in index_pairs2]
+            index_pairs = value['index_pairs'] # the chosen pairs
+            index_pairs2 = [np.transpose(np.stack(x)).tolist() for x in index_pairs] # separate out [a1,b1] pairs to two arrays of [a1,...,an] and [b1,...,bn]
+            distance_pairs_in_data[hier_idx] = [[full_dataset[x,:] for x in y] for y in index_pairs2] # get the data representation
 
         # STEP 6. create projection dataset
         projection_data_ = {'projection_results': []}
