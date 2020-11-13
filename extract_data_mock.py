@@ -1,6 +1,6 @@
-#from utils.extractor_utils import mftma_extractor
+from utils.extractor_utils import mftma_extractor
 from utils.model_utils import NN, save_dict
-#from utils.extractor_utils import make_manifold_data
+from utils.extractor_utils import make_manifold_data
 from utils import save_dir, data_dir, train_pool
 from utils.analysis_utils import analyze_pool
 import pickle
@@ -167,53 +167,16 @@ if __name__ == '__main__':
             index_pairs = value['index_pairs'] # the chosen pairs
             index_pairs2 = [np.transpose(np.stack(x)).tolist() for x in index_pairs] # separate out [a1,b1] pairs to two arrays of [a1,...,an] and [b1,...,bn]
             distance_pairs_in_data[hier_idx] = [[full_dataset[x,:] for x in y] for y in index_pairs2] # get the data representation
-
+        extract = mftma_extractor()
+        distance_pair_activations=[[[extract.extractor(model,x) for x in y] for y in z] for z in distance_pairs_in_data]
         # STEP 6. create projection dataset
         projection_data_ = {'projection_results': []}
-        extract = mftma_extractor()
-        activations_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
-        projection_cell = [extract.project(x, max_dim=analyze_params.n_project) for x in activations_cell]
-        for x in projection_cell:
-            assert(len(layer_names) == len(x))
-        # reorder files based on the layer
-        projection_file_list = []
-        for name in layer_names:
-            layer_proj_cell = [{name: x[name]} for x in projection_cell]
-            # STEP 7. save the file
-            projection_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
-            projection_file = projection_file.replace(".pth", '')
-            projection_file = projection_file + '_' + name + '_extracted.pkl'
-
-            projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
-                                          os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(4) + '_')
-            print(projection_file)
-            d_master = {'projection_results': layer_proj_cell,
-                        'analyze_identifier': analyze_identifier,
-                        'model_identifier': model_identifier,
-                        'layer_name': name,
-                        'files_generated': projection_file,
-                        'train_acc': weight_data['train_acc'],
-                        'test_acc': weight_data['test_acc'],
-                        'epoch': weight_data['epoch'],
-                        'batchidx': weight_data['batchidx']
+        d_master = {'results': distance_pair_activations,
+                        'distance_pairs_in_data': distance_pairs_in_data
                         }
-            save_dict(d_master, projection_file)
-            mat_file_name = projection_file.replace(".pkl", '.mat')
-            sio.savemat(mat_file_name, {'activation': d_master})
-            projection_file_list.append(projection_file+'\n')
-        # write to csv file
-        if not os.path.exists(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv')):
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'w',os.O_NONBLOCK)
-            extracted_files_txt.writelines(projection_file_list)
-            print(f"adding {len(projection_done_file_list)} new files to extracted.csv")
-            extracted_files_txt.flush()
-        else:
-            extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_extracted.csv'), 'a+',os.O_NONBLOCK)
-            already_written = extracted_files_txt.readlines()
-            temp = intersection(already_written, projection_file_list)
-            for k in temp:
-                projection_done_file_list.remove(k)
-            print(f"adding {len(projection_done_file_list)} remaining files to extracted.csv")
-            extracted_files_txt.writelines(projection_done_file_list)
-            extracted_files_txt.flush()
+        projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+        projection_file = projection_file.replace(".pth", '')
+        projection_file = projection_file + '_distance_data.pkl'
+
+        save_dict(d_master, projection_file)
         print('done!')

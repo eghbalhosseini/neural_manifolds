@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 import sys
 import os
-#from mftma.manifold_analysis_correlation import manifold_analysis_corr
+from mftma.manifold_analysis_correlation import manifold_analysis_corr
 import copy
 import itertools
 def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):

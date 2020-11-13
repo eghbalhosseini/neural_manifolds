@@ -68,7 +68,7 @@ if __name__ == '__main__':
                 print(len(valid_pairs))
                 [valid_pairs.append(x) for x in pairs if L[idx + 1][x[0]] != L[idx + 1][x[1]]]
             pair_assembly['index_pairs'].append(valid_pairs[:num_pair])
-        ASSEMBLY[idx] = pair_assembly
+        ASSEMBLY[len(L_unique[:-1])-idx-1] = pair_assembly
 
     # create train test splits
     train_sampler = SubsetRandomSampler(train_indices)
