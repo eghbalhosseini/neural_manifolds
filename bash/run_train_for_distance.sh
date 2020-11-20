@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=run_train
 #SBATCH -t 8:00:00
-#SBATCH --array=0-2
+#SBATCH --array=0-1
 #SBATCH --mem=80000
 #SBATCH --exclude node017,node018
 
@@ -11,8 +11,8 @@
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 #chmod g+w -R "${ROOT_DIR}"
 
-struct_list="partition tree"
-hier_list="1 6"
+struct_list="tree"
+hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
@@ -20,15 +20,18 @@ i=0
 for beta in 0.016 ; do
   for sigma in 0.833 ; do
     for nclass in 64 ; do
-      for idx in 0 1 ; do
+      for idx in 0  ; do
         for nfeat in 936 ; do
-        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=${nfeat}-train_test-fixed"
+          for network in linear_NN NN ; do
+
+        model="${network}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=${nfeat}-train_test-fixed"
         model_list[$i]="$model"
         i=$i+1
         done
       done
     done
   done
+done
 done
 # define singularity paths
 module add openmind/singularity

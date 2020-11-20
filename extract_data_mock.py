@@ -9,15 +9,16 @@ import argparse
 import os
 import scipy.io as sio
 import numpy as np
+from scipy.spatial.distance import cdist
 
-# parser = argparse.ArgumentParser(description='extract and save activations')
-# parser.add_argument('file_id', type=str,default=' ')
-# parser.add_argument('task_id', type=int,default=0)
-# parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
-# parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
-# parser.add_argument('overwrite',type=str,default='false')
+parser = argparse.ArgumentParser(description='extract and save activations')
+parser.add_argument('file_id', type=str,default=' ')
+parser.add_argument('task_id', type=int,default=0)
+parser.add_argument('model_id', type=str,default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
+parser.add_argument('analyze_id', type=str,default='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
+parser.add_argument('overwrite',type=str,default='false')
 #
-# args = parser.parse_args()
+args = parser.parse_args()
 
 def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
@@ -28,19 +29,19 @@ if __name__ == '__main__':
     # get sub_data
     # create hierarchical version of the data
     # STEP 1. get the variables
-    # file_id = args.file_id
-    # task_id = args.task_id
-    # model_identifier = args.model_id
-    # analyze_identifier = args.analyze_id
-    # overwrite = args.overwrite
+    file_id = args.file_id
+    task_id = args.task_id
+    model_identifier = args.model_id
+    analyze_identifier = args.analyze_id
+    overwrite = args.overwrite
 
 
 
-    file_id = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed-epoch=1-batchidx=570.pth'
-    task_id = 1
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
-    analyze_identifier = 'mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
-    overwrite = 'true'
+    #file_id = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed-epoch=1-batchidx=570.pth'
+    #task_id = 1
+    #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    #analyze_identifier = 'mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
+    #overwrite = 'true'
 
     #
     # STEP 2. load model and analysis parameters
@@ -168,9 +169,23 @@ if __name__ == '__main__':
             distance_pairs_in_data[hier_idx] = [[torch.from_numpy(full_dataset[x,:]).float() for x in y] for y in index_pairs2] # get the data representation
         extract = mftma_extractor()
         distance_pair_activations=[[[extract.extractor(model,[x.to(device)]) for x in y] for y in v] for k, v in distance_pairs_in_data.items()]
+        # reordering of the distance pairs
+        data_reshaped = dict()
+        for name in layer_names:
+            hierarchy_dict = dict()
+            for idx, hierarchy in enumerate(distance_pair_activations):
+                category_list = []
+                for category_pairs in hierarchy:
+                    category_list.append([x[name][0] for x in category_pairs])
+
+                hierarchy_dict[idx] = dict(pairs=category_list,
+                                           distance=[np.diag(cdist(x[0], x[1])) for x in category_list])
+
+            data_reshaped[name] = hierarchy_dict
         # STEP 6. create projection dataset
         projection_data_ = {'projection_results': []}
         d_master = {'results': distance_pair_activations,
+                    'distance_data':data_reshaped,
                         'distance_pairs_in_data': distance_pairs_in_data
                         }
         projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])

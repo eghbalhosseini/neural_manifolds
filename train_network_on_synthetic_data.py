@@ -27,13 +27,13 @@ except:
 user = getpass.getuser()
 print(user)
 
-# parser = argparse.ArgumentParser(description='neural manifold train network')
-# parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
-# args = parser.parse_args()
+parser = argparse.ArgumentParser(description='neural manifold train network')
+parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
+args = parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
-    # model_identifier = args.model_identifier
+    #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    model_identifier = args.model_identifier
     params = train_pool[model_identifier]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
