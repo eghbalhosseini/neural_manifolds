@@ -181,11 +181,11 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
             # _, pred = (torch.max(output, 1)) # other way of computing max pred - better?
 
             # Assert that hierarchical and normal target matches:
-            if not np.array_equal(hier_pred[0], pred):
+            if not np.array_equal(hier_pred[0].numpy().detach(), pred.numpy().detach()):
                 print('hier prediction \n')
-                print(torch.flatten(hier_pred[0]))
+                print(torch.flatten(hier_pred[0]).numpy().detach())
                 print('prediction \n')
-                print(torch.flatten(pred))
+                print(torch.flatten(pred).numpy().detach())
             #assert (np.array_equal(hier_pred[0], pred))
 
             correct = pred.eq(target.view_as(pred)).sum().item()
