@@ -4,7 +4,11 @@
 #SBATCH -t 1:00:00
 #SBATCH --mem=8000
 
+
+GRAND_FILE=$1
 OVERWRITE='false'
+
+
 #
 # this is where we put those lines , what lines ?!!
 
