@@ -122,6 +122,27 @@ if __name__ == '__main__':
 
         distance_file = distance_file.replace(".pth", '')
         distance_file = distance_file + '_distance_data.pkl'
-
+        distance_file_list=[distance_file]
         save_dict(d_master, distance_file)
+
+        # write to csv file
+        if not os.path.exists(
+                os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv')):
+            extracted_files_txt = open(
+                os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'w',
+                os.O_NONBLOCK)
+            extracted_files_txt.writelines(distance_file_list)
+            print(f"adding {len([distance_file_list])} new files to extracted.csv")
+            extracted_files_txt.flush()
+        else:
+            extracted_files_txt = open(
+                os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'a+',
+                os.O_NONBLOCK)
+            already_written = extracted_files_txt.readlines()
+            temp = intersection(already_written, distance_file_list)
+            for k in temp:
+                distance_file_list.remove(k)
+            print(f"adding {len(distance_file_list)} remaining files to extracted.csv")
+            extracted_files_txt.writelines(distance_file_list)
+            extracted_files_txt.flush()
         print('done!')
