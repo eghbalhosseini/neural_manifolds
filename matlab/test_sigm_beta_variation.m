@@ -3,17 +3,49 @@ set(0,'defaultfigurecolor',[1 1 1])
 
 %%
 % do one to get the within and between identifier 
-ops=create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'save_path',join([pwd,'\synth_datasets']))
+ops_part = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']))
 % n_class (20)*exm_per_class (10) = 200 data points, 100 features each.
 
-figure;imagesc(ops.data)
-c=cov(transpose(ops.data));
-figure;imagesc(c)
+%%
+ops_tree = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'structure','tree','save_path',join([pwd,'/synth_datasets']))
 
-temp=ops.class_id'*ops.class_id;
+%% 
+% Raw data 
+figure;imagesc(ops_part.data)
+figure;imagesc(ops_tree.data)
+
+%% Covariance
+c_part = cov(transpose(ops_part.data));
+figure;imagesc(c_part)
+
+c_tree = cov(transpose(ops_tree.data));
+figure;imagesc(c_tree)
+
+%% Investigate tree cov
+beta_range=linspace(1e-10,.05, 6);
+sigma_range=linspace(1e-5,2.5, 6);
+
+[Beta,Sigma]=meshgrid(beta_range, sigma_range);
+
+% Plot save str
+tree_str = strcat('nclass_',num2str(64),'_nfeat_',num2str(936),'_exmperclass_',num2str(100),'_structure_','tree.pdf');
+
+for i=1:(length(Beta(:)))
+    ops_tree = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'structure','tree','save_path', ... 
+        join([pwd,'/synth_datasets/']), 'beta', Beta(i), 'sigma',Sigma(i));
+    
+    plot_str = strcat('beta_',num2str(Beta(i)),'_sigma_',num2str(Sigma(i)),'_',tree_str)
+       
+    plot_tree_decomp(ops_tree.data, 'save_path', [strcat(pwd, '/tree_plots_11202020/')], 'plot_str', plot_str)
+
+end
+
+
+%% Specific for investigating partition
+temp=ops_part.class_id'*ops_part.class_id;
 figure;imagesc(temp)
 
-temp1=repmat(diag(temp),1,length(ops.class_id));
+temp1=repmat(diag(temp),1,length(ops_part.class_id));
 figure;imagesc(temp1)
 
 within_class=double(arrayfun(@(x,y) isequal(x,y),temp,temp1));
@@ -26,36 +58,11 @@ figure;imagesc(within_class)
 figure;imagesc(between_class)
 
 %% Function for visualizing various aspects of the data
-plot_decomp(ops.data)
+plot_decomp(ops_part.data)
 
-%% 
-betas=[1e-10,0.016,0.033,0.05];
-sigmas=[1.667,2.5];
+plot_decomp(ops_tree.data)
 
-% beta_range=linspace(1e-10,.05,10);
-% sigma_range=linspace(1e-5,2.5,10);
-
-beta_range=linspace(1e-10,.05, 4);
-sigma_range=linspace(1e-5,2.5, 4);
-
-% beta_range=linspace(1e-10,5,10); % does not provide more info 
-% sigma_range=linspace(1e-10,5,10); % does not provide more info
-
-[Beta,Sigma]=meshgrid(beta_range,sigma_range);
-
-c_ratio=nan*Beta;
-BTW_c=c_ratio;
-WTH_c=c_ratio;
-
-% Variance
-BTW_var=c_ratio;
-WTH_var=c_ratio;
-
-% pdist
-BTW_pdist=c_ratio;
-WTH_pdist=c_ratio;
-
-
+%% For partition
 for i=1:(length(Beta(:)))
     ops=create_synth_data_cholesky_method('n_class',20,'n_feat',100,'exm_per_class',10,'beta',Beta(i),'sigma',Sigma(i));
     c=cov(transpose(ops.data));

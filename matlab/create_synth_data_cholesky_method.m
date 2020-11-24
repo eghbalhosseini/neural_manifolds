@@ -9,10 +9,10 @@ function ops_out=create_synth_data_cholesky_method(varargin)
 % TODO: fix the routine for making tree
 % parse inputs  
 p=inputParser();
-addParameter(p, 'n_class', 50);
+addParameter(p, 'n_class', 10);
 addParameter(p, 'exm_per_class', 5);
 addParameter(p, 'n_feat', 28*28);
-addParameter(p, 'beta', 0.01);
+addParameter(p, 'beta', 0.4);
 addParameter(p, 'structure', 'partition'); % options : partition , tree
 addParameter(p, 'sigma', 1.5);
 addParameter(p,'norm',true);
@@ -39,17 +39,20 @@ n_hier=size(gr_output.class_ids,2);
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent,n_feat); 
 V = spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent);
-parfor n=1:n_feat
-    S=sparse(exprnd(beta).*adj);
-    W=(spfun(@(x) 1./x,S));
-    E=diag(sum(W,2));
-    % graph laplacian
-    Delta=E-W;
+for n=1:n_feat
+    %S=sparse(exprnd(beta).*adj);
+    S=triu(sparse(exprnd(beta,size(adj,1),size(adj,2)).*adj));
+    S=S+S';
+    % adjacency matrix needs to symmetric 
+    Adj=(spfun(@(x) 1./x,S));
+    Degree=diag(sum(Adj,2));
+    % graph laplacian : needs to be positive definite 
+    Laplacian=Degree-Adj;
     % proper prior
-    Delta_tilde=Delta+V;
+    Laplacian_tilde=Laplacian+V;
     % univariate random
     z = randn(n_ent+n_latent,1); 
-    L_Lambda = chol(Delta_tilde,'lower'); 
+    L_Lambda = chol(Laplacian_tilde,'lower'); 
     dat_feat=L_Lambda'\z;
     if is_norm
         dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
