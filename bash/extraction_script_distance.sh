@@ -5,7 +5,8 @@
 #SBATCH --mem=8000
 
 
-GRAND_FILE=$1
+
+
 OVERWRITE='false'
 
 

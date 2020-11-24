@@ -150,7 +150,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
     test_accuracies = []  # Return list of test accuracies for each epoch train_test is called
     train_accuracies = []
     log_interval = train_spec['log_interval']
-
+    counter=0
     for batch_idx, (data, target_dict) in enumerate(train_loader):
         target = target_dict['target']
         hier_target=target_dict['hier_target']
@@ -253,7 +253,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 'batchidx': batch_idx, }  # add test targets etc for starters
 
             # Define file names for saving
-            fname = train_spec['model_identifier'] + '-epoch=' + str(epoch) + '-batchidx=' + str(batch_idx) + '.pth'
+            fname = str(counter).zfill(4)+'_'+train_spec['model_identifier'] + '-epoch=' + str(epoch) + '-batchidx=' + str(batch_idx) + '.pth'
             torch.save(state, os.path.join(save_dir, train_spec['model_identifier'], fname))
             print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
 
@@ -272,7 +272,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 save_dir + '/' + train_spec['model_identifier'] + '/acc_test_' + train_spec['model_identifier'] + '.csv', append_write)
             test_acc_txt.writelines(str(accuracy_test) + '\n')
             test_acc_txt.close()
-
+            counter=counter+1
     return test_accuracies
 
 
