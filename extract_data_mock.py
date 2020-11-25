@@ -53,10 +53,39 @@ if __name__ == '__main__':
         os.mkdir(os.path.join(save_dir,model_identifier_for_saving))
 
     file_parts = file_id.split('/')
+    do_extraction = True
+    if 'false' in overwrite:
+        distance_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
+        distance_file = distance_file.replace(".pth", '')
+        distance_file = distance_file + '_distance_data.pkl'
+        distance_file = distance_file.replace(os.path.join(save_dir, model_identifier) + '/',
+                                                  os.path.join(save_dir, model_identifier) + '/' + str(
+                                                      task_id).zfill(4) + '_')
+        if os.path.exists(distance_file):
+            do_extraction = False
+            print(f"{distance_file} already exists")
+            if not os.path.exists(
+                    os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv')):
+                extracted_files_txt = open(os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'w',os.O_NONBLOCK)
+                extracted_files_txt.write(distance_file + '\n')
+                extracted_files_txt.flush()
+            else:
+                extracted_files_txt = open(
+                    os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'a+',
+                    os.O_NONBLOCK)
+                already_written = extracted_files_txt.readlines()
+                print(f" {len(already_written)} are already written")
+                temp = intersection(already_written, [distance_file])
+                for k in temp:
+                    [distance_file].remove(k)
+                projection_done_list = [x + '\n' for x in [distance_file]]
+                print(f"adding {len(projection_done_list)} remaining files to extracted.csv")
+                extracted_files_txt.writelines(projection_done_list)
+                extracted_files_txt.flush()
 
+        else:
+            do_extraction=True
     # based on layers decide to run the files
-    do_extraction=True
-
     if do_extraction:
         # weight_data = pickle.load(open(file_id, 'rb'))
         weight_data = torch.load(open(file_id, 'rb'))
@@ -110,19 +139,15 @@ if __name__ == '__main__':
 
             data_reshaped[name] = hierarchy_dict
         # STEP 6. create projection dataset
-        projection_data_ = {'projection_results': []}
         d_master = {'results': distance_pair_activations,
                     'distance_data':data_reshaped,
-                        'distance_pairs_in_data': distance_pairs_in_data
-                        }
+                        'distance_pairs_in_data': distance_pairs_in_data}
         distance_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+        distance_file = distance_file.replace(".pth", '')
+        distance_file = distance_file + '_distance_data.pkl'
         distance_file = distance_file.replace(os.path.join(save_dir, model_identifier) + '/',
                                                   os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(
                                                       4) + '_')
-
-        distance_file = distance_file.replace(".pth", '')
-        distance_file = distance_file + '_distance_data.pkl'
-        distance_file_list=[distance_file]
         save_dict(d_master, distance_file)
 
         # write to csv file
@@ -131,15 +156,16 @@ if __name__ == '__main__':
             extracted_files_txt = open(
                 os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'w',
                 os.O_NONBLOCK)
-            extracted_files_txt.writelines(distance_file_list)
-            print(f"adding {len([distance_file_list])} new files to extracted.csv")
+            extracted_files_txt.write(distance_file)
+            print(f"adding {distance_file} to extracted.csv")
             extracted_files_txt.flush()
         else:
             extracted_files_txt = open(
                 os.path.join(save_dir, model_identifier, 'master_' + model_identifier + '_distance_extracted.csv'), 'a+',
                 os.O_NONBLOCK)
             already_written = extracted_files_txt.readlines()
-            temp = intersection(already_written, distance_file_list)
+            temp = intersection(already_written, [distance_file])
+            distance_file_list=[distance_file]
             for k in temp:
                 distance_file_list.remove(k)
             print(f"adding {len(distance_file_list)} remaining files to extracted.csv")
