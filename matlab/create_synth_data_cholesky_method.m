@@ -5,16 +5,16 @@ function ops_out=create_synth_data_cholesky_method(varargin)
 % usage neural_manifold_create_synth_dataset_cholesky_method()
 
 % Eghbal Hosseini, 20/06/2020
-% changelog: 
+% changelog: GT + EH, nov25th etc.
 % TODO: fix the routine for making tree
 % parse inputs  
 p=inputParser();
 addParameter(p, 'n_class', 10);
 addParameter(p, 'exm_per_class', 5);
 addParameter(p, 'n_feat', 28*28);
-addParameter(p, 'beta', 0.4);
+addParameter(p, 'beta', 0.4 );
 addParameter(p, 'structure', 'partition'); % options : partition , tree
-addParameter(p, 'sigma', 1.5);
+addParameter(p, 'sigma', 5);
 addParameter(p,'norm',true);
 addParameter(p, 'save_path', '~/');
 parse(p, varargin{:});
@@ -27,21 +27,27 @@ n_ent=floor(ops.n_class.*ops.exm_per_class);
 ex_pr_cl=ops.exm_per_class;
 n_cl=ops.n_class;
 is_norm=ops.norm;
+
 % construct a partition graph  
 %   - Hr is the graph for how classes are connected, in case of partition is it
 %   is nan
 %   - Gr is the complete graph for the entities and classes. 
 [gr_output]=create_graph_for_structure(ops);
+
 % first level 
 adj=(adjacency(gr_output.full_graph));
 n_latent=gr_output.full_graph.numnodes-n_ent;
 n_hier=size(gr_output.class_ids,2);
+
 % create a feature dataset based on graph
-F_mat=nan*ones(n_ent+n_latent,n_feat); 
-V = spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent);
+F_mat=nan*ones(n_ent+n_latent, n_feat); % initialize
+V= spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
+
 for n=1:n_feat
     %S=sparse(exprnd(beta).*adj);
-    S=triu(sparse(exprnd(beta,size(adj,1),size(adj,2)).*adj));
+    %V = spdiags([(1/exprnd(beta))*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
+
+    S=triu(sparse(exprnd(beta,size(adj,1),size(adj,2)).*adj)); % draw from exp. distribution using beta parameter
     S=S+S';
     % adjacency matrix needs to symmetric 
     Adj=(spfun(@(x) 1./x,S));
@@ -50,6 +56,7 @@ for n=1:n_feat
     Laplacian=Degree-Adj;
     % proper prior
     Laplacian_tilde=Laplacian+V;
+    
     % univariate random
     z = randn(n_ent+n_latent,1); 
     L_Lambda = chol(Laplacian_tilde,'lower'); 

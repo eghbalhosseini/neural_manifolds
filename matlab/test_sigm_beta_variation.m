@@ -1,8 +1,19 @@
 %% Figure parameters
 set(0,'defaultfigurecolor',[1 1 1])
 
+%% Simple test
+ops_part = create_synth_data_cholesky_method('n_class',64,'n_feat',100,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']))
+ops_tree = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
+ops_tree4 = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
+
 %%
-% do one to get the within and between identifier 
+kemp_tree = create_synth_data_cholesky_method('beta', 0.4, 'n_class', 20, 'n_feat',2000,'exm_per_class',2,'save_path', join([pwd,'/synth_datasets']),'structure','tree')
+kemp_treeF = create_synth_data_cholesky_method('beta', 0.4, 'n_class', 64, 'n_feat',936,'exm_per_class',1000,'norm', true,'save_path', join([pwd,'/synth_datasets']),'structure','tree')
+
+c_kemp = cov(transpose(kemp_treeF.data));
+figure;imagesc(c_kemp)
+
+%%
 ops_part = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']))
 % n_class (20)*exm_per_class (10) = 200 data points, 100 features each.
 
@@ -20,6 +31,9 @@ figure;imagesc(c_part)
 
 c_tree = cov(transpose(ops_tree.data));
 figure;imagesc(c_tree)
+
+c_tree4 = cov(transpose(ops_tree.data));
+figure;imagesc(c_tree4)
 
 %% Investigate tree cov
 beta_range=linspace(1e-10,.05, 6);
