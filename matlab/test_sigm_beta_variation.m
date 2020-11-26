@@ -36,8 +36,8 @@ c_tree4 = cov(transpose(ops_tree.data));
 figure;imagesc(c_tree4)
 
 %% Investigate tree cov
-beta_range=linspace(1e-10,.05, 6);
-sigma_range=linspace(1e-5,2.5, 6);
+beta_range=linspace(1e-10,1, 10)
+sigma_range=linspace(1e-5,8, 10)
 
 [Beta,Sigma]=meshgrid(beta_range, sigma_range);
 
