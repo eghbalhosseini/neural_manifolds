@@ -49,3 +49,4 @@ plot_str=strcat('beta_',num2str(ops.beta),'_sigma_',num2str(ops.sigma),'_','ncla
 plot_tree_decomp(ops.data, 'save_path', plot_path, 'plot_str', plot_str);\
 quit;"
 chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
+chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots
