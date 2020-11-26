@@ -3,7 +3,7 @@
 #  run_create_synth_dataset_with_carpets.sh
 
 #SBATCH --job-name=synth_data_carpet
-#SBATCH -t 1:00:00
+#SBATCH -t 12:00:00
 #SBATCH -N 1
 #SBATCH --array=0-199
 #SBATCH -n 4
