@@ -40,6 +40,7 @@ if __name__ == '__main__':
     # do layerwise saving
     distance_pooled = makehash()
     for id_file, file in enumerate(sorted_files):
+        if os.path.exists(file):
             data_=pickle.load(open(file, 'rb'))
             s =re.findall('-batchidx=\d+', file)
             batchidx = [int(x.split('=')[1]) for x in s][0]
@@ -55,7 +56,8 @@ if __name__ == '__main__':
                      pair_distance_list=hier_val['distance']
                      temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
                      distance_pooled[layer_name][hier_id][id_file]=temp2
-
+        else:
+            print(f"{file} is missing")
     d_master = {'model_identifier': model_identifier,
                 'distance_results': distance_pooled,
                 'file_generated': sorted_files}
