@@ -27,9 +27,12 @@ if __name__ == '__main__':
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
 
     # find layers
-    extraction_files_csv = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_distance_extracted.csv'),'r')
+    extraction_files_csv = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_distance_extracted.csv'),'r',encoding="utf-8")
     analysis_files = extraction_files_csv.read().splitlines()
-    analysis_files=[x.replace('/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/',save_dir) for x in analysis_files]
+    null_files=[idx for idx, x in enumerate(analysis_files) if len(x) == 0]
+    for x in null_files:
+        analysis_files[x]='none'
+    #analysis_files=[x.replace('/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/',save_dir) for x in analysis_files]
     s = [re.findall('/\d+', x) for x in analysis_files]
     # fix errors in writing of the file
     s=[x for x in s if len(x)>0]
@@ -40,22 +43,24 @@ if __name__ == '__main__':
     # do layerwise saving
     distance_pooled = makehash()
     for id_file, file in enumerate(sorted_files):
+        file=file.replace('\x00','')
         if os.path.exists(file):
-            data_=pickle.load(open(file, 'rb'))
-            s =re.findall('-batchidx=\d+', file)
-            batchidx = [int(x.split('=')[1]) for x in s][0]
-            s = re.findall('-epoch=\d+', file)
-            epochidx = [int(x.split('=')[1]) for x in s][0]
-            # create the dimensions and coordinates
-            distance_data=data_['distance_data']
-            print(file)
-            for layer_name, hierarchies in distance_data.items():
-                # values are dictionary of different hierarchies;
-                 temp=distance_pooled[layer_name]
-                 for hier_id, hier_val in hierarchies.items():
-                     pair_distance_list=hier_val['distance']
-                     temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
-                     distance_pooled[layer_name][hier_id][id_file]=temp2
+            pass
+            # data_=pickle.load(open(file, 'rb'))
+            # s =re.findall('-batchidx=\d+', file)
+            # batchidx = [int(x.split('=')[1]) for x in s][0]
+            # s = re.findall('-epoch=\d+', file)
+            # epochidx = [int(x.split('=')[1]) for x in s][0]
+            # # create the dimensions and coordinates
+            # distance_data=data_['distance_data']
+            # print(file)
+            # for layer_name, hierarchies in distance_data.items():
+            #     # values are dictionary of different hierarchies;
+            #      temp=distance_pooled[layer_name]
+            #      for hier_id, hier_val in hierarchies.items():
+            #          pair_distance_list=hier_val['distance']
+            #          temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
+            #          distance_pooled[layer_name][hier_id][id_file]=temp2
         else:
             print(f"{file} is missing")
     d_master = {'model_identifier': model_identifier,
