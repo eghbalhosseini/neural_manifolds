@@ -6,51 +6,62 @@ import os
 import re
 import numpy as np
 import argparse
+import collections
+def makehash():
+    return collections.defaultdict(makehash)
+
 parser = argparse.ArgumentParser(description='pool results of distance analysis')
 parser.add_argument('model_id', type=str, default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
 parser.add_argument('analyze_id', type=str, default='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
 args = parser.parse_args()
 
-save_dir='/Users/eghbalhosseini/Desktop/'
+
+#save_dir='/Users/eghbalhosseini/Desktop/'
 if __name__ == '__main__':
-    #model_identifier = args.model_id
-    #analyze_identifier = args.analyze_id
-    #params = train_pool[model_identifier]()
-    model_identifier='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    model_identifier = args.model_id
+    analyze_identifier = args.analyze_id
     params = train_pool[model_identifier]()
+    #model_identifier='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    #params = train_pool[model_identifier]()
     layer_names = params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
 
     # find layers
-    extraction_files_csv = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '.csv'),'r')
+    extraction_files_csv = open(os.path.join(save_dir, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_distance_extracted.csv'),'r')
     analysis_files = extraction_files_csv.read().splitlines()
     analysis_files=[x.replace('/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/',save_dir) for x in analysis_files]
-    s = [re.findall('/\d+', x)[0] for x in analysis_files]
+    s = [re.findall('/\d+', x) for x in analysis_files]
+    # fix errors in writing of the file
+    s=[x for x in s if len(x)>0]
+    s = [item for sublist in s for item in sublist]
     file_id = [int(x.split('/')[1]) for x in s]
     sorted_files = [analysis_files[x] for x in np.argsort(file_id)]
+    #TODO: there is an issue with file saving in writing of files : need to write a routine and fix this.
     # do layerwise saving
-    mftma_pooled = dict()
-    for idx, layer in enumerate(layer_names):
-        s = np.asarray([int(not not re.findall(layer, x)) for x in sorted_files])
-        layer_files=[sorted_files[int(x)] for x in np.argwhere(s)]
-        x_idx=np.argwhere(s)
-        layer_results=[]
-        for id_file, file in enumerate(layer_files):
+    distance_pooled = makehash()
+    for id_file, file in enumerate(sorted_files):
             data_=pickle.load(open(file, 'rb'))
-            assert(data_['layer_name']==layer)
             s =re.findall('-batchidx=\d+', file)
             batchidx = [int(x.split('=')[1]) for x in s][0]
             s = re.findall('-epoch=\d+', file)
             epochidx = [int(x.split('=')[1]) for x in s][0]
+            # create the dimensions and coordinates
+            distance_data=data_['distance_data']
+            print(file)
+            for layer_name, hierarchies in distance_data.items():
+                # values are dictionary of different hierarchies;
+                 temp=distance_pooled[layer_name]
+                 for hier_id, hier_val in hierarchies.items():
+                     pair_distance_list=hier_val['distance']
+                     temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
+                     distance_pooled[layer_name][hier_id][id_file]=temp2
 
-            layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx, batch=batchidx,
-                 seq=id_file,train_acc=data_['train_acc'],test_acc=data_['test_acc'] , file=file))
-        mftma_pooled[layer]=layer_results
-    pool_file = os.path.join(analyze_dir,analyze_identifier_for_saving,model_identifier_for_saving, f'{model_identifier_for_saving}_mftma_pooled.pkl')
-    d_master = {'analyze_identifier': analyze_identifier,
-                'model_identifier': model_identifier,
-                'mftma_results': mftma_pooled,
-                'file_generated': pool_file}
+    d_master = {'model_identifier': model_identifier,
+                'distance_results': distance_pooled,
+                'file_generated': sorted_files}
+
+
+    pool_file = os.path.join(save_dir, model_identifier_for_saving, f'{model_identifier_for_saving}_distance_pooled.pkl')
     save_dict(d_master, pool_file)
     print('saved '+pool_file)
     print('done')
