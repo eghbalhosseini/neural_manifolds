@@ -45,22 +45,21 @@ if __name__ == '__main__':
     for id_file, file in enumerate(sorted_files):
         file=file.replace('\x00','')
         if os.path.exists(file):
-            pass
-            # data_=pickle.load(open(file, 'rb'))
-            # s =re.findall('-batchidx=\d+', file)
-            # batchidx = [int(x.split('=')[1]) for x in s][0]
-            # s = re.findall('-epoch=\d+', file)
-            # epochidx = [int(x.split('=')[1]) for x in s][0]
-            # # create the dimensions and coordinates
-            # distance_data=data_['distance_data']
-            # print(file)
-            # for layer_name, hierarchies in distance_data.items():
-            #     # values are dictionary of different hierarchies;
-            #      temp=distance_pooled[layer_name]
-            #      for hier_id, hier_val in hierarchies.items():
-            #          pair_distance_list=hier_val['distance']
-            #          temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
-            #          distance_pooled[layer_name][hier_id][id_file]=temp2
+            data_=pickle.load(open(file, 'rb'))
+            s =re.findall('-batchidx=\d+', file)
+            batchidx = [int(x.split('=')[1]) for x in s][0]
+            s = re.findall('-epoch=\d+', file)
+            epochidx = [int(x.split('=')[1]) for x in s][0]
+            # create the dimensions and coordinates
+            distance_data=data_['distance_data']
+            print(file)
+            for layer_name, hierarchies in distance_data.items():
+                # values are dictionary of different hierarchies;
+                 temp=distance_pooled[layer_name]
+                 for hier_id, hier_val in hierarchies.items():
+                     pair_distance_list=hier_val['distance']
+                     temp2=dict(identifier=f'{layer_name}-hier= {hier_id}',epoch=epochidx,batchidx=batchidx,distance=np.stack(pair_distance_list))
+                     distance_pooled[layer_name][hier_id][id_file]=temp2
         else:
             print(f"{file} is missing")
     d_master = {'model_identifier': model_identifier,
