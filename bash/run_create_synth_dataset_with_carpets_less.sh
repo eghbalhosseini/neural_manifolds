@@ -3,11 +3,11 @@
 #  run_create_synth_dataset_with_carpets.sh
 
 #SBATCH --job-name=synth_data_carpet
-#SBATCH -t 26:00:00
+#SBATCH -t 28:00:00
 #SBATCH -N 1
-#SBATCH --array=0-99
+#SBATCH --array=0-49
 #SBATCH -n 4
-#SBATCH --mem-per-cpu 32000
+#SBATCH --mem-per-cpu 36000
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 
@@ -37,8 +37,8 @@ addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
 save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
 plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';\
 structures={'partition','tree'};\
-betas=[1e-10, 0.2222, 0.4444, 0.6667, 0.8889, 1.0000];\
-sigmas=[1e-5, 1.7778,  3.5556, 5.3333, 7.1111, 9.0000];\
+betas=[1e-10, 0.0025, 0.0050, 0.0075, 0.0100];\
+sigmas=[1e-5, 0.5, 1, 1.5, 2];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
 n_class=${n_class_list[$SLURM_ARRAY_TASK_ID]};\

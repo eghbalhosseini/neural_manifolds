@@ -3,6 +3,7 @@
 #SBATCH -c 1
 #SBATCH --exclude node[017-018]
 #SBATCH -t 02:00:00
+#SBATCH --mem=60G
 
 MODEL_ID=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed
 ANALYZE_ID=knn-k=100-dist_metric=euclidean-num_subsamples=100
