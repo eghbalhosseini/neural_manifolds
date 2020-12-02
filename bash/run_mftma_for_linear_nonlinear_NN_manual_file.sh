@@ -30,16 +30,16 @@ for beta in 0.016 ; do
               printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$fname" >> $GRAND_MFTMA_FILE
               LINE_COUNT=$(expr ${LINE_COUNT} + 1)
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-              echo $LINE_COUNT
+
             done
           i=$i+1
         done
       done
     done
   done
+  echo $LINE_COUNT
 done
 
-echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
 
 
