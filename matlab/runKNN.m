@@ -1,7 +1,7 @@
 function M = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'root_dir', '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/');
-addParameter(p, 'analyze_identifier', 'knn');
+addParameter(p, 'analyze_identifier', 'knn-k=100-dist_metric=euclidean-num_subsamples=100');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'layer', 'layer_3_Linear');
 addParameter(p, 'dist_metric', 'euclidean');
@@ -53,8 +53,8 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % cd(file_dir)
 
 dataDir = strcat(params.root_dir, '/extracted/');
-analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep);
-resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep);
+analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep, params.model_identifier, filesep);
+resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep, params.model_identifier, filesep);
 
 % Make directories according to analyzeID
 if ~exist(analyzeDir, 'dir')
@@ -66,7 +66,7 @@ if ~exist(resultDir, 'dir')
 end
 
 
-KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'))
+KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'));
 disp('Found KNN files!')
 
 %% 
@@ -121,7 +121,7 @@ testAcc = [];
 trainAcc = [];
 
 for i = 1:length(KNN_data)
-    file = load(KNN_data{i})
+    file = load(KNN_data{i});
     file = file.activation;
     f = file.projection_results{1, hier_level}.( params.layer );
     
