@@ -13,12 +13,12 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0 ; do
+for beta in 0.016 ; do
   for sigma in 0.833  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
-        for net in NN linear_NN ; do
-        model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+        for net in NN ; do
+        model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
         model_list[$i]="$model"
         PTH_FILE="master_${model}.csv"
         FULL_FILE="${ROOT_DIR}/${model}/${PTH_FILE}"
@@ -39,6 +39,6 @@ done
 
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 extraction_script.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 200 300 100 extraction_script.sh $GRAND_FILE &
 
 

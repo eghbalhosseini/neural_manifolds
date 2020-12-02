@@ -17,12 +17,12 @@ struct_arr=($struct_list)
 hier_arr=($hier_list)
 old="extracted.pkl"
 new="mftma_analysis.pkl"
-for beta in 0.0 ; do
+for beta in 0.016 ; do
   for sigma in 0.833 ; do
     for nclass in 64 ; do
-      for net in NN linear_NN ; do
+      for net in NN  ; do
         for idx in 0 ; do
-          model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+          model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
           model_list[$i]="$model"
           EXT_FILE="master_${model}_extracted.csv"
           FULL_FILE="${ROOT_DIR}/${model}/${EXT_FILE}"
