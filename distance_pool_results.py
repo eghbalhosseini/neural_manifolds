@@ -17,13 +17,11 @@ parser.add_argument('analyze_id', type=str, default='mftma-exm_per_class=50-proj
 args = parser.parse_args()
 
 
-save_dir='/Users/eghbalhosseini/Desktop/'
+#save_dir='/Users/eghbalhosseini/Desktop/'
 if __name__ == '__main__':
     model_identifier = args.model_id
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
     analyze_identifier = args.analyze_id
-    params = train_pool[model_identifier]()
-
     params = train_pool[model_identifier]()
     layer_names = params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
