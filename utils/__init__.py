@@ -81,7 +81,7 @@ data_structure=[dict(struct='partition',nclass=64,n_hier=1,shape=(1,936)),
                 ]
 for idx, structure in enumerate(data_structure):
     for beta in ['0.0000','0.0160','0.0330','0.0500']:
-        for sigma in  ['0.0000','0.8330','1.6670','2.5000']:
+        for sigma in  ['0.0000','0.8330','1.6670','2.5000','0.5000']:
             nfeat=np.prod(structure['shape'])
             data_file=f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_{nfeat}_beta_{beta}_sigma_{sigma}_norm_1.mat"
             data_config.append(dict(data_file=data_file,shape=structure['shape']))

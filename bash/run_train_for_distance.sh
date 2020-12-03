@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=run_train
 #SBATCH -t 8:00:00
-#SBATCH --array=0-1
+#SBATCH --array=0
 #SBATCH --mem=80000
 #SBATCH --exclude node017,node018
 
@@ -17,12 +17,12 @@ struct_arr=($struct_list)
 hier_arr=($hier_list)
 
 i=0
-for beta in 0.016 ; do
-  for sigma in 0.833 ; do
+for beta in 0.0 ; do
+  for sigma in 0.5 ; do
     for nclass in 64 ; do
       for idx in 0  ; do
         for nfeat in 936 ; do
-          for network in linear_NN NN ; do
+          for network in NN ; do
 
         model="${network}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=${nfeat}-train_test-fixed"
         model_list[$i]="$model"
