@@ -25,16 +25,16 @@ for beta in 0.0 ; do
           FULL_DIR="${ROOT_DIR}/${model}/"
           echo "looking at ${FULL_DIR} "
           MODEL_LINE=0
-          find $FULL_DIR -name "*_extracted.pkl" | sort | while read fname; do
+          while read fname; do
               #echo $fname
               printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$fname" >> $GRAND_MFTMA_FILE
               LINE_COUNT=$(expr ${LINE_COUNT} + 1)
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
               echo $LINE_COUNT
               TOTAL_LINE_COUNT=$LINE_COUNT
-            done
+            done <<<$(find $FULL_DIR -name "*_extracted.pkl" | sort)
           i=$i+1
-          echo $TOTAL_LINE_COUNT
+          echo $LINE_COUNT
         done
       done
     done
