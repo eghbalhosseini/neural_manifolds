@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 analyze='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 
