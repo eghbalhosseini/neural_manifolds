@@ -6,9 +6,7 @@ import torch
 import pickle
 import os
 import argparse
-import re
 parser = argparse.ArgumentParser(description='run mftma and save results')
-#parser.add_argument('task_id', type=int, default=1)
 parser.add_argument('file_id', type=str, default='')
 parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
 parser.add_argument('analyze_id', type=str, default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
@@ -72,15 +70,6 @@ if __name__=='__main__':
                  'epoch': extracted_data['epoch'],
                  'files_generated': mftma_file}
         save_dict(d_master, mftma_file)
-        if not os.path.exists(os.path.join(analyze_dir, analyze_identifier,model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv')):
-            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier, model_identifier, 'master_' + model_identifier + '_mftma_analysis.csv'),'w',os.O_NONBLOCK)
-            mftma_analysis_files_txt.write(mftma_file+'\n')
-            mftma_analysis_files_txt.flush()
-        else:
-            mftma_analysis_files_txt = open(os.path.join(analyze_dir, analyze_identifier,model_identifier,'master_' + model_identifier + '_mftma_analysis.csv'),'a+',os.O_NONBLOCK)
-            mftma_analysis_files_txt.write(mftma_file + '\n')
-            mftma_analysis_files_txt.flush()
-        print('done')
     else:
          print('file already exists, abort')
          pass

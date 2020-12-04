@@ -33,11 +33,11 @@ for beta in 0.0 ; do
 
             done
           i=$i+1
+          echo $LINE_COUNT
         done
       done
     done
   done
-  echo $LINE_COUNT
 done
 
 nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &

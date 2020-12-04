@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --job-name=mftma_pool
+#SBATCH --job-name=distance_pool
 #SBATCH --array=0
 #SBATCH --time=12:00:00
 #SBATCH -N 1
