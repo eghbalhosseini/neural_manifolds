@@ -8,16 +8,17 @@ GRAND_FILE="${ROOT_DIR}/Grand_pool_${analyze}_extracted.csv"
 rm -f $GRAND_FILE
 touch $GRAND_FILE
 
-struct_list="partition tree"
-hier_list="1 6"
+struct_list="tree"
+hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0 0.016 0.033 0.05 ; do
-  for sigma in 0.0 0.833 1.667 2.5 ; do
-    for nclass in 64 96 ; do
-      for idx in 0 1 ; do
-        model="linear_NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+for beta in 0.0 ; do
+  for sigma in 0.5  ; do
+    for nclass in 64 ; do
+      for idx in 0 ; do
+        for net in NN ; do
+        model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
         model_list[$i]="$model"
         PTH_FILE="master_${model}.csv"
         FULL_FILE="${ROOT_DIR}/${model}/${PTH_FILE}"
@@ -30,13 +31,13 @@ for beta in 0.0 0.016 0.033 0.05 ; do
 	      done <$FULL_FILE
 
         i=$i+1
+        done
       done
     done
   done
 done
 
-
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1300 1500 200 extraction_script.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 extraction_script_distance.sh $GRAND_FILE &
 
 

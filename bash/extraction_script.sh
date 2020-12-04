@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #SBATCH -n 1 # one core
-#SBATCH -t 1:00:00
+#SBATCH -t 3:00:00
 #SBATCH --mem=8000
 
 GRAND_FILE=$1
@@ -46,4 +46,4 @@ XDG_CACHE_HOME=/om/user/`whoami`/st
 export XDG_CACHE_HOME
 
 # Get the relevant line from the parameters
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/extract_data.py ${run_file} ${run_model_line} ${run_model} ${run_analyze} ${OVERWRITE}
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/extract_data_mftma_knn_distance.py ${run_file} ${run_model_line} ${run_model} ${run_analyze} ${OVERWRITE}
