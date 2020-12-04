@@ -32,7 +32,7 @@ for beta in 0.0 ; do
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
               echo $LINE_COUNT
               TOTAL_LINE_COUNT=$LINE_COUNT
-            done <<<$(find $FULL_DIR -name "*_extracted.pkl" | sort)
+            done < <(find $FULL_DIR -name "*_extracted.pkl")
           i=$i+1
           echo $LINE_COUNT
         done
