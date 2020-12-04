@@ -31,8 +31,10 @@ for beta in 0.0 ; do
               LINE_COUNT=$(expr ${LINE_COUNT} + 1)
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
               echo $LINE_COUNT
+              TOTAL_LINE_COUNT=$LINE_COUNT
             done
           i=$i+1
+          echo $TOTAL_LINE_COUNT
         done
       done
     done
