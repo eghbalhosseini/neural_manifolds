@@ -10,12 +10,12 @@ function ops_out=create_synth_data_cholesky_method(varargin)
 % parse inputs  
 p=inputParser();
 addParameter(p, 'n_class', 10);
-addParameter(p, 'exm_per_class', 5);
-addParameter(p, 'n_feat', 28*28);
+addParameter(p, 'exm_per_class', 500);
+addParameter(p, 'n_feat', 500);
 addParameter(p, 'beta', 0.4 );
 addParameter(p, 'structure', 'partition'); % options : partition , tree
 addParameter(p, 'sigma', 5);
-addParameter(p,'norm',true);
+addParameter(p,'norm',false);
 addParameter(p, 'save_path', '~/');
 parse(p, varargin{:});
 ops = p.Results;
@@ -42,24 +42,45 @@ n_hier=size(gr_output.class_ids,2);
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent, n_feat); % initialize
 V= spdiags([(1/sigma^2)*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
+%
+index=find(adj);
+S=adj;
+Beta_val=exprnd(beta,length(index),1);
+for iter=1:length(index)
+    S(index(iter))=Beta_val(iter);
+end
+S=triu(S); % draw from exp. distribution using beta parameter
+S=S+S';
+Adj=(spfun(@(x) 1./x,S));
+Degree=diag(sum(Adj,2));
+% graph laplacian : needs to be positive definite
+Laplacian=Degree-Adj;
+% proper prior
+Laplacian_tilde=Laplacian+V;
+L_Lambda = chol(Laplacian_tilde,'lower'); 
 
 for n=1:n_feat
     %S=sparse(exprnd(beta).*adj);
     %V = spdiags([(1/exprnd(beta))*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
-
-    S=triu(sparse(exprnd(beta,size(adj,1),size(adj,2)).*adj)); % draw from exp. distribution using beta parameter
-    S=S+S';
+    %S=adj;
+    %Beta_val=exprnd(beta,length(index),1);
+    
+    %for iter=1:length(index)
+    %    S(index(iter))=Beta_val(iter);
+    %end 
+    %S=triu(S); % draw from exp. distribution using beta parameter
+    %S=S+S';
     % adjacency matrix needs to symmetric 
-    Adj=(spfun(@(x) 1./x,S));
-    Degree=diag(sum(Adj,2));
+    %Adj=(spfun(@(x) 1./x,S));
+    %Degree=diag(sum(Adj,2));
     % graph laplacian : needs to be positive definite 
-    Laplacian=Degree-Adj;
+    %Laplacian=Degree-Adj;
     % proper prior
-    Laplacian_tilde=Laplacian+V;
+    %Laplacian_tilde=Laplacian+V;
     
     % univariate random
     z = randn(n_ent+n_latent,1); 
-    L_Lambda = chol(Laplacian_tilde,'lower'); 
+    %L_Lambda = chol(Laplacian_tilde,'lower'); 
     dat_feat=L_Lambda'\z;
     if is_norm
         dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
@@ -72,6 +93,8 @@ ops_out=ops;
 ops_out.data=F_mat(1:n_ent,:);
 ops_out.data_latent=F_mat((n_ent+1):end,:);
 ops_out.Adjacency=adj;
+ops_out.weight=S;
+ops_out.beta_vals=Beta_val;
 ops_out.n_latent=n_latent;
 ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
