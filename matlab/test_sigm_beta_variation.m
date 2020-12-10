@@ -1,9 +1,23 @@
 %% Figure parameters
 set(0,'defaultfigurecolor',[1 1 1])
 
+%%
+ops_tree = create_synth_data_cholesky_method('n_class',64,'beta', 1e-10,'n_feat',936,'exm_per_class',1000,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
+
+plot_tree_decomp(ops_tree.data)
+
+%% 
+ops_tree1 = create_synth_data_cholesky_method('n_class',10,'beta', 0.4, 'sigma', 5, 'n_feat',100,'exm_per_class',2,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
+plot_tree_decomp(ops_tree1.data)
+
+%%
+Z=linkage(ops_tree1.data);
+figure;scatter3(X(:,1),X(:,2),X(:,3),10,c)
+
+
 %% Simple test
 ops_part = create_synth_data_cholesky_method('n_class',64,'n_feat',100,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']))
-ops_tree = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
+ops_tree = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',1000,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
 ops_tree4 = create_synth_data_cholesky_method('n_class',64,'n_feat',936,'exm_per_class',100,'save_path',join([pwd,'/synth_datasets']),'structure','tree')
 
 %%
