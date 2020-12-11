@@ -27,7 +27,7 @@ if p.Results.labels ~= []
     hold on
     yticks(1:length(labels)); yticklabels(animals.names);
 end
-if do_svd
+if ops.do_svd
     %% SVD
     [U,S,V] = svd(c); % the singular values are sorted
     Ut = U';

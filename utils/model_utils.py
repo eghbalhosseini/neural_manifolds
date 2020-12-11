@@ -278,7 +278,15 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 class NN(nn.Module):
     def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208):
         super(NN, self).__init__()
+
+        ## Initialize weights manually:
+        # https://jamesmccaffrey.wordpress.com/2018/08/21/pytorch-neural-network-weights-and-biases-initialization/
+
         self.fc1 = nn.Linear(num_fc1, num_fc2)
+
+        # conv1 = torch.nn.Conv2d(...)
+        # torch.nn.init.xavier_uniform(conv1.weight)
+
         self.fc2 = nn.Linear(num_fc2, num_fc3)
         self.fc3 = nn.Linear(num_fc3, num_classes)
 

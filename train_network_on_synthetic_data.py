@@ -91,6 +91,32 @@ if __name__ == '__main__':
                   'is_cuda': torch.cuda.is_available()
                   }
 
+    ## Initialize weights
+    # def weights_init(m):
+    #     if isinstance(m, nn.Conv2d):
+    #         torch.nn.init.xavier_uniform_(m.weight)
+    #         torch.nn.init.zeros_(m.bias)
+    #
+    #
+    # model.apply(weights_init)
+
+    # def init_weights(m):
+    #     if type(m) == nn.Linear:
+    #         torch.nn.init.xavier_uniform(m.weight)
+    #         m.bias.data.fill_(0.01)
+    #
+    #
+    # net = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2))
+    # net.apply(init_weights)
+
+    # https://stackoverflow.com/questions/49433936/how-to-initialize-weights-in-pytorch/49433937#49433937
+    # y = m.in_features
+    # # m.weight.data shoud be taken from a normal distribution
+    # m.weight.data.normal_(0.0, 1 / np.sqrt(y))
+    # # m.bias.data should be 0
+    # m.bias.data.fill_(0)
+
+
     model = params.model(num_classes=params.nclass, num_fc1=params.shape[1])
     model = model.to(device)
     model_initialized = copy.deepcopy(model)
