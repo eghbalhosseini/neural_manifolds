@@ -1,4 +1,4 @@
-function ops_out=create_synth_data_cholesky_method(varargin)
+function ops_out=create_synth_data_cholesky_method_draft(varargin)
 % create synthetic structured dataset based on gaussian prior 
 % ref: Kemp, Charles, and Joshua B. Tenenbaum. 2008. ?The Discovery of Structural Form.? PNAS.
 % note for tree case it creates a fractal patten tree. 
@@ -6,9 +6,7 @@ function ops_out=create_synth_data_cholesky_method(varargin)
 
 % Eghbal Hosseini, 20/06/2020
 % changelog: GT + EH, nov25th etc.
-% changelog: GT + EH, December9th-2020.
-%   - compared the code against KempTenenbaum2008, and verified that they
-%   produce similar results. 
+% TODO: fix the routine for making tree
 % parse inputs  
 p=inputParser();
 addParameter(p, 'n_class', 10);
@@ -17,9 +15,9 @@ addParameter(p, 'n_feat', 500);
 addParameter(p, 'beta', 0.4 );
 addParameter(p, 'structure', 'partition'); % options : partition , tree
 addParameter(p, 'sigma', 5);
-addParameter(p,'norm',true);
+addParameter(p,'norm',false);
 addParameter(p, 'save_path', '~/');
-addParameter(p, 'save', true);
+addParameter(p, 'save', false);
 parse(p, varargin{:});
 ops = p.Results;
 % 
@@ -27,6 +25,7 @@ beta=ops.beta;
 sigma=ops.sigma;
 n_feat=ops.n_feat;
 n_ent=floor(ops.n_class.*ops.exm_per_class);
+ex_pr_cl=ops.exm_per_class;
 n_cl=ops.n_class;
 is_norm=ops.norm;
 
@@ -43,47 +42,74 @@ n_hier=size(gr_output.class_ids,2);
 
 % create a feature dataset based on graph
 F_mat=nan*ones(n_ent+n_latent, n_feat); % initialize
-beta_vals=nan*ones(1, n_feat); % initialize
+F_mat_norm=nan*ones(n_ent+n_latent, n_feat); % initialize
+%
+%index=find(adj);
+%S=adj;
+%Beta_val=exprnd(beta,length(index),1);
+%for iter=1:length(index)
+    %S(index(iter))=Beta_val(iter);
+%    S(index(iter))=beta;
+%end
+%S=triu(S); % draw from exp. distribution using beta parameter
+%S=S+S';
+%Adj=(spfun(@(x) 1./x,S));
+%Degree=diag(sum(Adj,2));
+% graph laplacian : needs to be positive definite
+%Laplacian=Degree-Adj;
+% proper prior
 for n=1:n_feat
-    beta_val=exprnd(beta);
-    sigma_val=(sigma);
-    S=triu(sparse(beta_val.*adj));
+    Beta_val=exprnd(beta);
+    Sigma_val=exprnd(sigma);
+    S=triu(sparse(Beta_val.*adj));
     S=S+S';
     Adj=(spfun(@(x) 1./x,S));
     Degree=diag(sum(Adj,2));
     Laplacian=Degree-Adj;
-    V = spdiags([(1/(sigma_val^2))*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then 0.
+    %V = spdiags([(1/(Sigma_val^2))*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
+    V = spdiags([(1/(sigma^2))*ones(1,n_ent),zeros(1,n_latent)]',0,n_ent+n_latent,n_ent+n_latent); % first part is 1/sigma^2 I and then L, the graph structure
+    %S=adj;
+    %Beta_val=exprnd(beta,length(index),1);
     Laplacian_tilde=Laplacian+V;
+    %for iter=1:length(index)
+    %    S(index(iter))=Beta_val(iter);
+    %end 
+    % adjacency matrix needs to symmetric 
+    % proper prior
+    %L_lambda_inv=pdinv(Laplacian_tilde);
+    % univariate random
     z = randn(n_ent+n_latent,1); 
-    Chol_lower = chol(Laplacian_tilde,'lower'); 
-    dat_feat=Chol_lower'\z; % solves system of equation for X= mu + AZ where mu=0 , and takes care of inverting A (A=Laplacian, but covariance is inverse of laplacian)
+    L_Lambda = chol(Laplacian_tilde,'lower'); 
+    dat_feat=L_Lambda'\z; % solves system of equation for X= mu + AZ where mu=0 
+    %dat_feat=L_Lambda*z;
+    %dat_feat = mvnrnd(0*ones(1,n_ent+n_latent),L_lambda_inv) ;
+    dat_feat_norm = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
+    if is_norm
+        dat_feat = (dat_feat - min(dat_feat)) / ( max(dat_feat) - min(dat_feat));
+    end 
+    
     F_mat(:,n) = dat_feat;
-    beta_vals(n) = beta_val;
+    F_mat_norm(:,n) = dat_feat_norm;
     fprintf('feature: %d\n',n);
 end
 % save the results 
 ops_out=ops;
-if is_norm
-    ops_out.data=rescale_data(F_mat(1:n_ent,:));
-    
-else 
-    ops_out.data=(F_mat(1:n_ent,:));
-end 
-
+ops_out.data=F_mat(1:n_ent,:);
+ops_out.data_scaled_kemp=rescale_data(F_mat(1:n_ent,:));
+ops_out.data_scaled_G_E=F_mat_norm(1:n_ent,:);
 ops_out.data_latent=F_mat((n_ent+1):end,:);
-ops_out.data_full=F_mat;
 ops_out.Adjacency=adj;
-ops_out.beta_vals=beta_vals;
+ops_out.weight=S;
+ops_out.beta_vals=Beta_val;
 ops_out.n_latent=n_latent;
 ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
 ops_out.n_hier=n_hier;
-ops_out.data_id=sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm);
-data_loc=strcat(ops.save_path,ops_out.data_id);
+data_loc=strcat(ops.save_path,sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm));
 if ops.save
-    save(data_loc,'ops_out','-v7.3');
-    fprintf('saved data in %s \n',data_loc);
+save(data_loc,'ops_out','-v7.3');
+fprintf('saved data in %s \n',data_loc);
 end 
 
 end
