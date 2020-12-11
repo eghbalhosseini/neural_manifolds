@@ -1,13 +1,11 @@
 #!/bin/sh
 
 #  run_create_synth_dataset_with_carpets.sh
-
 #SBATCH --job-name=synth_data_carpet
 #SBATCH -t 26:00:00
-#SBATCH -N 1
-#SBATCH --array=0-2
-#SBATCH -n 4
-#SBATCH --mem-per-cpu 32000
+#SBATCH --ntasks=1
+#SBATCH --mem=120G
+#SBATCH --array=0-50
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 
@@ -47,7 +45,7 @@ exm_per_class=1000;n_feat=936;\
 beta=betas(${beta_list[$SLURM_ARRAY_TASK_ID]});sigma=sigmas(${sigma_list[$SLURM_ARRAY_TASK_ID]});\
 ops=create_synth_data_cholesky_method('structure',struct,'n_class',n_class,'exm_per_class',exm_per_class,'n_feat',n_feat,'save_path',save_path,'beta',beta,'sigma',sigma,'norm',true,'save',true);\
 plot_str=strcat('beta_',num2str(ops.beta),'_sigma_',num2str(ops.sigma),'_','nclass_',num2str(ops.n_class),'_nfeat_',num2str(ops.n_feat),'_exmperclass_',num2str(ops.exm_per_class),'_structure_',ops.structure,'.pdf');\
-data_cov=plot_tree_decomp(ops.data, 'save_path', plot_path, 'plot_str', plot_str);\
+data_cov=plot_tree_decomp(ops.data, 'save_path', plot_path, 'plot_str', plot_str,'do_svd',false);\
 ops.data_covar=data_cov;\
 ops=compute_class_distance(ops);\
 data_loc=strcat(save_path,ops.data_id);\
@@ -56,3 +54,8 @@ fprintf('saved data in %s \n',data_loc);\
 quit;"
 chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
 chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots
+
+
+# #SBATCH -n 4
+# #SBATCH --mem-per-cpu 32000
+
