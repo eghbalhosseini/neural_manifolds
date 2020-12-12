@@ -46,6 +46,7 @@ for i=1:length(hier_between_class)
     axis square
     title('within = white ; between = black, gray = excluded')
 end
+if save_ma
 
 % compute the metrics 
 % first modify them to have nan instead of zeros 

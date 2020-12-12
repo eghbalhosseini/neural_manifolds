@@ -2,7 +2,7 @@
 
 #  run_create_synth_dataset_with_carpets.sh
 #SBATCH --job-name=synth_data_carpet
-#SBATCH -t 26:00:00
+#SBATCH -t 48:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=120G
 #SBATCH --array=0-50

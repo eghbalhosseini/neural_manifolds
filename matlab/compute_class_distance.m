@@ -28,7 +28,9 @@ for i=1:length(within_class_ids)-1
     hier_within_class{i}=A;
     B=(arrayfun(@(x,y) xor(x,y),between_cell{i}, between_cell{i+1}));
     hier_between_class{i}=B;
-end 
+end
+res_out.hier_within_class=hier_within_class;
+res_out.hier_between_class=hier_between_class;
 % compute the metrics 
 % first modify them to have nan instead of zeros 
 for i=1:length(hier_between_class)
