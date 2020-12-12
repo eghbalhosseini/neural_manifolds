@@ -63,8 +63,8 @@ class params:
     batch_size_test = 32
     epochs = 15
     momentum = 0.5
-    lr = 0.001
-    log_interval = 60 # when to save, extract, and test the data
+    lr = 0.01
+    log_interval = 120 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1

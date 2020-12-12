@@ -14,6 +14,8 @@ import numpy as np
 from utils import save_dir, train_pool
 import re
 import argparse
+import matplotlib.pyplot as plt
+
 
 print('__cuda available ', torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
@@ -27,13 +29,13 @@ except:
 user = getpass.getuser()
 print(user)
 
-parser = argparse.ArgumentParser(description='neural manifold train network')
-parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description='neural manifold train network')
+# parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
+# args = parser.parse_args()
 
 if __name__ == '__main__':
-    #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
-    model_identifier = args.model_identifier
+    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
+    #model_identifier = args.model_identifier
     params = train_pool[model_identifier]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -100,26 +102,39 @@ if __name__ == '__main__':
     #
     # model.apply(weights_init)
 
-    # def init_weights(m):
-    #     if type(m) == nn.Linear:
-    #         torch.nn.init.xavier_uniform(m.weight)
-    #         m.bias.data.fill_(0.01)
+    # def weights_init(m, init_type='gaussian', lower_bound=-1, upper_bound=1, mu=0, std=1, bias=False):
+    #     if isinstance(m, torch.nn.Linear):
+    #         if init_type == 'uniform':
+    #             torch.nn.init.uniform_(m.weight.data, a=lower_bound, b=upper_bound)
+    #         if init_type == 'gaussian':
+    #         # torch.nn.init.normal_(m.weight.data, mean=mu, std=np.sqrt(std)) # pytorch uses std^2, so this ensures that the std is the one inputted in the function, and not std^2
+    #         if init_type == 'empty':
+    #             torch.nn.init.zeros_(m.weight.data)
+    #         if init_type == 'xavier_uniform':
+    #             torch.nn.init.xavier_uniform_(m.weight.data)  # gain is 1 by default
+    #         if init_type == 'xavier_normal':
+    #             torch.nn.init.xavier_normal_(m.weight.data)  # gain is 1 by default
     #
+    #         if not bias:
+    #             torch.nn.init.zeros_(m.bias.data)
     #
-    # net = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2))
-    # net.apply(init_weights)
+    # def weights_init(m):
+    #     if isinstance(m, nn.Linear):
+    #         torch.nn.init.uniform_(m.weight.data, a=7, b=0)
+    #         #xavier(m.bias.data)
 
-    # https://stackoverflow.com/questions/49433936/how-to-initialize-weights-in-pytorch/49433937#49433937
-    # y = m.in_features
-    # # m.weight.data shoud be taken from a normal distribution
-    # m.weight.data.normal_(0.0, 1 / np.sqrt(y))
-    # # m.bias.data should be 0
-    # m.bias.data.fill_(0)
+    # model.apply(weights_init)
 
-
-    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1])
+    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1], init_type='gaussian', std=0.0001)
     model = model.to(device)
     model_initialized = copy.deepcopy(model)
+
+    # g = model.fc1.weight.detach().numpy()
+    # plt.figure()
+    # plt.hist(g.flatten(), bins=1000)
+    # plt.show()
+
+
 
     # Save the very initial weights
     model_untrained = model.state_dict()
