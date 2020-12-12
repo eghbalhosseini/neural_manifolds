@@ -11,6 +11,8 @@ import os
 import matplotlib.pyplot as plt
 from random import sample
 from utils import save_dir
+import matplotlib.pyplot as plt
+
 
 class sub_data(Dataset):
     def __init__(self, data_path, shape=(1, 936), transform=None):
@@ -276,19 +278,36 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 
 
 class NN(nn.Module):
-    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208):
+    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208,
+                 init_type='gaussian', lower_bound=-1, upper_bound=1, mu=0, std=1, bias=False):
         super(NN, self).__init__()
 
-        ## Initialize weights manually:
-        # https://jamesmccaffrey.wordpress.com/2018/08/21/pytorch-neural-network-weights-and-biases-initialization/
-
         self.fc1 = nn.Linear(num_fc1, num_fc2)
-
-        # conv1 = torch.nn.Conv2d(...)
-        # torch.nn.init.xavier_uniform(conv1.weight)
-
         self.fc2 = nn.Linear(num_fc2, num_fc3)
         self.fc3 = nn.Linear(num_fc3, num_classes)
+
+        if init_type == 'uniform':
+            torch.nn.init.uniform_(self.fc1.weight, a=lower_bound, b=upper_bound)
+            torch.nn.init.uniform_(self.fc2.weight, a=lower_bound, b=upper_bound)
+            torch.nn.init.uniform_(self.fc3.weight, a=lower_bound, b=upper_bound)
+
+        if init_type == 'gaussian':
+            torch.nn.init.normal_(self.fc1.weight, mean=mu, std=np.sqrt(std)) # pytorch uses std^2, so this ensures that the std is the one inputted in the function, and not std^2
+            torch.nn.init.normal_(self.fc2.weight, mean=mu, std=np.sqrt(std))
+            torch.nn.init.normal_(self.fc3.weight, mean=mu, std=np.sqrt(std))
+
+        if init_type == 'xavier_uniform':
+            torch.nn.init.xavier_uniform_(self.fc1.weight) # gain is 1 by default
+            torch.nn.init.xavier_uniform_(self.fc2.weight)
+            torch.nn.init.xavier_uniform_(self.fc3.weight)
+        #
+        # if init_type == 'xavier_normal':
+        #     torch.nn.init.xavier_normal_(m.weight.data) # gain is 1 by default
+
+        if not bias:
+            torch.nn.init.zeros_(self.fc1.bias)
+            torch.nn.init.zeros_(self.fc2.bias)
+            torch.nn.init.zeros_(self.fc3.bias)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
