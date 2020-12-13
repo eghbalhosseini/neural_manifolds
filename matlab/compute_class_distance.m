@@ -12,12 +12,12 @@ fprintf('constructing masks\n')
 for i=1:length(within_class_ids)
     temp=within_class_ids{i}'*within_class_ids{i};
     temp1=repmat(diag(temp),1,length(res.class_id));
-    within_class=double(arrayfun(@(x,y) isequal(x,y),temp,temp1));
+    within_class=(arrayfun(@(x,y) isequal(x,y),temp,temp1));
     within_cell{i}=within_class;
     % do the same to get between class 
     temp=between_class_ids{i}'*between_class_ids{i};
     temp1=repmat(diag(temp),1,length(res.class_id));
-    between_class=double(arrayfun(@(x,y) isequal(x,y),temp,temp1));
+    between_class=(arrayfun(@(x,y) isequal(x,y),temp,temp1));
     between_cell{i}=between_class;
 end 
 hier_within_class={};

@@ -1,4 +1,4 @@
-function [c] = plot_tree_decomp(data, varargin)
+function  plot_tree_decomp(data,data_covar, varargin)
 p=inputParser();
 addParameter(p, 'labels', []);
 addParameter(p, 'save_path', '~/');
@@ -14,7 +14,7 @@ if ~exist(ops.save_path, 'dir')
 end
 
 %%
-c = cov(data');
+c = data_covar;
 figure;imagesc(c);
 colormap(cm);
 colorbar();

@@ -61,18 +61,23 @@ for n=1:n_feat
     beta_vals(n) = beta_val;
     fprintf('feature: %d\n',n);
 end
+% clear up some space 
+clear S Adj Laplacian V Liplacian_tilde Chol_lower 
 % save the results 
 ops_out=ops;
+% 
+fprintf('doing the norm\n')
 if is_norm
-    ops_out.data=rescale_data(F_mat(1:n_ent,:));
+    [ops_out.data,ops_out.data_covar]=rescale_data(F_mat(1:n_ent,:));
     
 else 
     ops_out.data=(F_mat(1:n_ent,:));
+    ops_out.data_covar=calc_cov(F_mat(1:n_ent,:));
 end 
 
 ops_out.data_latent=F_mat((n_ent+1):end,:);
-ops_out.data_full=F_mat;
-ops_out.Adjacency=adj;
+%ops_out.data_full=F_mat;
+ops_out.Adjacency=logical(adj);
 ops_out.beta_vals=beta_vals;
 ops_out.n_latent=n_latent;
 ops_out.hierarchical_class_ids=gr_output.class_ids;
