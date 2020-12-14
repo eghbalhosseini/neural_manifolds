@@ -4,7 +4,7 @@
 #SBATCH --job-name=synth_data_carpet
 #SBATCH -t 96:00:00
 #SBATCH --ntasks=1
-#SBATCH --mem-per-cpu 64000
+#SBATCH --mem-per-cpu 300000
 #SBATCH --array=1-50
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
