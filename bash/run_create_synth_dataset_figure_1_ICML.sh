@@ -5,13 +5,10 @@
 #SBATCH -t 96:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=120G
-#SBATCH --array=1-50
+#SBATCH --array=1
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 
-
-
-beta_ids=$(seq 1 50)
 
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 module add mit/matlab/2020a
