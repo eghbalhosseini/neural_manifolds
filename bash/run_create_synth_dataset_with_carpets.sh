@@ -53,8 +53,8 @@ data_loc=strcat(save_path,ops.data_id);\
 data_comp_loc=strrep(data_loc,'.mat','_compressed.mat');\
 save(data_comp_loc,'ops_comp','-v7.3');\
 fprintf('saved compressed data in %s \n',data_comp_loc);\
-save(data_loc,'ops','-v7.3');\
-fprintf('saved full data in %s \n',data_loc);\
+%save(data_loc,'ops','-v7.3');\
+%fprintf('saved full data in %s \n',data_loc);\
 quit;"
 chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
 chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots

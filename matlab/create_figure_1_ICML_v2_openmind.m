@@ -2,8 +2,8 @@ function create_figure_1_ICML_v2_openmind(file_to_pick)
 save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';
 plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';
 %% construct file names to grab
-%save_path='/Users/eghbalhosseini/Desktop';
-%plot_path=save_path;
+save_path='/Users/eghbalhosseini/Desktop';
+plot_path=save_path;
 file_pattern='synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_936_beta*_compressed.mat';
 d_files=dir(strcat(save_path,filesep,file_pattern));
 
