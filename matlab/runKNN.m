@@ -45,11 +45,19 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 % Manual input
-% data_dir = '/Users/gt/pCloud Drive/Previous/GitHub_GitLab/GitHub_from_Dell_09072020/neural_manifolds/local/'
-% model_identifier = 'NN-partition_nclass=50_nobj=50000_nhier=1_beta=0.0_sigma=0.83_nfeat=3072-train_test-fixed'
-% layer = 'layer_1_Linear'
-% 
-% file_dir = strcat(params.data_dir, params.model_identifier, filesep);
+params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
+params.layer = 'layer_1_Linear'
+params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+params.k = 100
+params.num_subsamples = 100
+params.save_fig = false
+params.dist_metric = 'euclidean'
+
+addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+
+
+% file_dir = strcat(params.root_dir, params.model_identifier, filesep);
 % cd(file_dir)
 
 dataDir = strcat(params.root_dir, '/extracted/');
@@ -57,9 +65,9 @@ analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, file
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep, params.model_identifier, filesep);
 
 % Make directories according to analyzeID
-if ~exist(analyzeDir, 'dir')
-   mkdir(analyzeDir)
-end
+% if ~exist(analyzeDir, 'dir')
+%    mkdir(analyzeDir)
+% end
 
 if ~exist(resultDir, 'dir')
    mkdir(resultDir)
@@ -91,6 +99,7 @@ cell_map = {};
 hier_field_names = [];
 hier_field_structs = [];
 
+hier_level = 3 %  TEST OUTCOMMENT
 for hier_level = 1:nhier_level
     
 % Load sample file to get correct dimensions for each hierarchy
@@ -100,12 +109,6 @@ data_size = size(sample_file);
 num_classes = data_size(1);
 num_features = data_size(2);
 num_examples = data_size(3);
-
-%% Manual params for testing
-% num_subsamples = num_classes*2; % Per point in time, i.e. per batch idx
-% hier_level = 1;
-% dist_metric = 'euclidean';
-% k = num_classes*2;
 
 %% Assert that subsampling across time is possible 
 assert(params.num_subsamples <= num_classes * num_examples, 'Too many subsamples specified')
@@ -223,9 +226,14 @@ uniqueSubEpochBatches = arrayfun(@(x) find(incrTrial==x), unique(incrTrial), 'un
 incrSubEpochTrial = cell2mat(cellfun(@(x) min(x), uniqueSubEpochBatches, 'uniformoutput',false));
 incrSubEpoch = subEpoch((incrSubEpochTrial));
 
+%% Permutation across time
+data1 = data;
+rand_idx = randperm(length(data1));
+data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+
 %% Test/train accuracy
 
-% Test acc for each subsample - if overlay on the other plots
+% Test acc for each subsample - if overlay on the other plots 
 testAccSubsample = repmat(testAcc, 1, params.num_subsamples);
 testAccSubsamples = reshape(testAccSubsample', [], 1);
 
@@ -445,24 +453,24 @@ end
 % clear keySet valueSet M 
 
 %% If saving as struct
-% Structs per hierarchy
-hier_struct = struct('hier_level', hier_level, ...
-                    'params', params_out, ...
-                    'targets', targets, ...
-                    'testAccSubsamples', testAccSubsamples, ...
-                    'testAcc', testAcc, ...
-                    'trainAccSubsamples', trainAccSubsamples, ...
-                    'trainAcc', trainAcc, ...
-                    'dataNorm', dataNorm, ...
-                    'meanTimeDataNorm', meanTimeDataNorm, ...
-                    'NNids', NNids, ...
-                    'meanTimeNNids', meanTimeNNids, ...
-                    'meanNormNN', meanNormNN, ...
-                    'meanTimeNormNN', meanTimeNormNN, ...
-                    'stdNormNN', stdNormNN, ...
-                    'meanTimeStdNormNN', meanTimeStdNormNN)
-
-hier_field_name = strcat('hier_', num2str(hier_level));
+% Structs per hierarchy OUTCOMMENTED
+% hier_struct = struct('hier_level', hier_level, ...
+%                     'params', params_out, ...
+%                     'targets', targets, ...
+%                     'testAccSubsamples', testAccSubsamples, ...
+%                     'testAcc', testAcc, ...
+%                     'trainAccSubsamples', trainAccSubsamples, ...
+%                     'trainAcc', trainAcc, ...
+%                     'dataNorm', dataNorm, ...
+%                     'meanTimeDataNorm', meanTimeDataNorm, ...
+%                     'NNids', NNids, ...
+%                     'meanTimeNNids', meanTimeNNids, ...
+%                     'meanNormNN', meanNormNN, ...
+%                     'meanTimeNormNN', meanTimeNormNN, ...
+%                     'stdNormNN', stdNormNN, ...
+%                     'meanTimeStdNormNN', meanTimeStdNormNN)
+% 
+% hier_field_name = strcat('hier_', num2str(hier_level));
 
 % Append to array
 hier_field_names = [hier_field_names; hier_field_name]
