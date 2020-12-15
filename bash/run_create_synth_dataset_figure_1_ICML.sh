@@ -5,7 +5,7 @@
 #SBATCH -t 96:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem-per-cpu 300000
-#SBATCH --array=1-60
+#SBATCH --array=1-30
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 
