@@ -56,7 +56,7 @@ for n=1:n_feat
     Laplacian_tilde=Laplacian+V;
     z = randn(n_ent+n_latent,1); 
     Chol_lower = chol(Laplacian_tilde,'lower'); 
-    dat_feat=Chol_lower'\z; % solves system of equation for X= mu + AZ where mu=0 , and takes care of inverting A (A=Laplacian, but covariance is inverse of laplacian)
+    dat_feat=Chol_lower'\z;% solves system of equation for X= mu + AZ where mu=0 , and takes care of inverting A (A=Laplacian, but covariance is inverse of laplacian)
     F_mat(:,n) = dat_feat;
     beta_vals(n) = beta_val;
     fprintf('feature: %d\n',n);
@@ -68,8 +68,7 @@ ops_out=ops;
 % 
 fprintf('doing the norm\n')
 if is_norm
-    [ops_out.data,ops_out.data_covar]=rescale_data(F_mat(1:n_ent,:));
-    
+    [ops_out.data,ops_out.data_covar]=rescale_data_feature_based(F_mat(1:n_ent,:));
 else 
     ops_out.data=(F_mat(1:n_ent,:));
     ops_out.data_covar=calc_cov(F_mat(1:n_ent,:));
@@ -84,7 +83,7 @@ ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
 ops_out.n_hier=n_hier;
-ops_out.data_id=sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm);
+ops_out.data_id=sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_feature_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm);
 data_loc=strcat(ops.save_path,ops_out.data_id);
 if ops.save
     save(data_loc,'ops_out','-v7.3');

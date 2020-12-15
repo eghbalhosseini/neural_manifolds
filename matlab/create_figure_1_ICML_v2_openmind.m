@@ -256,12 +256,12 @@ ax6.XAxis.FontSize=12;
 ax6.XAxis.LineWidth=1;
 ax6.YAxis.FontSize=12;
 ax6.YAxis.LineWidth=1;
-legend('position',[.42,.64,.1,.1])
+legend('position',[.78,.64,.1,.1])
 ax6.Legend.FontSize=12;
 ylabel('$\bf{\alpha}-\bf{\gamma}$','fontsize',14,'interpreter','latex');
 xlabel('$\bf{\beta}$','fontsize',14,'interpreter','latex','rotation',0);
 % plot the selected beta value
-plot(res.beta*[1,1],ax6.YLim,'color',[.5,.5,.5],'linewidth',1);
+plot(res.beta*[1,1],ax6.YLim,'color',[.5,.5,.5],'linewidth',1,'displayname','selected');
 axis tight
 %%
 temp1=res.data_id(1:regexp(res.data_id,'_beta_'));
