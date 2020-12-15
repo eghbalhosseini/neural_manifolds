@@ -5,13 +5,13 @@
 #SBATCH -t 96:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=220G
-#SBATCH --array=0-59
+#SBATCH --array=0-29
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
 
 
 i=0
-beta_ids=$(seq 1 60)
+beta_ids=$(seq 1 30)
 for beta_id in ${beta_ids[@]} ; do
   for sigma_id in 1 ; do
     for struct_id in 2 ; do
@@ -36,7 +36,7 @@ addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
 save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
 plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';\
 structures={'partition','tree'};\
-betas=logspace(-6,2,60);\
+betas=logspace(-6,2,30);\
 sigmas=[5];\
 fprintf('creating structure %s\n',structures{${struct_list[$SLURM_ARRAY_TASK_ID]}});\
 struct=structures{${struct_list[$SLURM_ARRAY_TASK_ID]}};\
