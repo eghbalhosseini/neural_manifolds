@@ -83,7 +83,7 @@ ops_out.hierarchical_class_ids=gr_output.class_ids;
 ops_out.class_id=gr_output.class_ids{1};
 ops_out.graph=gr_output;
 ops_out.n_hier=n_hier;
-ops_out.data_id=sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.4f_sigma_%1.4f_norm_feature_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm);
+ops_out.data_id=sprintf('synth_%s_nobj_%d_nclass_%d_nhier_%d_nfeat_%d_beta_%1.7f_sigma_%1.4f_norm_feature_%d.mat',ops.structure,n_ent,n_cl,n_hier,n_feat,beta,sigma,is_norm);
 data_loc=strcat(ops.save_path,ops_out.data_id);
 if ops.save
     save(data_loc,'ops_out','-v7.3');
