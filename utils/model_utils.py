@@ -18,7 +18,10 @@ class sub_data(Dataset):
     def __init__(self, data_path, shape=(1, 936), transform=None):
         self.data_path = data_path
         mat = mat73.loadmat(data_path)
-        ops = mat['ops_out']
+        try:
+            ops = mat['ops_out']
+        except:
+            ops = mat['ops_comp']
         self.data = ops['data']  # obs! if loading using sio, do: ops['data'][0][0]
         self.targets = ops['class_id'].squeeze()
         self.targets = self.targets - 1
