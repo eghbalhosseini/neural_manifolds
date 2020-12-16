@@ -8,8 +8,6 @@ addParameter(p, 'dist_metric', 'euclidean');
 addParameter(p, 'save_fig', true);
 addParameter(p, 'k', 100);
 addParameter(p, 'num_subsamples', 100);
-%addParameter(p, 'hier_level', 5);
-
 
 parse(p, varargin{:});
 params = p.Results;
@@ -41,7 +39,6 @@ set(gcf,'color','w');
 addpath(strcat('/om/user/gretatu/neural_manifolds/matlab/utils/'))
 addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 
-
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 % Manual input
@@ -55,10 +52,6 @@ params.save_fig = false
 params.dist_metric = 'euclidean'
 
 addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
-
-
-% file_dir = strcat(params.root_dir, params.model_identifier, filesep);
-% cd(file_dir)
 
 dataDir = strcat(params.root_dir, '/extracted/');
 analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep, params.model_identifier, filesep);
@@ -227,6 +220,7 @@ incrSubEpochTrial = cell2mat(cellfun(@(x) min(x), uniqueSubEpochBatches, 'unifor
 incrSubEpoch = subEpoch((incrSubEpochTrial));
 
 %% Permutation across time
+% Proof of concept that KNN can handle data that is not organized correctly
 data1 = data;
 rand_idx = randperm(length(data1));
 data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
@@ -300,16 +294,19 @@ end
 y = reshape(dataNorm, params.num_subsamples, length(KNN_files));
 meanTimeDataNorm = mean(y, 1);
 
-% figure;scatter([1:237],meanTimeDataNorm)
-
 %% Nearest neighbors
 NNids_self = knnsearch(data, data, 'K', params.k, 'Distance', params.dist_metric); 
 NNids_self = NNids_self./max(NNids_self(:,1)); % normalized NNids
 NNids = NNids_self(:, 2:end); 
 
+% Null - if the network did not perform any operation, how should the KNN
+% representation look
+nullNNids = repmat(NNids_self(:,1),1,200);
+% figure;imagesc(nullNNids)
+
 if params.save_fig
     figure;
-    imagesc(NNids)
+    imagesc(NNids_self)
     hold on
     xlabel('K nearest neighbors')
     set(gca,'YTick',downsample(productionTime, round(size(relTime,1)/10)))
@@ -322,7 +319,7 @@ end
 
 y1 = reshape(NNids, params.num_subsamples, length(KNN_files), params.k-1); % num subsamples x num points in time x num k-1
 meanTimeNNids = squeeze(mean(y1, 1));
-% figure;imagesc(meanTimeNNids)
+figure;imagesc(meanTimeNNids)
 
 %% Compute norm of neighbors
 normNN = zeros(params.k - 1, length(epoch));
@@ -333,6 +330,22 @@ end
 
 meanNormNN = mean(normNN,1);
 stdNormNN = std(normNN,1);
+
+%% Compute norm of neighbors - null
+normNN_null = zeros(params.k - 1, length(epoch));
+
+for i=2:params.k
+    normNN_null(i-1, :)=(abs(nullNNids(:,1) - nullNNids(:,i)));%.^2;
+end
+
+meanNormNN_null = mean(normNN_null,1);
+stdNormNN_null = std(normNN_null,1);
+
+y2 = reshape(meanNormNN_null, params.num_subsamples, length(KNN_files));
+meanTimeNormNN_null = mean(y2, 1);
+
+y3 = reshape(stdNormNN_null, params.num_subsamples, length(KNN_files));
+meanTimeStdNormNN_null = mean(y3, 1);
 
 %% Mean vector norms over samples at the same time 
 y2 = reshape(meanNormNN, params.num_subsamples, length(KNN_files));
