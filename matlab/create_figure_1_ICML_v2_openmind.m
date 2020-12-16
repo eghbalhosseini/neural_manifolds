@@ -267,7 +267,7 @@ xlabel('$\bf{\beta}$','fontsize',14,'interpreter','latex','rotation',0);
 plot(res.beta*[1,1],ax6.YLim,'color',[.5,.5,.5],'linewidth',1,'displayname',sprintf('beta=%f',res.beta));
 axis tight
 %%
-file_id=find(beta_vals_sort,res.beta);
+file_id=find(beta_vals_sort==res.beta);
 temp1=res.data_id(1:regexp(res.data_id,'_beta_'));
 plt_name_str=strcat(plot_path,filesep,...
     sprintf("%sbeta_vals_%d_%d_sigma_%d_id_%d_beta_plot_%d.pdf",temp1,beta_vals_sort(1),beta_vals_sort(end),res.sigma,file_id,res.beta));
