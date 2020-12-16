@@ -239,18 +239,21 @@ caxis([0 3]);
 set(gca,'XTick',[],'YTick',[]);
 clear hier_within_class hier_between_class
 %%
+% first sort the betas 
+[beta_vals_sort,sort_idx]=sort(beta_vals);
+difference_sort=difference(sort_idx,:);
 % plot the
 line_cols=viridis(size(difference,2)+1);
 ax6=axes('position',[.36,.55,.42,0.2]);
 hold on;
-beta_res=arrayfun(@(x) plot(beta_vals,difference(:,x),'color',line_cols(x,:),...
-    'displayname',sprintf('hierarchy %d',x),'markersize',10),1:size(difference,2));
+beta_res=arrayfun(@(x) plot(beta_vals_sort,difference_sort(:,x),'color',line_cols(x,:),...
+    'displayname',sprintf('hierarchy %d',x),'markersize',10),1:size(difference_sort,2));
 
 arrayfun(@(x) set(beta_res(x),'LineWidth',2),1:length(beta_res))
 set(gca,'yscale','linear');
 set(gca,'xscale','log');
 
-ax6.XLim=[beta_vals(1),beta_vals(end)];
+ax6.XLim=[beta_vals_sort(1),beta_vals_sort(end)];
 ax6.Box='off';
 ax6.XAxis.FontSize=12;
 ax6.XAxis.LineWidth=1;
@@ -261,12 +264,13 @@ ax6.Legend.FontSize=12;
 ylabel('$\bf{\alpha}-\bf{\gamma}$','fontsize',14,'interpreter','latex');
 xlabel('$\bf{\beta}$','fontsize',14,'interpreter','latex','rotation',0);
 % plot the selected beta value
-plot(res.beta*[1,1],ax6.YLim,'color',[.5,.5,.5],'linewidth',1,'displayname','selected');
+plot(res.beta*[1,1],ax6.YLim,'color',[.5,.5,.5],'linewidth',1,'displayname',sprintf('beta=%f',res.beta));
 axis tight
 %%
+file_id=find(beta_vals_sort,res.beta);
 temp1=res.data_id(1:regexp(res.data_id,'_beta_'));
 plt_name_str=strcat(plot_path,filesep,...
-    sprintf("%sbeta_vals_%d_%d_sigma_%d_covar_from_%d.pdf",temp1,beta_vals(1),beta_vals(end),res.sigma,res.beta));
+    sprintf("%sbeta_vals_%d_%d_sigma_%d_id_%d_beta_plot_%d.pdf",temp1,beta_vals_sort(1),beta_vals_sort(end),res.sigma,file_id,res.beta));
 print(f,'-painters', '-dpdf', plt_name_str);
 
 fprintf("saved file at %s",plt_name_str);
