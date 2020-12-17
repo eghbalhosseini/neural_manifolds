@@ -13,8 +13,8 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0 ; do
-  for sigma in 0.5  ; do
+for beta in 0.000161 ; do
+  for sigma in 5.0  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
         for net in NN ; do
