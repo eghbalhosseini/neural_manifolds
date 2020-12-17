@@ -34,7 +34,7 @@ print(user)
 # args = parser.parse_args()
 
 if __name__ == '__main__':
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+    model_identifier = 'linear_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
     #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.016_sigma=0.833_nfeat=936-train_test-fixed'
     #model_identifier = args.model_identifier
     params = train_pool[model_identifier]()
@@ -68,7 +68,7 @@ if __name__ == '__main__':
             valid_pairs = []
             while len(valid_pairs) < num_pair:
                 pairs = [np.random.choice(indexes, 2, replace=True) for x in range(300)]
-                print(len(valid_pairs))
+                # print(len(valid_pairs))
                 [valid_pairs.append(x) for x in pairs if L[idx + 1][x[0]] != L[idx + 1][x[1]]]
             pair_assembly['index_pairs'].append(valid_pairs[:num_pair])
         ASSEMBLY[len(L_unique[:-1])-idx-1] = pair_assembly

@@ -327,11 +327,32 @@ class NN(nn.Module):
         # return torch.log_softmax(self.fc3(x))
 
 class linear_NN(nn.Module):
-    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208):
+    def __init__(self, num_classes=64, num_fc1=936, num_fc2=624, num_fc3=208,
+                 init_type='gaussian', lower_bound=-1, upper_bound=1, mu=0, std=1, bias=False):
         super(linear_NN, self).__init__()
         self.fc1 = nn.Linear(num_fc1, num_fc2)
         self.fc2 = nn.Linear(num_fc2, num_fc3)
         self.fc3 = nn.Linear(num_fc3, num_classes)
+
+        if init_type == 'uniform':
+            torch.nn.init.uniform_(self.fc1.weight, a=lower_bound, b=upper_bound)
+            torch.nn.init.uniform_(self.fc2.weight, a=lower_bound, b=upper_bound)
+            torch.nn.init.uniform_(self.fc3.weight, a=lower_bound, b=upper_bound)
+
+        if init_type == 'gaussian':
+            torch.nn.init.normal_(self.fc1.weight, mean=mu, std=np.sqrt(std)) # pytorch uses std^2, so this ensures that the std is the one inputted in the function, and not std^2
+            torch.nn.init.normal_(self.fc2.weight, mean=mu, std=np.sqrt(std))
+            torch.nn.init.normal_(self.fc3.weight, mean=mu, std=np.sqrt(std))
+
+        if init_type == 'xavier_uniform':
+            torch.nn.init.xavier_uniform_(self.fc1.weight) # gain is 1 by default
+            torch.nn.init.xavier_uniform_(self.fc2.weight)
+            torch.nn.init.xavier_uniform_(self.fc3.weight)
+
+        if not bias:
+            torch.nn.init.zeros_(self.fc1.bias)
+            torch.nn.init.zeros_(self.fc2.bias)
+            torch.nn.init.zeros_(self.fc3.bias)
 
     def forward(self, x):
         x = self.fc1(x)
