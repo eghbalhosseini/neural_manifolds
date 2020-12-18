@@ -36,10 +36,10 @@ while IFS=, read -r line_count model_line model analyze analyze_file ; do
 
 done <"${GRAND_FILE}"
 
-echo "line ${run_model_line}"
-echo "model ${run_model}"
-echo "analyze ${run_analyze}"
-echo "file to analyze ${run_file}"
+#echo "line ${run_model_line}"
+#echo "model ${run_model}"
+#echo "analyze ${run_analyze}"
+#echo "file to analyze ${run_file}"
 
 module add openmind/singularity
 export SINGULARITY_CACHEDIR=/om/user/${USER}/st/
