@@ -99,7 +99,7 @@ if __name__ == '__main__':
     do_extraction= do_extraction_mftma_knn or distance_extraction
 
     if do_extraction:
-        weight_data = pickle.load(open(file_id, 'rb'))
+        weight_data = torch.load(open(file_id, 'rb'))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = data['model_structure']
         model = model.to(device)
