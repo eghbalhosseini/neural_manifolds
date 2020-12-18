@@ -33,7 +33,7 @@ echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
-addpath(genpath('/om/user/`whoami`/neural_manifolds/matlab/'));\
+addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
 save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
 plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';\
 structures={'partition','tree'};\

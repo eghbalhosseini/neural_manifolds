@@ -19,7 +19,7 @@ NUM_SUBSAMPLES=100
 # Specify a model/analyze identifier and loop through layers:
 #for l={'layer_1_Linear', 'layer_2_Linear', 'layer_3_Linear'};\
 module add mit/matlab/2020a
-matlab -nodisplay -r "addpath(genpath('/om/user/`whoami`/neural_manifolds/'));\
+matlab -nodisplay -r "addpath(genpath('/om/user/${USER}/neural_manifolds/'));\
 for l={'layer_2_Linear', 'layer_3_Linear'};\
 runKNN('root_dir','$ROOT_DIR','analyze_identifier','$ANALYZE_ID','model_identifier','$MODEL_ID','layer',l{1},'dist_metric','$DIST_METRIC','k',$NUM_K,'num_subsamples',$NUM_SUBSAMPLES);\
 end;\

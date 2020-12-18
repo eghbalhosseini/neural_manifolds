@@ -35,16 +35,16 @@ done
 done
 # define singularity paths
 module add openmind/singularity
-SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
+SINGULARITY_CACHEDIR=/om/user/${USER}/st/
 export SINGULARITY_CACHEDIR
 #
-XDG_CACHE_HOME=/om/user/`whoami`/st
+XDG_CACHE_HOME=/om/user/${USER}/st
 export XDG_CACHE_HOME
 # run training
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec --nv -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/python36_fz python /om/user/`whoami`/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
+singularity exec --nv -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/python36_fz python /om/user/${USER}/neural_manifolds/train_network_on_synthetic_data.py "${model_list[$SLURM_ARRAY_TASK_ID]}"
 #wait
 # Grant access
 #chmod g+w -R ${ROOT_DIR}${model_list[$SLURM_ARRAY_TASK_ID]}

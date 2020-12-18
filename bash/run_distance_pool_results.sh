@@ -31,10 +31,10 @@ done
 
 
 module add openmind/singularity
-export SINGULARITY_CACHEDIR=/om/user/`whoami`/st/
-XDG_CACHE_HOME=/om/user/`whoami`/st
+export SINGULARITY_CACHEDIR=/om/user/${USER}/st/
+XDG_CACHE_HOME=/om/user/${USER}/st
 export XDG_CACHE_HOME
 
 echo "Running pooling for:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/`whoami`/simg_images/neural_manifolds_tiny.simg python /om/user/`whoami`/neural_manifolds/distance_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma}
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/distance_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma}
