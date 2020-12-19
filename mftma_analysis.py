@@ -35,7 +35,10 @@ if __name__=='__main__':
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier)):
         os.mkdir(os.path.join(analyze_dir,analyze_identifier))
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier,model_identifier)):
-        os.mkdir(os.path.join(analyze_dir,analyze_identifier,model_identifier))
+        try:
+            os.mkdir(os.path.join(analyze_dir,analyze_identifier,model_identifier))
+        except:
+            print('looks like the folder already exists \n')
 
     file_parts=file_id.split('/')
     extracted_data = pickle.load(open(file_id, 'rb'))
