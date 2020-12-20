@@ -29,11 +29,11 @@ k=${k//-dist/}
 num_subsamples=$(echo "$analyze_knn" | grep -a -o "num_subsamples=.*")
 num_subsamples=${num_subsamples//num_subsamples=/}
 
-for beta in 0.0 0.016 0.033 0.05 ; do
-  for sigma in 0.0 0.833 1.667 2.5 ; do
-    for nclass in 64 96 ; do
-      for idx in 0 1 ; do
-        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=3072-train_test-fixed"
+for beta in 0.000161 ; do
+  for sigma in 5.0 ; do
+    for nclass in 64 ; do
+      for idx in 1 ; do
+        model="NN-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
         model_list[$i]="$model"
         EXT_FILE="master_${model}_extracted.csv"
         FULL_FILE="${ROOT_DIR}/${model}/${EXT_FILE}"
