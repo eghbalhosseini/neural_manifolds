@@ -263,10 +263,14 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
             print("Saving model for epoch {:d}, batch idx {:d}\n".format(epoch, batch_idx))
 
             # Print train and test accuracies
-            if os.path.exists(save_dir + '/' + train_spec['model_identifier'] + '/acc_train_' + train_spec['model_identifier'] + '.csv'):
-                append_write = 'a'  # append if already exists
-            else:
+            if epoch == 1 and batch_idx == log_interval:
                 append_write = 'w'  # make a new file if not
+            else:
+                append_write = 'a'
+            # if os.path.exists(save_dir + '/' + train_spec['model_identifier'] + '/acc_train_' + train_spec['model_identifier'] + '.csv'):
+            #     append_write = 'a'  # append if already exists
+            # else:
+            #     append_write = 'w'  # make a new file if not
 
             train_acc_txt = open(
                 save_dir + '/' + train_spec['model_identifier'] + '/acc_train_' + train_spec['model_identifier'] + '.csv', append_write)

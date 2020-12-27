@@ -62,7 +62,7 @@ class params:
     batch_size_train = 32
     batch_size_test = 32
     epochs = 20
-    momentum = 0.5
+    momentum = 0.8
     lr = 0.0001
     log_interval = 30 # when to save, extract, and test the data
     test_split = .2
