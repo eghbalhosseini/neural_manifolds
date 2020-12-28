@@ -42,6 +42,7 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 extraction_script_distance_permission.sh $GRAND_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_distance_permission.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 

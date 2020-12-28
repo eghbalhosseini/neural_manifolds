@@ -35,23 +35,25 @@ if __name__ == '__main__':
     analyze_identifier = args.analyze_id
     overwrite = args.overwrite
     #
+    file_parts = file_id.split('/')
+    data_dir='/'.join(file_parts[:-1])
     # STEP 2. load model and analysis parameters
     #
     params = train_pool[model_identifier]()
     layer_names=params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
 
-    pickle_file = os.path.join(save_dir,model_identifier_for_saving, 'master_'+model_identifier+'.pkl')
+    pickle_file = os.path.join(data_dir, 'master_'+model_identifier+'.pkl')
     data = pickle.load(open(pickle_file, 'rb'))
     #
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
     # check if path exists
-    if not os.path.exists(os.path.join(save_dir,model_identifier_for_saving)):
-        os.mkdir(os.path.join(save_dir,model_identifier_for_saving))
+    #if not os.path.exists(os.path.join(save_dir,model_identifier_for_saving)):
+    #    os.mkdir(os.path.join(save_dir,model_identifier_for_saving))
 
-    file_parts = file_id.split('/')
+
     layer_extraction=[True for k in layer_names]
     distance_extraction=True
     projection_done_file_list=[]
@@ -62,11 +64,11 @@ if __name__ == '__main__':
     ## extraction of data for knn and projection
 
         for idx, name in enumerate(layer_names):
-            projection_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+            projection_file = os.path.join(data_dir, file_parts[-1])
             projection_file = projection_file.replace(".pth", '')
             projection_file = projection_file + '_' + name + '_extracted.pkl'
-            projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
-                                                      os.path.join(save_dir, model_identifier) + '/' + str(
+            projection_file = projection_file.replace(os.path.join(data_dir) + '/',
+                                                      os.path.join(data_dir) + '/' + str(
                                                         task_id).zfill(4) + '_')
             print(f"looking for {projection_file}")
             if os.path.exists(projection_file):
@@ -80,11 +82,11 @@ if __name__ == '__main__':
 
 
         ## check if distance data exsits:
-        distance_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+        distance_file = os.path.join(data_dir, file_parts[-1])
         distance_file = distance_file.replace(".pth", '')
         distance_file = distance_file + '_distance_data.pkl'
-        distance_file = distance_file.replace(os.path.join(save_dir, model_identifier) + '/',
-                                          os.path.join(save_dir, model_identifier) + '/' + str(
+        distance_file = distance_file.replace(os.path.join(data_dir) + '/',
+                                          os.path.join(data_dir) + '/' + str(
                                               task_id).zfill(4) + '_')
         if os.path.exists(distance_file):
             distance_extraction=False
@@ -137,12 +139,12 @@ if __name__ == '__main__':
             for name in layer_names:
                 layer_proj_cell = [{name: x[name]} for x in projection_cell]
             # STEP 7. save the file
-                projection_file=os.path.join(save_dir,model_identifier_for_saving,file_parts[-1])
+                projection_file=os.path.join(data_dir,file_parts[-1])
                 projection_file = projection_file.replace(".pth", '')
                 projection_file = projection_file + '_' + name + '_extracted.pkl'
 
-                projection_file = projection_file.replace(os.path.join(save_dir, model_identifier) + '/',
-                                          os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(4) + '_')
+                projection_file = projection_file.replace(os.path.join(data_dir) + '/',
+                                          os.path.join(data_dir) + '/' + str(task_id).zfill(4) + '_')
                 print(projection_file)
                 d_master = {'projection_results': layer_proj_cell,
                         'analyze_identifier': analyze_identifier,
@@ -192,10 +194,10 @@ if __name__ == '__main__':
                         'test_acc': weight_data['test_acc'],
                         'epoch': weight_data['epoch'],
                         'batchidx': weight_data['batchidx']}
-            distance_file = os.path.join(save_dir, model_identifier_for_saving, file_parts[-1])
+            distance_file = os.path.join(data_dir, file_parts[-1])
             distance_file = distance_file.replace(".pth", '')
             distance_file = distance_file + '_distance_data.pkl'
-            distance_file = distance_file.replace(os.path.join(save_dir, model_identifier) + '/',
-                                                  os.path.join(save_dir, model_identifier) + '/' + str(task_id).zfill(
+            distance_file = distance_file.replace(os.path.join(data_dir) + '/',
+                                                  os.path.join(data_dir) + '/' + str(task_id).zfill(
                                                       4) + '_')
             save_dict(d_distance, distance_file)
