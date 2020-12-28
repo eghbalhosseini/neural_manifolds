@@ -90,10 +90,12 @@ if __name__ == '__main__':
                   'sigma': dataset.sigma,
                   'norm': dataset.is_norm,
                   'log_interval': params.log_interval,
-                  'is_cuda': torch.cuda.is_available()
+                  'is_cuda': torch.cuda.is_available(),
+                  'training_folder': params.training_folder
                   }
 
-    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1], init_type='gaussian', std=0.00001)
+    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1],
+                         init_type=params.init_type, mu=params.gaussian_mu, std=params.gaussian_std)
     model = model.to(device)
     model_initialized = copy.deepcopy(model)
 
@@ -160,7 +162,6 @@ if __name__ == '__main__':
             generated_files_csv = open(save_dir + '/' + model_identifier + '/master_' + model_identifier + '.csv', 'w')
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    #pth_file = save_dir + '/' + model_identifier + '/' + model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
                     pth_file = os.path.join(save_dir, model_identifier,
                                             model_identifier + '-epoch=' + (str(e).zfill(2)) + '-batchidx=' + str(b) + '.pth')
                     files.append(pth_file)

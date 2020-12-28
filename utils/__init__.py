@@ -23,7 +23,7 @@ def load_train(train_name):
     return train_pool[train_name]()
 
 
-#############TRAINING ###########################
+####################### TRAINING ###########################
 class params:
     def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
                  shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance',n_pairs=200):
@@ -49,6 +49,7 @@ class params:
 
     def load_dataset(self):
         self.dataset = sub_data(data_path=self.dataset_path)
+
     def get_layer_names(self):
         childrens=[]
         leaf_traverse(self.model(),childrens)
@@ -57,8 +58,8 @@ class params:
         [layer_names.append(x.layer_name) for x in childrens]
         self.layer_names=layer_names
         return layer_names
+
     #####  Training specs #####
-    #exm_per_class = 100  # examples per class
     batch_size_train = 32
     batch_size_test = 32
     epochs = 10
@@ -68,6 +69,11 @@ class params:
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
+    init_type = 'gaussian'
+    gaussian_mu = 0
+    gaussian_std = 0.00001
+    training_folder = f'epochs-{epochs}_batch-{batch_size_test}_lr-{lr}_momentum-{momentum}_init-{init_type}_std-{gaussian_std}'
+
 data_config=[]
 # Creating tags for training paradigm
 data_structure=[dict(struct='partition',nclass=64,n_hier=1,shape=(1,936)),
