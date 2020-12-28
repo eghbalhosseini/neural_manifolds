@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     # model.apply(weights_init)
 
-    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1], init_type='gaussian', std=0.0001)
+    model = params.model(num_classes=params.nclass, num_fc1=params.shape[1], init_type='gaussian', std=0.00001)
     model = model.to(device)
     model_initialized = copy.deepcopy(model)
 
@@ -200,7 +200,7 @@ if __name__ == '__main__':
                 for b in num_batches_lst:
                     #pth_file = save_dir + '/' + model_identifier + '/' + model_identifier + '-epoch=' + str(e) + '-batchidx=' + str(b) + '.pth'
                     pth_file = os.path.join(save_dir, model_identifier,
-                                            model_identifier + '-epoch=' + str(e.zfill(2)) + '-batchidx=' + str(b) + '.pth')
+                                            model_identifier + '-epoch=' + (str(e).zfill(2)) + '-batchidx=' + str(b) + '.pth')
                     files.append(pth_file)
 
                     # Write to csv file
