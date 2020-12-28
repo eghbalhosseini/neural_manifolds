@@ -29,6 +29,8 @@ except:
 user = getpass.getuser()
 print(user)
 
+
+
 # parser = argparse.ArgumentParser(description='neural manifold train network')
 # parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
 # args = parser.parse_args()
@@ -39,7 +41,11 @@ if __name__ == '__main__':
     params = train_pool[model_identifier]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    ##### DATA ####
+    # Make saving directory
+    if not os.path.exists(os.path.join(save_dir, model_identifier, params.training_folder)):
+        os.makedirs(os.path.join(save_dir, model_identifier, params.training_folder))
+
+    ##### DATA #####
     params.load_dataset()
     dataset = params.dataset
     exm_per_class = dataset.exm_per_class
@@ -113,19 +119,20 @@ if __name__ == '__main__':
 
     #### LOGGING ####
     # Tensorboard
-    access_rights = 0o755
-    current_time = datetime.now().strftime('%b%d_%H-%M-%S')
-    log_dir = os.path.join(save_dir, model_identifier, 'runs', current_time + '_' + socket.gethostname())
+    if params.tensorboard:
+        access_rights = 0o755
+        current_time = datetime.now().strftime('%b%d_%H-%M-%S')
+        log_dir = os.path.join(save_dir, model_identifier, params.training_folder, 'runs', current_time + '_' + socket.gethostname())
 
-    writer = SummaryWriter(log_dir=log_dir)
-    writer.add_hparams(hparam_dict=train_spec, metric_dict={})
+        writer = SummaryWriter(log_dir=log_dir)
+        writer.add_hparams(hparam_dict=train_spec, metric_dict={})
 
     #### TRAINING ####
     for epoch in range(1, params.epochs + 1):  # e.g. if epochs = 50, then running from 1 to 50
 
         #### DEFINE TRAIN FUNCTION ####
         if params.train_type == 'train_test':
-            test_accuracies = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer)
+            test_accuracies = train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer=params.tensorboard)
         if params.train_type == 'train':
             epoch_dat = train(epoch, model, device, train_loader, test_loader, optimizer, train_spec)
 
@@ -159,10 +166,12 @@ if __name__ == '__main__':
                     num_batches_lst.append(batch_idx)
 
             files = []
-            generated_files_csv = open(save_dir + '/' + model_identifier + '/master_' + model_identifier + '.csv', 'w')
+            generated_files_csv = open(save_dir + '/' + model_identifier + '/' + params.training_folder + '/' +
+                                       '/master_' + model_identifier + '.csv', 'w')
+
             for e in range(1, epoch + 1):
                 for b in num_batches_lst:
-                    pth_file = os.path.join(save_dir, model_identifier,
+                    pth_file = os.path.join(save_dir, model_identifier, params.training_folder,
                                             model_identifier + '-epoch=' + (str(e).zfill(2)) + '-batchidx=' + str(b) + '.pth')
                     files.append(pth_file)
 
@@ -178,7 +187,8 @@ if __name__ == '__main__':
                         'files_generated': files,
                         'distance_pair_index':ASSEMBLY}
 
-            save_dict(d_master, save_dir + '/' + model_identifier + '/master_' + model_identifier + '.pkl')
+            save_dict(d_master, save_dir + '/' + model_identifier + '/' + params.training_folder + '/' +
+                      '/master_' + model_identifier + '.pkl')
 
             break  # Break statement in case the end was not reached (test accuracy termination)
 
