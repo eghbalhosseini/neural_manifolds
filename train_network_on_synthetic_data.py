@@ -93,38 +93,6 @@ if __name__ == '__main__':
                   'is_cuda': torch.cuda.is_available()
                   }
 
-    ## Initialize weights
-    # def weights_init(m):
-    #     if isinstance(m, nn.Conv2d):
-    #         torch.nn.init.xavier_uniform_(m.weight)
-    #         torch.nn.init.zeros_(m.bias)
-    #
-    #
-    # model.apply(weights_init)
-
-    # def weights_init(m, init_type='gaussian', lower_bound=-1, upper_bound=1, mu=0, std=1, bias=False):
-    #     if isinstance(m, torch.nn.Linear):
-    #         if init_type == 'uniform':
-    #             torch.nn.init.uniform_(m.weight.data, a=lower_bound, b=upper_bound)
-    #         if init_type == 'gaussian':
-    #         # torch.nn.init.normal_(m.weight.data, mean=mu, std=np.sqrt(std)) # pytorch uses std^2, so this ensures that the std is the one inputted in the function, and not std^2
-    #         if init_type == 'empty':
-    #             torch.nn.init.zeros_(m.weight.data)
-    #         if init_type == 'xavier_uniform':
-    #             torch.nn.init.xavier_uniform_(m.weight.data)  # gain is 1 by default
-    #         if init_type == 'xavier_normal':
-    #             torch.nn.init.xavier_normal_(m.weight.data)  # gain is 1 by default
-    #
-    #         if not bias:
-    #             torch.nn.init.zeros_(m.bias.data)
-    #
-    # def weights_init(m):
-    #     if isinstance(m, nn.Linear):
-    #         torch.nn.init.uniform_(m.weight.data, a=7, b=0)
-    #         #xavier(m.bias.data)
-
-    # model.apply(weights_init)
-
     model = params.model(num_classes=params.nclass, num_fc1=params.shape[1], init_type='gaussian', std=0.00001)
     model = model.to(device)
     model_initialized = copy.deepcopy(model)
@@ -133,12 +101,6 @@ if __name__ == '__main__':
     # plt.figure()
     # plt.title('fc1')
     # plt.hist(g.flatten(), bins=1000)
-    # plt.show()
-    #
-    # g2 = model.fc2.weight.detach().numpy()
-    # plt.figure()
-    # plt.title('fc2')
-    # plt.hist(g2.flatten(), bins=1000)
     # plt.show()
 
     # Save the very initial weights
