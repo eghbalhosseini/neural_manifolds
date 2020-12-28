@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 analyze='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 
@@ -13,8 +13,8 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0 ; do
-  for sigma in 0.5  ; do
+for beta in 0.000161 ; do
+  for sigma in 5.0  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
         for net in NN ; do
@@ -42,6 +42,7 @@ for beta in 0.0 ; do
 done
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 extraction_script_distance.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 
