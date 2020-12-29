@@ -21,8 +21,11 @@ for beta in 0.000161 ; do
     for nclass in 64 ; do
       for net in NN  ; do
         for idx in 0 ; do
+          for train_dir in epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001 \
+                           epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05 \
+                           epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
           model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
-          FULL_DIR="${ROOT_DIR}/${model}/"
+          FULL_DIR="${ROOT_DIR}/${model}/${train_dir}"
           echo "looking at ${FULL_DIR} "
           MODEL_LINE=0
           while read x; do
@@ -34,12 +37,13 @@ for beta in 0.000161 ; do
               echo $LINE_COUNT
             done < <(find $FULL_DIR -name "*_extracted.pkl")
           i=$i+1
+          done
         done
       done
     done
   done
 done
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
 
 

@@ -23,28 +23,42 @@ if __name__=='__main__':
     model_identifier = args.model_id
     analyze_identifier = args.analyze_id
     overwrite = args.overwrite
+    #
+    file_parts = file_id.split('/')
+    data_dir = '/'.join(file_parts[:-1])
 
     params = train_pool[model_identifier]()
     layer_names = params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
-    analyze_params = analyze_pool[analyze_identifier]()
+    analyze_params = analyze_pool[analyze_identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
+
+    results_dir = data_dir.replace(save_dir, os.path.join(analyze_dir, analyze_identifier_for_saving+'/'))
     #
     # check if path exists
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier)):
-        os.mkdir(os.path.join(analyze_dir,analyze_identifier))
+        try:
+            os.mkdir(os.path.join(analyze_dir,analyze_identifier))
+        except:
+            print(f'looks like the folder {os.path.join(analyze_dir,analyze_identifier)} already exists \n')
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier,model_identifier)):
         try:
             os.mkdir(os.path.join(analyze_dir,analyze_identifier,model_identifier))
         except:
-            print('looks like the folder already exists \n')
+            print(f'looks like the folder {os.mkdir(os.path.join(analyze_dir,analyze_identifier,model_identifier))} already exists \n')
+    if not os.path.exists(results_dir):
+        try:
+            os.mkdir(results_dir)
+        except:
+            print(f'looks like the folder {results_dir} already exists \n')
+
 
     file_parts=file_id.split('/')
     extracted_data = pickle.load(open(file_id, 'rb'))
     projection_data_ = extracted_data['projection_results']
     # create outputfile
-    mftma_file = os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
+    mftma_file = os.path.join(results_dir,file_parts[-1])
     mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -60,7 +74,7 @@ if __name__=='__main__':
     # run mftma
         mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
         # save results:
-        mftma_file=os.path.join(analyze_dir,analyze_identifier,model_identifier,file_parts[-1])
+        mftma_file=os.path.join(results_dir,file_parts[-1])
         mftma_file = mftma_file.replace("_extracted.pkl", '_mftma_analysis.pkl')
         #print(mftma_file)
     #
