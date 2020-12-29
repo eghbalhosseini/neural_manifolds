@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=distance_pool
-#SBATCH --array=0
+#SBATCH --array=0-2
 #SBATCH --time=12:00:00
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
