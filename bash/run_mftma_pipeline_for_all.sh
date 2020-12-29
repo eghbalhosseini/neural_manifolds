@@ -34,10 +34,11 @@ for beta in 0.000161 ; do
               printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$x" >> $GRAND_MFTMA_FILE
               LINE_COUNT=$(expr ${LINE_COUNT} + 1)
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-              echo $LINE_COUNT
+
             done < <(find $FULL_DIR -name "*_extracted.pkl")
           i=$i+1
           done
+          echo $LINE_COUNT
         done
       done
     done
@@ -45,5 +46,6 @@ for beta in 0.000161 ; do
 done
 echo $LINE_COUNT
 #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_FILE &
 
 
