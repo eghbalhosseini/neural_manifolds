@@ -10,11 +10,13 @@ import fnmatch
 parser = argparse.ArgumentParser(description='run mftma and save results')
 parser.add_argument('model_id', type=str, default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.02_sigma=0.83_nfeat=3072-train_test-fixed')
 parser.add_argument('analyze_id', type=str, default='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1')
+parser.add_argument('train_id', type=str, default='')
 args = parser.parse_args()
 
 if __name__ == '__main__':
     model_identifier = args.model_id
     analyze_identifier = args.analyze_id
+    train_dir_identifier = args.train_id
     params = train_pool[model_identifier]()
     layer_names = params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
@@ -24,20 +26,15 @@ if __name__ == '__main__':
     # find layers
     # manually walk through the files
     mftma_files = []
-    for file in os.listdir(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving)):
+    for file in os.listdir(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving,train_dir_identifier)):
         if fnmatch.fnmatch(file, '*_mftma_analysis.pkl'):
-            mftma_files.append(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving, file))
+            mftma_files.append(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving,train_dir_identifier, file))
     s = [re.findall('/\d+', x) for x in mftma_files]
     s = [item for sublist in s for item in sublist]
     file_id = [int(x.split('/')[1]) for x in s]
     sorted_files = [mftma_files[x] for x in np.argsort(file_id)]
 
-    #analysis_files_csv = open(os.path.join(analyze_dir,analyze_identifier_for_saving, model_identifier_for_saving, 'master_' + model_identifier_for_saving + '_mftma_analysis.csv'),'r')
-    #analysis_files = analysis_files_csv.read().splitlines()
-    #s = [re.findall('/\d+', x)[0] for x in analysis_files]
-    #file_id = [int(x.split('/')[1]) for x in s]
-    #sorted_files = [analysis_files[x] for x in np.argsort(file_id)]
-    # do layerwise saving
+      # do layerwise saving
     mftma_pooled = dict()
     for idx, layer in enumerate(layer_names):
         s = np.asarray([int(not not re.findall(layer, x)) for x in sorted_files])
@@ -55,9 +52,10 @@ if __name__ == '__main__':
             layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx, batch=batchidx,
                  seq=id_file,train_acc=data_['train_acc'],test_acc=data_['test_acc'] , file=file))
         mftma_pooled[layer]=layer_results
-    pool_file = os.path.join(analyze_dir,analyze_identifier_for_saving,model_identifier_for_saving, f'{model_identifier_for_saving}_mftma_pooled.pkl')
+    pool_file = os.path.join(analyze_dir,analyze_identifier_for_saving,model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_mftma_pooled.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
+                'train_identifier': train_dir_identifier,
                 'mftma_results': mftma_pooled,
                 'file_generated': pool_file}
     save_dict(d_master, pool_file)
