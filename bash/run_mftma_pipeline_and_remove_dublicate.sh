@@ -37,11 +37,12 @@ for beta in 0.000161 ; do
               possible_path="${possible_file/$FULL_DIR/$ANALYZE_DIR}"
               if [ -f "$possible_path" ]
               then
-                echo "$possible_path exists"
+                true
               else
                 echo "$possible_path dosent exists adding it"
-                printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$x" >> $GRAND_MFTMA_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
+                printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$x" >> $GRAND_MFTMA_FILE
+
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
             done < <(find $FULL_DIR -name "*_extracted.pkl")
@@ -54,6 +55,12 @@ for beta in 0.000161 ; do
   done
 done
 echo $LINE_COUNT
+run_val=0
+if [ "$LINE_COUNT" -gt "$run_val" ]; then
+   true
+  else
+    echo $LINE_COUNT
+fi
 #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_MFTMA_FILE &
 
