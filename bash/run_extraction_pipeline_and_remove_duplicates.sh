@@ -31,12 +31,12 @@ for beta in 0.000161 ; do
               original="${ROOT_DIR}/${model}/${train_dir}/"
               file_name="${line/$original/}"
               original='.pth'
-              correction='_distance_data.pkl'
+              correction='_layer*'
               possible_file="${file_name/$original/$correction}"
               leading_zero=$(printf "%04d" $MODEL_LINE)
               new_file_name="${ROOT_DIR}/${model}/${train_dir}/${leading_zero}_${possible_file}"
-              if [ -f "$new_file_name" ]
-              then
+              #if [ -f "$new_file_name" ]
+              if compgen -G "${new_file_name}" > /dev/null ; then
                 echo "$new_file_name exists"
               else
                 echo "$new_file_name dosent exists adding it"
