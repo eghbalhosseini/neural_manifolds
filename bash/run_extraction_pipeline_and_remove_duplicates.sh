@@ -28,10 +28,23 @@ for beta in 0.000161 ; do
         echo $FULL_FILE
         MODEL_LINE=0
         while read line; do
-
-	            printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
+              original="${ROOT_DIR}/${model}/${train_dir}/"
+              correction=""
+              file_name="${x/$original/$correction}"
+              original='.pth'
+              correction='_distance_data.pkl'
+              possible_file="${file_name/$original/$correction}"
+              leading_zero=$(printf "%04d" $MODEL_LINE)
+              new_file_name="${ROOT_DIR}/${model}/${train_dir}/${leading_zero}_${possible_file}"
+              if [ -f "$new_file_name" ]
+              then
+                echo "$new_file_name exists"
+              else
+                echo "$new_file_name dosent exists adding it"
+	              printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-                MODEL_LINE=$(expr ${MODEL_LINE} + 1)
+              fi
+              MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE
 
         i=$i+1
@@ -43,7 +56,7 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 

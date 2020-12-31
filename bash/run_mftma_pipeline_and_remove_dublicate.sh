@@ -42,8 +42,8 @@ for beta in 0.000161 ; do
                 echo "$possible_path dosent exists adding it"
                 printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze_mftma" "$x" >> $GRAND_MFTMA_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
-                MODEL_LINE=$(expr ${MODEL_LINE} + 1)
               fi
+              MODEL_LINE=$(expr ${MODEL_LINE} + 1)
             done < <(find $FULL_DIR -name "*_extracted.pkl")
           i=$i+1
           done
