@@ -56,7 +56,12 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+run_val=0
+if [ "$LINE_COUNT" -gt "$run_val" ]; then
+    nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+  else
+    echo $LINE_COUNT
+fi
 #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 
