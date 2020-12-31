@@ -37,9 +37,10 @@ for beta in 0.000161 ; do
               new_file_name="${ROOT_DIR}/${model}/${train_dir}/${leading_zero}_${possible_file}"
               #if [ -f "$new_file_name" ]
               if compgen -G "${new_file_name}" > /dev/null ; then
-                echo "$new_file_name exists"
+                #echo "$new_file_name exists"
+                true
               else
-                echo "$new_file_name dosent exists adding it"
+                echo "$new_file_name doesnt exists adding it"
 	              printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
               fi
@@ -55,7 +56,7 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 
