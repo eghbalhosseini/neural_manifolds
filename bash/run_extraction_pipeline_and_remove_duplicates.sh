@@ -29,8 +29,7 @@ for beta in 0.000161 ; do
         MODEL_LINE=0
         while read line; do
               original="${ROOT_DIR}/${model}/${train_dir}/"
-              correction=""
-              file_name="${line/$original/$correction}"
+              file_name="${line/$original/}"
               original='.pth'
               correction='_distance_data.pkl'
               possible_file="${file_name/$original/$correction}"
