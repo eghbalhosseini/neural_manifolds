@@ -40,9 +40,10 @@ for beta in 0.000161 ; do
                 #echo "$new_file_name exists"
                 true
               else
+                LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 echo "$new_file_name doesnt exists adding it"
 	              printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
-                LINE_COUNT=$(expr ${LINE_COUNT} + 1)
+
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE
