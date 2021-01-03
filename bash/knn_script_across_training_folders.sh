@@ -20,8 +20,10 @@ NUM_SUBSAMPLES=100
 #for l={'layer_1_Linear', 'layer_2_Linear', 'layer_3_Linear'};\
 module add mit/matlab/2020a
 matlab -nodisplay -r "addpath(genpath('/om/user/${USER}/neural_manifolds/'));\
+for t={'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001','epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05','epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'}
 for l={'layer_1_Linear', 'layer_2_Linear', 'layer_3_Linear'};\
-runKNN('root_dir','$ROOT_DIR','analyze_identifier','$ANALYZE_ID','model_identifier','$MODEL_ID','layer',l{1},'dist_metric','$DIST_METRIC','k',$NUM_K,'num_subsamples',$NUM_SUBSAMPLES);\
+runKNN('root_dir','$ROOT_DIR','analyze_identifier','$ANALYZE_ID','model_identifier','$MODEL_ID','training_folder',t{1},'layer',l{1},'dist_metric','$DIST_METRIC','k',$NUM_K,'num_subsamples',$NUM_SUBSAMPLES);\
+end;\
 end;\
 quit;"
 #runKNN('root_dir','$ROOT_DIR','analyze_identifier','$run_analyze','model_identifier','$run_model','layer','$run_layer','dist_metric','$run_dist_metric','k',$run_k,'num_subsamples',$run_num_subsamples);\
