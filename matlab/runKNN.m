@@ -497,7 +497,6 @@ end
 %% Save meanTimeNormNN plot across all hierarchies
 meanTimeNormNN_all(hier_level, :) = squeeze(meanTimeNormNN);
 
-disp('here!')
 %% Clear variables for saving the next hierarchy results
 clear hier_field_name hier_field_struct 
 
