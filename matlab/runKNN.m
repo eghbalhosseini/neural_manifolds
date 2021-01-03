@@ -69,7 +69,7 @@ if ~exist(resultDir, 'dir')
 end
 
 
-KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'));
+KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, params.training_folder, filesep, '*', params.layer, '_extracted.mat'));
 disp('Found KNN files!')
 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);
