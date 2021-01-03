@@ -42,23 +42,23 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-% params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-% params.layer = 'layer_1_Linear'
-% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-% params.k = 100
-% params.num_subsamples = 100
-% params.save_fig = false
-% params.dist_metric = 'euclidean'
-% 
-% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
+params.layer = 'layer_1_Linear'
+params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+params.k = 100
+params.num_subsamples = 100
+params.save_fig = false
+params.dist_metric = 'euclidean'
+
+addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/');
 analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep, params.model_identifier, filesep);
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep, params.model_identifier, filesep);
 
-Make directories according to analyzeID
+%Make directories according to analyzeID
 if ~exist(analyzeDir, 'dir')
    mkdir(analyzeDir)
 end
@@ -71,7 +71,6 @@ end
 KNN_files = dir(strcat(dataDir, params.model_identifier, filesep, '*', params.layer, '_extracted.mat'));
 disp('Found KNN files!')
 
-%% 
 order = cellfun(@(x) str2num(x(1:4)), {KNN_files.name}, 'UniformOutput', false);
 assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
@@ -93,8 +92,12 @@ cell_map = {};
 hier_field_names = [];
 hier_field_structs = [];
 
+% Save meanTimeNormNN across all hierarchies
+meanTimeNormNN_all = zeros(nhier_level, length(KNN_data));
+
 % hier_level = 3 %  TEST OUTCOMMENT
 for hier_level = 1:nhier_level
+disp(strcat('Hierarchy level: ', string(hier_level)))
     
 % Load sample file to get correct dimensions for each hierarchy
 sample_file = file.projection_results{1, hier_level}.( params.layer );
@@ -468,44 +471,71 @@ end
 
 %% If saving as struct
 % Structs per hierarchy OUTCOMMENTED
-hier_struct = struct('hier_level', hier_level, ...
-                    'params', params_out, ...
-                    'targets', targets, ...
-                    'testAccSubsamples', testAccSubsamples, ...
-                    'testAcc', testAcc, ...
-                    'trainAccSubsamples', trainAccSubsamples, ...
-                    'trainAcc', trainAcc, ...
-                    'dataNorm', dataNorm, ...
-                    'meanTimeDataNorm', meanTimeDataNorm, ...
-                    'NNids', NNids, ...
-                    'meanTimeNNids', meanTimeNNids, ...
-                    'meanNormNN', meanNormNN, ...
-                    'meanTimeNormNN', meanTimeNormNN, ...
-                    'stdNormNN', stdNormNN, ...
-                    'meanTimeStdNormNN', meanTimeStdNormNN)
+% hier_struct = struct('hier_level', hier_level, ...
+%                     'params', params_out, ...
+%                     'targets', targets, ...
+%                     'testAccSubsamples', testAccSubsamples, ...
+%                     'testAcc', testAcc, ...
+%                     'trainAccSubsamples', trainAccSubsamples, ...
+%                     'trainAcc', trainAcc, ...
+%                     'dataNorm', dataNorm, ...
+%                     'meanTimeDataNorm', meanTimeDataNorm, ...
+%                     'NNids', NNids, ...
+%                     'meanTimeNNids', meanTimeNNids, ...
+%                     'meanNormNN', meanNormNN, ...
+%                     'meanTimeNormNN', meanTimeNormNN, ...
+%                     'stdNormNN', stdNormNN, ...
+%                     'meanTimeStdNormNN', meanTimeStdNormNN)
+% 
+% hier_field_name = strcat('hier_', num2str(hier_level));
+% 
+% % Append to array
+% hier_field_names = [hier_field_names; hier_field_name]
+% hier_field_structs = [hier_field_structs; hier_struct]
 
-hier_field_name = strcat('hier_', num2str(hier_level));
+%% Save meanTimeNormNN plot across all hierarchies
+meanTimeNormNN_all(hier_level, :) = squeeze(meanTimeNormNN);
 
-% Append to array
-hier_field_names = [hier_field_names; hier_field_name]
-hier_field_structs = [hier_field_structs; hier_struct]
-
-% Clear variables for saving the next hierarchy results
+disp('here!')
+%% Clear variables for saving the next hierarchy results
 clear hier_field_name hier_field_struct 
 
 end % End hierarchy loop
 
 % Structs of structs
 % hier_field_names_cell = num2cell(hier_field_names);
-hier_field_structs_cell = num2cell(hier_field_structs);
+% hier_field_structs_cell = num2cell(hier_field_structs);
+% 
+% super_struct = cell2struct(hier_field_structs_cell, hier_field_names);
+% 
+% disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
+% 
+% cd(analyzeDir)
+% % save(saveStrAnalyze, 'cell_map');
+% save(saveStrAnalyze, 'super_struct','-v7.3');
 
-super_struct = cell2struct(hier_field_structs_cell, hier_field_names);
+%% Make meanTimeNormNN plot across all hierarchies
+colorsMeanTimeNormNN_all = magma(nhier_level); 
 
-disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
+if params.save_fig
+    figure;
+    
+    for i=1:nhier_level
+        plot(time, meanTimeNormNN_all(i,:), 'Color', colorsMeanTimeNormNN_all(i,:))
+        hold on
+    end
 
-cd(analyzeDir)
-% save(saveStrAnalyze, 'cell_map');
-save(saveStrAnalyze, 'super_struct','-v7.3');
+    ylabel('Mean neighbor distance') % (unit: training time)
+    hold on
+    set(gca,'XTick',downsample(productionTime, round(size(relTime,1)/10)))
+    set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
+    hold on
+    leg = legend('1','2','3','4','5','6');hold on;
+    title(leg, 'Hierarchy level')
+    xlabel('Relative time in training')
+    axis tight
+    saveas(gcf, strcat(resultDir,'meanTimeNormNN_allHier_',saveStrResult));
+end
 
 
 end
