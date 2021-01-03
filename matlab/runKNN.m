@@ -55,7 +55,7 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
-dataDir = strcat(params.root_dir, '/extracted/', params.training_folder, filesep);
+dataDir = strcat(params.root_dir, '/extracted/');
 analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep, params.model_identifier, filesep, params.training_folder, filesep);
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep, params.model_identifier, filesep, params.training_folder, filesep);
 
