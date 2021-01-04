@@ -14,6 +14,10 @@ parse(p, varargin{:});
 params = p.Results;
 params_out = params;
 
+disp(strcat('\nModel identifier: ', params.model_identifier))
+disp(strcat('\nTraining folder: ', params.training_folder))
+
+
 %% Figure specs
 set(groot, ...
 'DefaultFigureColor', 'w', ...
