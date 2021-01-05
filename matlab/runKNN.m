@@ -429,7 +429,7 @@ if params.save_fig
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
     set(gca,'XTick',downsample(time, round(size(time,1)/10)))
-    set(gca,'XTickLabel', linspace(0,max(epochs)-1,10))
+    set(gca,'XTickLabel', linspace(0,max(epoch)-1,10))
     % set(gca,'XTickLabel', (max(epochs)))
     xlabel('Epochs')
     axis tight
@@ -553,7 +553,7 @@ if params.save_fig
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
     set(gca,'XTick',downsample(time, round(size(time,1)/10)))
-    set(gca,'XTickLabel', linspace(0,max(epochs)-1,10))
+    set(gca,'XTickLabel', linspace(0,max(epoch)-1,10))
     xlabel('Epochs');
     hold on
     leg = legend('1','2','3','4','5','6', 'Location', 'best');hold on;
