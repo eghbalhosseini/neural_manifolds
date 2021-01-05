@@ -47,18 +47,18 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-params.layer = 'layer_1_Linear'
-params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-params.k = 100
-params.num_subsamples = 100
-params.save_fig = false
-params.dist_metric = 'euclidean'
-params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
-params_out = params;
-
-addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+% params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
+% params.layer = 'layer_1_Linear'
+% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+% params.k = 100
+% params.num_subsamples = 100
+% params.save_fig = false
+% params.dist_metric = 'euclidean'
+% params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
+% params_out = params;
+% 
+% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/');
