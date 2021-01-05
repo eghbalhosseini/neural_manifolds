@@ -14,8 +14,8 @@ parse(p, varargin{:});
 params = p.Results;
 params_out = params;
 
-disp(strcat('\nModel identifier: ', params.model_identifier))
-disp(strcat('\nTraining folder: ', params.training_folder))
+disp(strcat('Model identifier: ', params.model_identifier))
+disp(strcat('Training folder: ', params.training_folder))
 
 
 %% Figure specs
@@ -47,16 +47,18 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-% params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-% params.layer = 'layer_1_Linear'
-% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-% params.k = 100
-% params.num_subsamples = 100
-% params.save_fig = false
-% params.dist_metric = 'euclidean'
-% 
-% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
+params.layer = 'layer_1_Linear'
+params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+params.k = 100
+params.num_subsamples = 100
+params.save_fig = false
+params.dist_metric = 'euclidean'
+params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
+params_out = params;
+
+addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/');
@@ -103,7 +105,8 @@ meanTimeNormNN_all = zeros(nhier_level, length(KNN_data));
 % hier_level = 3 %  TEST OUTCOMMENT
 for hier_level = 1:nhier_level
 disp(strcat('Hierarchy level: ', string(hier_level)))
-    
+tic
+
 % Load sample file to get correct dimensions for each hierarchy
 sample_file = file.projection_results{1, hier_level}.( params.layer );
 
@@ -125,6 +128,9 @@ subEpoch = [];
 testAcc = [];
 trainAcc = [];
 
+toc
+disp('Start subsampling KNN data files')
+tic
 for i = 1:length(KNN_data)
     file = load(KNN_data{i});
     file = file.activation;
@@ -192,25 +198,30 @@ for i = 1:length(KNN_data)
     trainAcc = [trainAcc; train_a];
 
 end
-
+toc
 % Find log interval:
 logInt = abs(subEpoch(params.num_subsamples) - subEpoch(params.num_subsamples*2));
 productionTime = (1:length(epoch))'; 
-time = [1:length(KNN_files)];
+time = [1:length(KNN_files)]';
 relTime = productionTime./max(productionTime);
 
-%% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
+%% %%%%%%%%%% SAVE DIRS, COLORS, AXES LABELS %%%%%%%%%%%%%%
 
 % Save directories
 saveStrResult = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
 saveStrAnalyze = strcat(params.model_identifier,'_',params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 
 % Colors
-colorsEpoch = magma(max(epoch) +1); % 3 colors
-% colorsEpoch = colorsEpoch(2:end, :);
-colorsTarget = magma(max(num_classes));
+colorsEpoch = magma(max(epoch)+1); % 3 colors
+colorsEpoch = colorsEpoch(1:end-1, :);
+
+colorsTarget = magma(max(num_classes+1));
+colorsTarget = colorsTarget(1:end-1, :);
+
 colorsTargetViridis = viridis(max(num_classes));
-targetLoc = arrayfun(@(x) find(targets==x), [1:max(target)],'uniformoutput',false); % Locates the targets
+
+colorsMeanTimeNormNN_all = magma(nhier_level+1); 
+colorsMeanTimeNormNN_all = colorsMeanTimeNormNN_all(1:end-1, :);
 
 %% Make axes labels
 subEpochSwitch = diff(subEpoch);
@@ -228,11 +239,15 @@ uniqueSubEpochBatches = arrayfun(@(x) find(incrTrial==x), unique(incrTrial), 'un
 incrSubEpochTrial = cell2mat(cellfun(@(x) min(x), uniqueSubEpochBatches, 'uniformoutput',false));
 incrSubEpoch = subEpoch((incrSubEpochTrial));
 
+targetLoc = arrayfun(@(x) find(targets==x), [1:max(target)],'uniformoutput',false); % Locates the targets
+
 %% Permutation across time
 % Proof of concept that KNN can handle data that is not organized correctly
-data1 = data;
-rand_idx = randperm(length(data1));
-data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+% data1 = data;
+% rand_idx = randperm(length(data1));
+% data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+
+%% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
 %% Test/train accuracy
 
@@ -304,15 +319,20 @@ y = reshape(dataNorm, params.num_subsamples, length(KNN_files));
 meanTimeDataNorm = mean(y, 1);
 
 %% Nearest neighbors
+disp('Computing KNN')
+tic
 NNids_self = knnsearch(data, data, 'K', params.k, 'Distance', params.dist_metric); 
 NNids_self = NNids_self./max(NNids_self(:,1)); % normalized NNids
 NNids = NNids_self(:, 2:end); 
+toc
 
 % Null - if the network did not perform any operation, how should the KNN
 % representation look
 nullNNids = repmat(NNids_self(:,1),1,200);
 % figure;imagesc(nullNNids)
 
+disp('Starting KNN plots')
+tic
 if params.save_fig
     figure;
     imagesc(NNids_self)
@@ -328,7 +348,7 @@ end
 
 y1 = reshape(NNids, params.num_subsamples, length(KNN_files), params.k-1); % num subsamples x num points in time x num k-1
 meanTimeNNids = squeeze(mean(y1, 1));
-figure;imagesc(meanTimeNNids)
+% figure;imagesc(meanTimeNNids)
 
 %% Compute norm of neighbors
 normNN = zeros(params.k - 1, length(epoch));
@@ -382,8 +402,7 @@ end
 
 %% Plot vector norm - according to data point colors - OBS HEAVY PLOT
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
-colorsNormNN = magma(length(meanNormNN)); 
-% 
+% colorsNormNN = magma(length(meanNormNN)); % for the heavy plot
 % if params.save_fig
 %     figure;
 %     hold on
@@ -399,7 +418,8 @@ colorsNormNN = magma(length(meanNormNN));
 
 %% Plot vector norm - according to data point colors - meaned over time
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
-colorsMeanTimeNormNN = magma(length(meanTimeNormNN)); 
+colorsMeanTimeNormNN = magma(length(meanTimeNormNN)+1); 
+colorsMeanTimeNormNN = colorsMeanTimeNormNN(2:end, :);
 
 if params.save_fig
     figure;
@@ -407,8 +427,9 @@ if params.save_fig
     arrayfun(@(i) scatter(time(i)', meanTimeNormNN(i)', 30, colorsMeanTimeNormNN(i,:), 'filled', 'o'), [1:length(meanTimeNormNN)])
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
-    set(gca,'XTick',downsample(productionTime, round(size(relTime,1)/10)))
-    set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
+    set(gca,'XTick',downsample(time, round(size(time,1)/10)))
+    set(gca,'XTickLabel',downsample(round(time,2), round(size(time,1)/10)))
+    % set(gca,'XTickLabel', (max(epochs)))
     xlabel('Relative time in training')
     axis tight
     saveas(gcf, strcat(resultDir,'meanTimeNormNN_',saveStrResult));
@@ -451,52 +472,52 @@ if params.save_fig
     axis tight
     saveas(gcf, strcat(resultDir,'meanStdTimeNormNN_targetColor_',saveStrResult));
 end
-
+toc
 %% Save variables
 
 %% First across all subsamples, then averaged - pairwise
 
 %% If saving as map structure
-% keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
-%     'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
-%     'stdNormNN', 'meanTimeStdNormNN'};
-% 
-% valueSet = {hier_level, params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
-%     dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
-%      stdNormNN, meanTimeStdNormNN};
-%  
-% M = containers.Map(keySet,valueSet,'UniformValues',false);
-% % Get vals
-% % M('params')
-% 
-% cell_map{1, hier_level} = M;
+keySet = {'hier_level','params', 'targets', 'testAccSubsamples', 'testAcc', 'trainAccSubsamples', 'trainAcc', ...
+    'dataNorm', 'meanTimeDataNorm', 'NNids', 'meanTimeNNids', 'meanNormNN', 'meanTimeNormNN', ... 
+    'stdNormNN', 'meanTimeStdNormNN'};
+
+valueSet = {hier_level, params_out, targets, testAccSubsamples, testAcc, trainAccSubsamples, trainAcc, ...
+    dataNorm, meanTimeDataNorm, NNids, meanTimeNNids, meanNormNN, meanTimeNormNN, ...
+     stdNormNN, meanTimeStdNormNN};
+ 
+M = containers.Map(keySet,valueSet,'UniformValues',false);
+% Get vals
+% M('params')
+
+cell_map{1, hier_level} = M;
 
 % Clear variables for saving the next hierarchy results
-% clear keySet valueSet M 
+clear keySet valueSet M 
 
 %% If saving as struct
 % Structs per hierarchy OUTCOMMENTED
-% hier_struct = struct('hier_level', hier_level, ...
-%                     'params', params_out, ...
-%                     'targets', targets, ...
-%                     'testAccSubsamples', testAccSubsamples, ...
-%                     'testAcc', testAcc, ...
-%                     'trainAccSubsamples', trainAccSubsamples, ...
-%                     'trainAcc', trainAcc, ...
-%                     'dataNorm', dataNorm, ...
-%                     'meanTimeDataNorm', meanTimeDataNorm, ...
-%                     'NNids', NNids, ...
-%                     'meanTimeNNids', meanTimeNNids, ...
-%                     'meanNormNN', meanNormNN, ...
-%                     'meanTimeNormNN', meanTimeNormNN, ...
-%                     'stdNormNN', stdNormNN, ...
-%                     'meanTimeStdNormNN', meanTimeStdNormNN)
-% 
-% hier_field_name = strcat('hier_', num2str(hier_level));
-% 
-% % Append to array
-% hier_field_names = [hier_field_names; hier_field_name]
-% hier_field_structs = [hier_field_structs; hier_struct]
+hier_struct = struct('hier_level', hier_level, ...
+                    'params', params_out, ...
+                    'targets', targets, ...
+                    'testAccSubsamples', testAccSubsamples, ...
+                    'testAcc', testAcc, ...
+                    'trainAccSubsamples', trainAccSubsamples, ...
+                    'trainAcc', trainAcc, ...
+                    'dataNorm', dataNorm, ...
+                    'meanTimeDataNorm', meanTimeDataNorm, ...
+                    'NNids', NNids, ...
+                    'meanTimeNNids', meanTimeNNids, ...
+                    'meanNormNN', meanNormNN, ...
+                    'meanTimeNormNN', meanTimeNormNN, ...
+                    'stdNormNN', stdNormNN, ...
+                    'meanTimeStdNormNN', meanTimeStdNormNN)
+
+hier_field_name = strcat('hier_', num2str(hier_level));
+
+% Append to array
+hier_field_names = [hier_field_names; hier_field_name];
+hier_field_structs = [hier_field_structs; hier_struct];
 
 %% Save meanTimeNormNN plot across all hierarchies
 meanTimeNormNN_all(hier_level, :) = squeeze(meanTimeNormNN);
@@ -507,19 +528,18 @@ clear hier_field_name hier_field_struct
 end % End hierarchy loop
 
 % Structs of structs
-% hier_field_names_cell = num2cell(hier_field_names);
-% hier_field_structs_cell = num2cell(hier_field_structs);
-% 
-% super_struct = cell2struct(hier_field_structs_cell, hier_field_names);
-% 
-% disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
-% 
-% cd(analyzeDir)
-% % save(saveStrAnalyze, 'cell_map');
-% save(saveStrAnalyze, 'super_struct','-v7.3');
+hier_field_names_cell = num2cell(hier_field_names);
+hier_field_structs_cell = num2cell(hier_field_structs);
+
+super_struct = cell2struct(hier_field_structs_cell, hier_field_names);
+
+disp(strcat('Finished hierarchy loop - saving file in: ', saveStrAnalyze))
+
+cd(analyzeDir)
+% save(saveStrAnalyze, 'cell_map');
+save(saveStrAnalyze, 'super_struct','-v7.3');
 
 %% Make meanTimeNormNN plot across all hierarchies
-colorsMeanTimeNormNN_all = magma(nhier_level); 
 
 if params.save_fig
     figure;
@@ -531,10 +551,10 @@ if params.save_fig
 
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
-    set(gca,'XTick',downsample(productionTime, round(size(relTime,1)/10)))
-    set(gca,'XTickLabel',downsample(round(relTime,2), round(size(relTime,1)/10)))
+    set(gca,'XTick',downsample(time, round(size(time,1)/10)))
+    set(gca,'XTickLabel',downsample(round(time,2), round(size(time,1)/10)))
     hold on
-    leg = legend('1','2','3','4','5','6');hold on;
+    leg = legend('1','2','3','4','5','6', 'Location', 'best');hold on;
     title(leg, 'Hierarchy level')
     xlabel('Relative time in training')
     axis tight
