@@ -428,9 +428,9 @@ if params.save_fig
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
     set(gca,'XTick',downsample(time, round(size(time,1)/10)))
-    set(gca,'XTickLabel',downsample(round(time,2), round(size(time,1)/10)))
+    set(gca,'XTickLabel', linspace(0,max(epochs)-1,10))
     % set(gca,'XTickLabel', (max(epochs)))
-    xlabel('Relative time in training')
+    xlabel('Epochs')
     axis tight
     saveas(gcf, strcat(resultDir,'meanTimeNormNN_',saveStrResult));
 end
@@ -552,11 +552,11 @@ if params.save_fig
     ylabel('Mean neighbor distance') % (unit: training time)
     hold on
     set(gca,'XTick',downsample(time, round(size(time,1)/10)))
-    set(gca,'XTickLabel',downsample(round(time,2), round(size(time,1)/10)))
+    set(gca,'XTickLabel', linspace(0,max(epochs)-1,10))
+    xlabel('Epochs');
     hold on
     leg = legend('1','2','3','4','5','6', 'Location', 'best');hold on;
     title(leg, 'Hierarchy level')
-    xlabel('Relative time in training')
     axis tight
     saveas(gcf, strcat(resultDir,'meanTimeNormNN_allHier_',saveStrResult));
 end
