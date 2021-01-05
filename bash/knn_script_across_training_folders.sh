@@ -2,7 +2,7 @@
 #
 #SBATCH -c 1
 #SBATCH --exclude node[017-018]
-#SBATCH -t 05:00:00
+#SBATCH -t 08:00:00
 #SBATCH --mem=10G
 
 MODEL_ID=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
@@ -18,9 +18,11 @@ NUM_SUBSAMPLES=100
 
 # Specify a model/analyze identifier and loop through layers:
 #for l={'layer_1_Linear', 'layer_2_Linear', 'layer_3_Linear'};\
+#for t={'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001','epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05','epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'};\
+
 module add mit/matlab/2020a
 matlab -nodisplay -r "addpath(genpath('/om/user/${USER}/neural_manifolds/'));\
-for t={'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001','epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05','epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'};\
+for t={'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'};\
 for l={'layer_1_Linear', 'layer_2_Linear', 'layer_3_Linear'};\
 runKNN('root_dir','$ROOT_DIR','analyze_identifier','$ANALYZE_ID','model_identifier','$MODEL_ID','training_folder',t{1},'layer',l{1},'dist_metric','$DIST_METRIC','k',$NUM_K,'num_subsamples',$NUM_SUBSAMPLES);\
 end;\
