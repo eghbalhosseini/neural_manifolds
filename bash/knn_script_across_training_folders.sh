@@ -2,7 +2,7 @@
 #
 #SBATCH -c 2
 #SBATCH --exclude node[017-018]
-#SBATCH -t 01:00:00
+#SBATCH -t 10:00:00
 #SBATCH --mem=10G
 
 MODEL_ID=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
