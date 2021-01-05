@@ -15,6 +15,7 @@ params = p.Results;
 params_out = params;
 
 disp(strcat('Model identifier: ', params.model_identifier))
+disp(strcat('Layer: ', params.layer))
 disp(strcat('Training folder: ', params.training_folder))
 
 
