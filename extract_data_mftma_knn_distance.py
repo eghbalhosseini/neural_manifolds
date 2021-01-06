@@ -42,6 +42,18 @@ if __name__ == '__main__':
     #data_dir='/'.join(file_parts[:-1])
     # STEP 2. load model and analysis parameters
     #
+    # check if path exists
+    if not os.path.exists(os.path.join(save_dir,analyze_identifier,model_identifier)):
+        try:
+            os.mkdir(os.path.join(save_dir,analyze_identifier,model_identifier))
+        except:
+            print(f'looks like the folder {os.path.join(data_dir)} already exists \n')
+    if not os.path.exists(data_dir):
+        try:
+            os.mkdir(os.path.join(data_dir))
+        except:
+            print(f'looks like the folder {os.path.join(data_dir)} already exists \n')
+
     params = train_pool[model_identifier]()
     layer_names=params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
