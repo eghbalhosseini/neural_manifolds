@@ -36,16 +36,19 @@ if __name__ == '__main__':
     overwrite = args.overwrite
     #
     file_parts = file_id.split('/')
-    data_dir='/'.join(file_parts[:-1])
+    train_dir=file_parts[-2]
+    data_dir=os.path.join(save_dir,analyze_identifier,model_identifier,train_dir)
+    pth_dir=os.path.join(save_dir,model_identifier,train_dir)
+    #data_dir='/'.join(file_parts[:-1])
     # STEP 2. load model and analysis parameters
     #
     params = train_pool[model_identifier]()
     layer_names=params.get_layer_names()
     model_identifier_for_saving = params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
 
-    pickle_file = os.path.join(data_dir, 'master_'+model_identifier+'.pkl')
-    data = pickle.load(open(pickle_file, 'rb'))
-    #
+    #pickle_file = os.path.join(pth_dir, 'master_'+model_identifier+'.pkl')
+    #data = pickle.load(open(pickle_file, 'rb'))
+
     analyze_params = analyze_pool[analyze_identifier]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
     #
