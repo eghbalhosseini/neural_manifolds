@@ -1,10 +1,17 @@
 #!/bin/sh
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 analyze='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
+EXTERACTION_DIR="${ROOT_DIR}/${analyze}/"
+if [ -d "$EXTERACTION_DIR" ]
+              then
+                true
+              else
+    mkdir $EXTERACTION_DIR
+fi
 
 i=0
 LINE_COUNT=0
-GRAND_FILE="${ROOT_DIR}/Grand_pool_${analyze}_extracted.csv"
+GRAND_FILE="${EXTERACTION_DIR}/Grand_pool_${analyze}_extracted.csv"
 rm -f $GRAND_FILE
 touch $GRAND_FILE
 
@@ -43,7 +50,7 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
 #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 
