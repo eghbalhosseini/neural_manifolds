@@ -1,7 +1,7 @@
 #!/bin/bash
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
 ANALYSIS_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/
-analyze_mftma='mftma-exm_per_class=50-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
+analyze_mftma='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
 
 i=0
 LINE_COUNT=0
@@ -20,7 +20,6 @@ for beta in 0.000161 ; do
   for sigma in 5.0 ; do
     for nclass in 64 ; do
       for net in NN  ; do
-        for idx in 0 ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
                            #epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05 \
                            #epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
