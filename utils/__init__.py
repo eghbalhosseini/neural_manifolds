@@ -64,14 +64,14 @@ class params:
     batch_size_test = 32
     epochs = 10
     momentum = 0.5
-    lr = 0.001
+    lr = 0.01
     log_interval = 15 # when to save, extract, and test the data
     test_split = .2
     shuffle_dataset = True
     random_seed = 1
     init_type = 'gaussian'
     gaussian_mu = 0
-    gaussian_std = 0.0001
+    gaussian_std = 0.000001
     tensorboard = False
     training_folder = f'epochs-{epochs}_batch-{batch_size_test}_lr-{lr}_momentum-{momentum}_init-{init_type}_std-{gaussian_std}'
 
