@@ -150,7 +150,7 @@ def test(model, device, test_loader, epoch):
 def train_test(epoch, model, device, train_loader, test_loader, optimizer, train_spec, writer):
     model.train()
 
-    target_all = []
+    target_all = [] # for the test batches (not training)
     # batch_all = []
     test_accuracies = []  # Return list of test accuracies for each epoch train_test is called
     train_accuracies = []
@@ -210,7 +210,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 model.eval()
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
-                pred_nolog_test = np.exp(output_test.detach().numpy())
+                pred_nolog_test = np.exp(output_test.detach().numpy()) # predictions not in log space
                 # output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
@@ -253,7 +253,9 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 'hier_test_acc': hier_accuracy_test,
                 'data_test': data_test,
                 'target_test': target_test,
-                'hier_target_test':hier_target_test,
+                'pred_test': pred_test, # category prediction, test set
+                'pred_test_prob': pred_nolog_test, # probability not in log space of the 64 categories, test set
+                'hier_target_test': hier_target_test,
                 'epoch': epoch,
                 'batchidx': batch_idx, }  # add test targets etc for starters
 
