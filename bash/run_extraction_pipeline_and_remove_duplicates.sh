@@ -1,6 +1,13 @@
 #!/bin/sh
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted
 analyze='mftma-exm_per_class=100-proj=False-rand=False-kappa=0-n_t=300-n_rep=1'
+EXTERACTION_DIR="${ROOT_DIR}/${analyze}/"
+if [ -d "$EXTERACTION_DIR" ]
+              then
+                true
+              else
+    mkdir $EXTERACTION_DIR
+fi
 
 i=0
 LINE_COUNT=0
@@ -34,7 +41,7 @@ for beta in 0.000161 ; do
               correction='_layer*'
               possible_file="${file_name/$original/$correction}"
               leading_zero=$(printf "%04d" $MODEL_LINE)
-              new_file_name="${ROOT_DIR}/${model}/${train_dir}/${leading_zero}_${possible_file}"
+              new_file_name="${ROOT_DIR}/${analyze}/${model}/${train_dir}/${leading_zero}_${possible_file}"
               #if [ -f "$new_file_name" ]
               if compgen -G "${new_file_name}" > /dev/null ; then
                 #echo "$new_file_name exists"
