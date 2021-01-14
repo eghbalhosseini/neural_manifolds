@@ -50,7 +50,7 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 %% Manual input
 % params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
 % params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-% params.layer = 'layer_1_Linear'
+% params.layer = 'layer_3_Linear'
 % params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
 % params.k = 100
 % params.num_subsamples = 100
@@ -84,7 +84,7 @@ assert(issorted(cell2mat(order)), 'Files not ordered correctly!')
 
 %% Load files
 KNN_data = arrayfun(@(x) {strcat(KNN_files(x).folder, filesep, KNN_files(x).name)}, 1:length(KNN_files));
-disp(strcat('Searching for KNN files in: ', (strcat(dataDir, params.model_identifier))))
+disp(strcat('Searching for KNN files in: ', (strcat(dataDir, params.model_identifier, filesep, params.training_folder))))
 assert(~isempty(KNN_data), 'KNN files empty - no files found!')
 
 file = load(KNN_data{1});

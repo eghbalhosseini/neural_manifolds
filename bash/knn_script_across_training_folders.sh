@@ -2,17 +2,18 @@
 #
 #SBATCH -c 2
 #SBATCH --exclude node[017-018]
-#SBATCH -t 16:00:00
+#SBATCH -t 08:00:00
 #SBATCH --mem=10G
+#SBATCH -p evlab
 
-MODEL_ID=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
+MODEL_ID=linear_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
 ANALYZE_ID=knn-k=100-dist_metric=euclidean-num_subsamples=100
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/
 DIST_METRIC=euclidean
 NUM_K=100
 NUM_SUBSAMPLES=100
-TRAINING_FOLDER=epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05
-#TRAINING_FOLDER=epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06
+#TRAINING_FOLDER=epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05
+TRAINING_FOLDER=epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06
 LAYER="${1}"
 echo "${LAYER}"
 #for LAYER in layer_1_Linear layer_2_Linear layer_3_Linear ; do
