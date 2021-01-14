@@ -10,23 +10,35 @@ def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):
     # run mftma on all layers and hierarchies
     mftmas_cell = []
     for hier_id, activ_hier in enumerate(layer_data):
-        data_ = {'capacities': [],'radii': [],'dimensions': [],'correlations': [],'layer': [],'n_hier_class': [],'hierarchy': hier_id}
+        data_ = {'capacities': [],'radii': [],'dimensions': [],'correlations': [],
+                 'capacities_all': [], 'radii_all': [], 'dimensions_all': [], 'correlations_all': [],
+                 'layer': [],'n_hier_class': [],'hierarchy': hier_id}
         capacities = []
         radii = []
         dimensions = []
         correlations = []
+        capacities_all=[]
+        radii_all=[]
+        dimensions_all=[]
+        correlations_all=[]
         for k, X, in activ_hier.items():
             data_['layer'] = k
             data_['n_hier_class'] = len(X)
             # Analyze each layer's activations
             try:
-                a, r, d, r0, K = manifold_analysis_corr(X, kappa, n_t)
+                a_all, r_all, d_all, r0_all, K = manifold_analysis_corr(X, kappa, n_t)
             # Compute the mean values
-                a = 1 / np.mean(1 / a)
-                r = np.mean(r)
-                d = np.mean(d)
+                a = 1 / np.mean(1 / a_all)
+                r = np.mean(r_all)
+                d = np.mean(d_all)
+                r0 = np.mean(r0_all)
                 print("{} capacity: {:4f}, radius {:4f}, dimension {:4f}, correlation {:4f}".format(k, a, r, d, r0))
             except :
+                a_all=np.nan*np.empty((1,len(X)))
+                r_all = np.nan * np.empty((1, len(X)))
+                d_all= np.nan * np.empty((1, len(X)))
+                r0_all= np.nan * np.empty((1, len(X)))
+
                 a = np.nan
                 r = np.nan
                 d = np.nan
@@ -36,11 +48,20 @@ def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):
             radii.append(r)
             dimensions.append(d)
             correlations.append(r0)
+            capacities_all.append(a_all)
+            radii_all.append(r_all)
+            dimensions_all.append(d_all)
+            correlations_all.append(r0_all)
         # combine the results
             data_['capacities'] = capacities
             data_['radii'] = radii
             data_['dimensions'] = dimensions
             data_['correlations'] = correlations
+            data_['capacities_all'] = capacities
+            data_['radii_all'] = radii
+            data_['dimensions_all'] = dimensions
+            data_['correlations_all'] = correlations
+
             mftmas_cell.append(data_)
     return mftmas_cell
 
@@ -85,8 +106,8 @@ analyze_pool={}
 
 analyze_method=['mftma']
 n_ts=[300]
-kappas=[0]
-n_reps=[1]
+kappas=[0,0.00000001]
+n_reps=[1,5,10]
 n_projs=[5000]
 
 exm_per_class=[20,50,100]
