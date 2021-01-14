@@ -34,7 +34,7 @@ if __name__=='__main__':
     analyze_params = analyze_pool[analyze_identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))]()
     analyze_identifier_for_saving = analyze_params.identifier.translate(str.maketrans({'[': '', ']': '', '/': '_'}))
 
-    results_dir = data_dir.replace(save_dir, os.path.join(analyze_dir, analyze_identifier_for_saving+'/'))
+    results_dir = data_dir.replace(save_dir, os.path.join(analyze_dir+'/'))
     #
     # check if path exists
     if not os.path.exists(os.path.join(analyze_dir,analyze_identifier)):
