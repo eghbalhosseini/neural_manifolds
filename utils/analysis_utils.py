@@ -57,10 +57,10 @@ def run_mftma(layer_data,kappa=0,n_t=300,n_reps=1):
             data_['radii'] = radii
             data_['dimensions'] = dimensions
             data_['correlations'] = correlations
-            data_['capacities_all'] = capacities
-            data_['radii_all'] = radii
-            data_['dimensions_all'] = dimensions
-            data_['correlations_all'] = correlations
+            data_['capacities_all'] = capacities_all
+            data_['radii_all'] = radii_all
+            data_['dimensions_all'] = dimensions_all
+            data_['correlations_all'] = correlations_all
 
             mftmas_cell.append(data_)
     return mftmas_cell
