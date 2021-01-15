@@ -2,6 +2,7 @@ function M = runKNN(varargin)
 p=inputParser();
 addParameter(p, 'root_dir', '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/');
 addParameter(p, 'analyze_identifier', 'knn-k=100-dist_metric=euclidean-num_subsamples=100');
+addParameter(p, 'extraction_identifier', 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');
 addParameter(p, 'training_folder', 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001');
 addParameter(p, 'layer', 'layer_3_Linear');
@@ -17,7 +18,7 @@ params_out = params;
 disp(strcat('Model identifier: ', params.model_identifier))
 disp(strcat('Layer: ', params.layer))
 disp(strcat('Training folder: ', params.training_folder))
-
+disp(strcat('Extraction identifier: ', params.extraction_identifier))
 
 %% Figure specs
 set(groot, ...
@@ -62,7 +63,7 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
-dataDir = strcat(params.root_dir, '/extracted/');
+dataDir = strcat(params.root_dir, '/extracted/', params.extraction_identifier, filesep);
 analyzeDir = strcat(params.root_dir, 'analyze/', params.analyze_identifier, filesep, params.model_identifier, filesep, params.training_folder, filesep);
 resultDir = strcat(params.root_dir, 'result/', params.analyze_identifier, filesep, params.model_identifier, filesep, params.training_folder, filesep);
 
@@ -565,22 +566,5 @@ end
 
 end
 
-%% Repetoire Dating
-% [RPD, RPD_epoch, RPD_subEpoch] = repertoireDating.percentiles(NNids, epoch, subEpoch);
-% repertoireDating.plotPercentiles(RPD, RPD_epoch, RPD_subEpoch, 1:length(KNN_data));
-% 
-% repertoireDating.renditionPercentiles(NNids, epoch,  'doPlot', true);
-% repertoireDating.renditionPercentiles(NNids, epoch, 'valid', epoch == 50, 'doPlot', true,'percentiles',[5,50,95]);
-% 
-% 
-% %%
-% MM = repertoireDating.mixingMatrix(NNids, epoch, 'doPlot', true);
-% RP = repertoireDating.renditionPercentiles(NNids, epoch, 'percentiles', 50);
-% stratMM = repertoireDating.stratifiedMixingMatrices(data, epoch, subEpoch, RP);
-% C = arrayfun(@(i) stratMM.allMMs{i}.log2CountRatio, 1:numel(stratMM.allMMs), 'uni', false);
-% avgStratMM = nanmean(cat(3, C{:}), 3);
-% 
-% %% 
-% repertoireDating.visualizeStratifiedMixingMatrix(avgStratMM, stratMM);
 
 
