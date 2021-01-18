@@ -41,7 +41,7 @@ for beta in 0.000161 ; do
     done
   done
 echo $LINE_COUNT
-#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 200 300 100 mftma_script.sh $GRAND_MFTMA_FILE &
-nohup /cm/shared/admin/bin/submit-many-jobs 5 2 5 3 mftma_script.sh $GRAND_MFTMA_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 350 500 150 mftma_script.sh $GRAND_MFTMA_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs 5 2 5 3 mftma_script.sh $GRAND_MFTMA_FILE &
 
 
