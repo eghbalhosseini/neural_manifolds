@@ -55,7 +55,7 @@ done
 echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
-   nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 1000 1200 200 mftma_script.sh $GRAND_MFTMA_FILE &
+   nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 mftma_script.sh $GRAND_MFTMA_FILE &
   else
     echo $LINE_COUNT
 fi
