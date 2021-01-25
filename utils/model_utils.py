@@ -151,21 +151,17 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
     model.train()
 
     target_all = [] # for the test batches (not training)
-    # batch_all = []
     test_accuracies = []  # Return list of test accuracies for each epoch train_test is called
     train_accuracies = []
     log_interval = train_spec['log_interval']
 
     for batch_idx, (data, target_dict) in enumerate(train_loader):
         target = target_dict['target']
-        hier_target=target_dict['hier_target']
-        # print('In training batch idx loop')
+        hier_target = target_dict['hier_target']
+
         data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
+        optimizer.zero_grad() # clears old gradients from the last step (otherwise you’d just accumulate the gradients from all loss.backward() calls).
         output = model(data)
-        # output = torch.squeeze(output)
-        # print(output.size())
-        # print(target.size())
         loss = F.nll_loss(output, target)  # nn.MSELoss(output, target)#
         loss.backward()
         optimizer.step()
@@ -178,8 +174,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
 
             # get hierarchical probs for each sample:
             hier_probs = [np.matmul(pred_nolog, hier) for hier in test_loader.dataset.transformation_mats]
-            hier_pred=[torch.tensor(x).argmax(dim=1,keepdim=True) for x in hier_probs]
-
+            hier_pred = [torch.tensor(x).argmax(dim=1,keepdim=True) for x in hier_probs]
 
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
@@ -191,30 +186,35 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
                 print(torch.flatten(hier_pred[0]))
                 print('prediction \n')
                 print(torch.flatten(pred))
-            #assert (np.array_equal(hier_pred[0], pred))
 
             correct = pred.eq(target.view_as(pred)).sum().item()
             accuracy_train = (100. * correct / len(target))
             train_accuracies.append(accuracy_train)
-            # hier version
-            hier_correct=[x.eq(torch.tensor(hier_target[idx]).view_as(x)).sum().item() for idx, x in enumerate(hier_pred)]
-            hier_accuracy_train=[(100.*x/len(hier_target[idx])) for idx, x in enumerate(hier_correct)]
-             # Extract independent test set during training
+
+            # Hierarchical accuracy
+            hier_correct = [x.eq(torch.tensor(hier_target[idx]).view_as(x)).sum().item() for idx, x in enumerate(hier_pred)]
+            hier_accuracy_train = [(100.*x/len(hier_target[idx])) for idx, x in enumerate(hier_correct)]
+
+            # Extract gradients from training
+            model_modules = model.__dict__['_modules']
+            grad_dict = {}
+            for k, v in model_modules.items():
+                grad_dict[k] = v.weight.grad
+
+            # Extract independent test set during training
             iteration = iter(test_loader)
             data_test, target_test_dict = next(iteration)
             target_test = target_test_dict['target']
             hier_target_test = target_test_dict['hier_target']
 
-            with torch.no_grad():  # don't save gradient
+            with torch.no_grad():  # don't save gradient, faster inference
                 # Allow eval for test set inference
                 model.eval()
                 data_test, target_test = data_test.to(device), target_test.to(device)
                 output_test = model(data_test)
                 pred_nolog_test = np.exp(output_test.detach().numpy()) # predictions not in log space
-                # output_test = torch.squeeze(output_test)
 
             target_all.append(target_test.cpu())
-            # batch_all.append(target_test.cpu() * 0 + batch_idx)
 
             # Test error
             pred_test = output_test.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
@@ -246,6 +246,7 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
             # Save weights and accuracies
             state = {
                 'state_dict': model.state_dict(),
+                'grad_dict': grad_dict,
                 'optimizer': optimizer.state_dict(),
                 'train_acc': accuracy_train,
                 'test_acc': accuracy_test,

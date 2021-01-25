@@ -2,11 +2,11 @@
 #
 #SBATCH -c 2
 #SBATCH --exclude node[017-018]
-#SBATCH -t 03:00:00
+#SBATCH -t 18:00:00
 #SBATCH --mem=10G
 #SBATCH -p evlab
 
-MODEL_ID=linear_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
+MODEL_ID=NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed
 ANALYZE_ID=knn-k=100-dist_metric=euclidean-num_subsamples=100
 EXTRACTION_ID=mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/
