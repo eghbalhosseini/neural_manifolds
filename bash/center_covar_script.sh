@@ -38,6 +38,7 @@ echo "line ${run_model_line}"
 echo "model ${run_model}"
 echo "analyze ${run_analyze}"
 echo "file to analyze ${run_file}"
+echo "running covar analysis"
 module add openmind/singularity
 export SINGULARITY_CACHEDIR=/om/user/${USER}/st/
 XDG_CACHE_HOME=/om/user/${USER}/st

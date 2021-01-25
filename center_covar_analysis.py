@@ -103,6 +103,7 @@ if __name__=='__main__':
                     'epoch': extracted_data['epoch'],
                     'files_generated': covar_file}
         save_dict(d_master, covar_file)
+        print('done!')
     else:
         print('file already exists, abort')
         pass
