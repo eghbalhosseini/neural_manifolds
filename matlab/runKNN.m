@@ -49,18 +49,19 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-% params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-% params.layer = 'layer_3_Linear'
-% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-% params.k = 100
-% params.num_subsamples = 100
-% params.save_fig = false
-% params.dist_metric = 'euclidean'
-% params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
-% params_out = params;
-% 
-% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
+params.layer = 'layer_3_Linear'
+params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+params.k = 100
+params.num_subsamples = 100
+params.save_fig = false
+params.dist_metric = 'euclidean'
+params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
+params_out = params;
+params.extraction_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
+
+addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/', params.extraction_identifier, filesep);
@@ -101,8 +102,9 @@ cell_map = {};
 hier_field_names = [];
 hier_field_structs = [];
 
-% Save meanTimeNormNN across all hierarchies
+% Save meanTimeNormNN and stdTimeNorm NN across all hierarchies
 meanTimeNormNN_all = zeros(nhier_level, length(KNN_data));
+stdTimeNormNN_all = zeros(nhier_level, length(KNN_data));
 
 % hier_level = 3 %  TEST OUTCOMMENT
 for hier_level = 1:nhier_level
@@ -381,7 +383,9 @@ meanTimeStdNormNN_null = mean(y3, 1);
 %% Mean vector norms over samples at the same time 
 y2 = reshape(meanNormNN, params.num_subsamples, length(KNN_files));
 meanTimeNormNN = mean(y2, 1);
+stdTimeNormNN = std(y2, 1);
 
+% std over the KNN matrix
 y3 = reshape(stdNormNN, params.num_subsamples, length(KNN_files));
 meanTimeStdNormNN = mean(y3, 1);
 
@@ -521,8 +525,9 @@ hier_field_name = strcat('hier_', num2str(hier_level));
 hier_field_names = [hier_field_names; hier_field_name];
 hier_field_structs = [hier_field_structs; hier_struct];
 
-%% Save meanTimeNormNN plot across all hierarchies
+%% Save meanTimeNormNN and stdTimeNormNN across all hierarchies
 meanTimeNormNN_all(hier_level, :) = squeeze(meanTimeNormNN);
+stdTimeNormNN_all(hier_level, :) = squeeze(stdTimeNormNN);
 
 %% Clear variables for saving the next hierarchy results
 clear hier_field_name hier_field_struct 
@@ -547,7 +552,8 @@ if params.save_fig
     figure;
     
     for i=1:nhier_level
-        plot(time, meanTimeNormNN_all(i,:), 'Color', colorsMeanTimeNormNN_all(i,:))
+        plot(time, meanTimeNormNN_all(i,:), 'Color', colorsMeanTimeNormNN_all(i,:));hold on;
+        plot(time, stdTimeNormNN_all(i, :), 'Color', 'black')
         hold on
     end
 
@@ -560,7 +566,7 @@ if params.save_fig
     leg = legend('1','2','3','4','5','6', 'Location', 'best');hold on;
     title(leg, 'Hierarchy level')
     axis tight
-    saveas(gcf, strcat(resultDir,'meanTimeNormNN_allHier_',saveStrResult));
+    saveas(gcf, strcat(resultDir,'allHier_meanTimeNormNN_',saveStrResult));
 end
 
 
