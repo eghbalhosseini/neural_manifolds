@@ -1,6 +1,6 @@
 %% 
 close all 
-res=create_synth_data_cholesky_method('structure','tree','n_class',16,'exm_per_class',1000,'n_feat',936,'beta',.4,'sigma',1,'norm',true,'save',false);
+res=create_synth_data_cholesky_method('structure','tree','n_class',16,'exm_per_class',10,'n_feat',30,'beta',.4,'sigma',1,'norm',true,'save',false);
 % append the 0th level 
 within_class_ids=cat(2,[1:length(res.class_id)],res.hierarchical_class_ids);
 between_class_ids=cat(2,res.hierarchical_class_ids,[1:length(res.class_id)]*0+1);
