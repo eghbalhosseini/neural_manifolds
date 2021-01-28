@@ -10,6 +10,8 @@ addParameter(p, 'dist_metric', 'euclidean');
 addParameter(p, 'save_fig', true);
 addParameter(p, 'k', 100);
 addParameter(p, 'num_subsamples', 100);
+addParameter(p, 'permute', false);
+
 
 parse(p, varargin{:});
 params = p.Results;
@@ -49,19 +51,20 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-% params.model_identifier = 'NN-tree_nclass=6_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
-% params.layer = 'layer_2_Linear'
-% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-% params.k = 50
-% params.num_subsamples = 100
-% params.save_fig = true
-% params.dist_metric = 'euclidean'
-% params.training_folder = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
-% params_out = params;
-% params.extraction_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
-% 
-% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+params.model_identifier = 'NN-tree_nclass=6_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+params.layer = 'layer_2_Linear'
+params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+params.k = 50
+params.num_subsamples = 100
+params.save_fig = true
+params.dist_metric = 'euclidean'
+params.training_folder = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
+params_out = params;
+params.extraction_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
+params.permute = false
+
+addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/', params.extraction_identifier, filesep);
@@ -212,8 +215,8 @@ relTime = productionTime./max(productionTime);
 %% %%%%%%%%%% SAVE DIRS, COLORS, AXES LABELS %%%%%%%%%%%%%%
 
 % Save directories
-saveStrResult = strcat(params.model_identifier,'_PERMUTE_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
-saveStrAnalyze = strcat(params.model_identifier,'_PERMUTE_',params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+saveStrResult = strcat(params.model_identifier,'_permute_',string(params.permute),params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+saveStrAnalyze = strcat(params.model_identifier,'_permute_',string(params.permute),params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 
 % Colors
 colorsEpoch = magma(max(epoch)+1); % 3 colors
@@ -246,10 +249,13 @@ incrSubEpoch = subEpoch((incrSubEpochTrial));
 targetLoc = arrayfun(@(x) find(targets==x), [1:max(target)],'uniformoutput',false); % Locates the targets
 
 %% Permutation across time
-% Proof of concept that KNN can handle data that is not organized correctly
-data1 = data;
-rand_idx = randperm(length(data1));
-data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+
+if params.permute
+    disp('Permuting data!')
+    data1 = data;
+    rand_idx = randperm(length(data1));
+    data = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+end 
 
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
@@ -325,7 +331,7 @@ meanTimeDataNorm = mean(y, 1);
 %% Nearest neighbors
 disp('Computing KNN')
 tic
-NNids_self = knnsearch(data_permute, data_permute, 'K', params.k, 'Distance', params.dist_metric); 
+NNids_self = knnsearch(data, data, 'K', params.k, 'Distance', params.dist_metric); 
 NNids_self = NNids_self./max(NNids_self(:,1)); % normalized NNids
 NNids = NNids_self(:, 2:end); 
 toc
@@ -355,30 +361,36 @@ meanTimeNNids = squeeze(mean(y1, 1));
 % figure;imagesc(meanTimeNNids)
 
 %% Compute norm of neighbors
-normNN = zeros(params.k - 1, length(epoch));
+% normNN = zeros(params.k - 1, length(epoch));
+% 
+% for i=2:params.k
+%     normNN(i-1, :)=((NNids_self(:,1) - NNids_self(:,i)));%.^2;
+% end
 
-for i=2:params.k
-    normNN(i-1, :)=(abs(NNids_self(:,1) - NNids_self(:,i)));%.^2;
-end
+% meanNormNN = mean(normNN,1);
+% stdNormNN = std(normNN,1);
 
-meanNormNN = mean(normNN,1);
-stdNormNN = std(normNN,1);
+meanNormNN = mean(NNids,2);
+% if using percentiles:
+meanNormNN = prctile(NNids,50,2);
+
+stdNormNN = std((NNids),0,2);
 
 %% Compute norm of neighbors - null
-normNN_null = zeros(params.k - 1, length(epoch));
-
-for i=2:params.k
-    normNN_null(i-1, :)=(abs(nullNNids(:,1) - nullNNids(:,i)));%.^2;
-end
-
-meanNormNN_null = mean(normNN_null,1);
-stdNormNN_null = std(normNN_null,1);
-
-y2 = reshape(meanNormNN_null, params.num_subsamples, length(KNN_files));
-meanTimeNormNN_null = mean(y2, 1);
-
-y3 = reshape(stdNormNN_null, params.num_subsamples, length(KNN_files));
-meanTimeStdNormNN_null = mean(y3, 1);
+% normNN_null = zeros(params.k - 1, length(epoch));
+% 
+% for i=2:params.k
+%     normNN_null(i-1, :)=(abs(nullNNids(:,1) - nullNNids(:,i)));%.^2;
+% end
+% 
+% meanNormNN_null = mean(normNN_null,1);
+% stdNormNN_null = std(normNN_null,1);
+% 
+% y2 = reshape(meanNormNN_null, params.num_subsamples, length(KNN_files));
+% meanTimeNormNN_null = mean(y2, 1);
+% 
+% y3 = reshape(stdNormNN_null, params.num_subsamples, length(KNN_files));
+% meanTimeStdNormNN_null = mean(y3, 1);
 
 %% Mean vector norms over samples at the same time 
 y2 = reshape(meanNormNN, params.num_subsamples, length(KNN_files));
@@ -386,8 +398,8 @@ meanTimeNormNN = mean(y2, 1);
 stdTimeNormNN = std(y2, 1);
 
 % std over the KNN matrix
-y3 = reshape(stdNormNN, params.num_subsamples, length(KNN_files));
-meanTimeStdNormNN = mean(y3, 1);
+% y3 = reshape(stdNormNN, params.num_subsamples, length(KNN_files));
+% meanTimeStdNormNN = mean(y3, 1);
 
 %% Plot vector norm - according to epochs colors
 % Plotting all samples, i.e. if num_samples=60, then 60 samples for that time point. Averaged across neighbors.
