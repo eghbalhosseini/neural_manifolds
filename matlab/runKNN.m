@@ -49,19 +49,19 @@ addpath(strcat('/om/user/ehoseini/neural_manifolds/matlab/utils/'))
 % Load the generated mat files, session of interest: (input, the model identifier)
 
 %% Manual input
-params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
-params.model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=0.5_nfeat=936-train_test-fixed'
-params.layer = 'layer_3_Linear'
-params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
-params.k = 100
-params.num_subsamples = 100
-params.save_fig = false
-params.dist_metric = 'euclidean'
-params.training_folder = 'epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001'
-params_out = params;
-params.extraction_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
-
-addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
+% params.root_dir = '/Users/gt/Documents/GitHub/neural_manifolds/local/knn_tests/'
+% params.model_identifier = 'NN-tree_nclass=6_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+% params.layer = 'layer_2_Linear'
+% params.analyze_identifier = 'knn-k=100-dist_metric=euclidean-num_subsamples=100'
+% params.k = 50
+% params.num_subsamples = 100
+% params.save_fig = true
+% params.dist_metric = 'euclidean'
+% params.training_folder = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
+% params_out = params;
+% params.extraction_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
+% 
+% addpath(strcat('/Users/gt/Documents/GitHub/neural_manifolds/matlab/utils/'))
 
 %%
 dataDir = strcat(params.root_dir, '/extracted/', params.extraction_identifier, filesep);
@@ -105,7 +105,7 @@ hier_field_structs = [];
 % Save meanTimeNormNN and stdTimeNorm NN across all hierarchies
 meanTimeNormNN_all = zeros(nhier_level, length(KNN_data));
 stdTimeNormNN_all = zeros(nhier_level, length(KNN_data));
-
+%%
 % hier_level = 3 %  TEST OUTCOMMENT
 for hier_level = 1:nhier_level
 disp(strcat('Hierarchy level: ', string(hier_level)))
@@ -212,8 +212,8 @@ relTime = productionTime./max(productionTime);
 %% %%%%%%%%%% SAVE DIRS, COLORS, AXES LABELS %%%%%%%%%%%%%%
 
 % Save directories
-saveStrResult = strcat(params.model_identifier,'_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
-saveStrAnalyze = strcat(params.model_identifier,'_',params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
+saveStrResult = strcat(params.model_identifier,'_PERMUTE_',params.layer,'_hier_',num2str(hier_level),'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.pdf');
+saveStrAnalyze = strcat(params.model_identifier,'_PERMUTE_',params.layer,'_numSubsamples_',num2str(params.num_subsamples),'_k_',num2str(params.k),'.mat');
 
 % Colors
 colorsEpoch = magma(max(epoch)+1); % 3 colors
@@ -247,9 +247,9 @@ targetLoc = arrayfun(@(x) find(targets==x), [1:max(target)],'uniformoutput',fals
 
 %% Permutation across time
 % Proof of concept that KNN can handle data that is not organized correctly
-% data1 = data;
-% rand_idx = randperm(length(data1));
-% data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
+data1 = data;
+rand_idx = randperm(length(data1));
+data_permute = data1(rand_idx, :); % if rand_idx(1) is 71, then row71 in the real data is now row 1
 
 %% %%%%%%%%%% ANALYSES %%%%%%%%%%%%%%
 
@@ -325,7 +325,7 @@ meanTimeDataNorm = mean(y, 1);
 %% Nearest neighbors
 disp('Computing KNN')
 tic
-NNids_self = knnsearch(data, data, 'K', params.k, 'Distance', params.dist_metric); 
+NNids_self = knnsearch(data_permute, data_permute, 'K', params.k, 'Distance', params.dist_metric); 
 NNids_self = NNids_self./max(NNids_self(:,1)); % normalized NNids
 NNids = NNids_self(:, 2:end); 
 toc
