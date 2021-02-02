@@ -7,6 +7,7 @@ import pickle
 import os
 import argparse
 import numpy as np
+import scipy.spatial.distance as dist
 parser = argparse.ArgumentParser(description='run covar and save results')
 parser.add_argument('file_id', type=str, default='')
 parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
@@ -80,10 +81,11 @@ if __name__=='__main__':
             for k, X, in activ_hier.items():
                 data_['layer'] = k
                 data_['n_hier_class'] = len(X)
-
+                
                 centers = [np.mean(X[i], axis=1) for i in range(len(X))]
                 centers = np.stack(centers, axis=1)  # Centers is of shape (N, m) for m manifolds
-                center_cov=np.cov(np.transpose(centers))
+                center_cov=dist.squareform(dist.pdist(np.transpose(centers)))
+                #center_cov=np.cov(np.transpose(centers))
                 center_cov_all.append(center_cov)
             data_['center_cov']=center_cov_all
             covar_results.append(data_)

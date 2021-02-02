@@ -5,7 +5,7 @@
 #SBATCH -t 5:00:00
 
 GRAND_FILE=$1
-OVERWRITE='false' # or 'true'
+OVERWRITE='true' # or 'true'
 #
 
 if [ -n "$SLURM_ARRAY_TASK_ID" ]; then
