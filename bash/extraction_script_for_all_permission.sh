@@ -5,7 +5,7 @@
 #SBATCH --mem=8000
 
 GRAND_FILE=$1
-OVERWRITE='false'
+OVERWRITE='true'
 
 #
 # this is where we put those lines , what lines ?!!
