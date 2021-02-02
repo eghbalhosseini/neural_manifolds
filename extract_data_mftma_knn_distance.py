@@ -29,12 +29,21 @@ if __name__ == '__main__':
     # get sub_data
     # create hierarchical version of the data
     # STEP 1. get the variables
+
+    # RUN DEBUG
+    # file_id = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed/epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=01-batchidx=15.pth'
+    # task_id = 0
+    # model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+    # analyze_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
+    # overwrite = 'false'
+
     file_id = args.file_id
     task_id = args.task_id
     model_identifier = args.model_id
     analyze_identifier = args.analyze_id
     overwrite = args.overwrite
-    #
+    do_gradient_extraction = True
+
     file_parts = file_id.split('/')
     train_dir=file_parts[-2]
     data_dir=os.path.join(save_dir,analyze_identifier,model_identifier,train_dir)
@@ -217,3 +226,40 @@ if __name__ == '__main__':
                                                   os.path.join(data_dir) + '/' + str(task_id).zfill(
                                                       4) + '_')
             save_dict(d_distance, distance_file)
+
+            if do_grad_extraction:
+                weight_data = torch.load(open(file_id, 'rb'))
+
+                state_dict = weight_data['state_dict']
+                grad_dict = weight_data['grad_dict']
+
+                state_dict['fc1.weight'] = grad_dict['fc1']
+                state_dict['fc2.weight'] = grad_dict['fc2']
+                state_dict['fc3.weight'] = grad_dict['fc3']
+                state_dict['fc1.bias'] = state_dict['fc1.bias'] * 0
+                state_dict['fc2.bias'] = state_dict['fc2.bias'] * 0
+                state_dict['fc3.bias'] = state_dict['fc3.bias'] * 0
+
+                device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+                model = data['model_structure']
+                model = model.to(device)
+                model.load_state_dict(state_dict)
+                weight_data = torch.load(file_id)
+                model = model.eval()
+                extract = mftma_extractor()
+
+                gradients_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
+
+                d_gradient = {'results': gradients_cell,
+                        'train_acc': weight_data['train_acc'],
+                        'test_acc': weight_data['test_acc'],
+                        'epoch': weight_data['epoch'],
+                        'batchidx': weight_data['batchidx']}
+
+                gradient_file = os.path.join(data_dir, file_parts[-1])
+                gradient_file = gradient_file.replace(".pth", '')
+                gradient_file = gradient_file + '_gradient_data.pkl'
+                gradient_file = gradient_file.replace(os.path.join(data_dir) + '/',
+                                                      os.path.join(data_dir) + '/' + str(task_id).zfill(
+                                                          4) + '_')
+                save_dict(d_gradient, gradient_file)

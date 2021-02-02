@@ -1,4 +1,4 @@
-from mftma.utils.activation_extractor import extractor
+# from mftma.utils.activation_extractor import extractor
 from collections import defaultdict
 import numpy as np
 import torch
