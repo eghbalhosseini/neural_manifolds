@@ -29,6 +29,7 @@ for beta in 0.000161 ; do
             distance_metric_list[$i]="$distance_metric"
             i=$i+1
           done
+          done
         done
       done
     done
