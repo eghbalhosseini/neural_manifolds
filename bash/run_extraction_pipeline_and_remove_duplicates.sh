@@ -24,7 +24,7 @@ for beta in 0.000161 ; do
   for sigma in 5.0  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
-        for net in NN linear_NN ; do
+        for net in NN ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
 #                           epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001 \
 #                           epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05 \
@@ -38,7 +38,8 @@ for beta in 0.000161 ; do
               original="${ROOT_DIR}/${model}/${train_dir}/"
               file_name="${line/$original/}"
               original='.pth'
-              correction='_layer*'
+#              correction='_layer*'
+              correction='_gradient*'
               possible_file="${file_name/$original/$correction}"
               leading_zero=$(printf "%04d" $MODEL_LINE)
               new_file_name="${ROOT_DIR}/${analyze}/${model}/${train_dir}/${leading_zero}_${possible_file}"
@@ -66,7 +67,8 @@ done
 echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
-    nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+#    nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+    nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 extraction_script_for_all_permission.sh $GRAND_FILE &
   else
     echo $LINE_COUNT
 fi
