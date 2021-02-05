@@ -227,7 +227,8 @@ if __name__ == '__main__':
                                                       4) + '_')
             save_dict(d_distance, distance_file)
 
-            if do_grad_extraction:
+
+            if do_gradient_extraction:
                 weight_data = torch.load(open(file_id, 'rb'))
 
                 state_dict = weight_data['state_dict']
