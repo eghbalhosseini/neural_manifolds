@@ -1,6 +1,5 @@
 #!/bin/sh
 #SBATCH --job-name=distance_pool
-#SBATCH --array=0-2
 #SBATCH --time=12:00:00
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
@@ -19,7 +18,7 @@ for beta in 0.000161 ; do
   for sigma in 5.0 ; do
     for nclass in 64 ; do
       for idx in 0 ; do
-        for net in NN linear_NN ; do
+        for net in NN ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
         model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
         model_list[$i]="$model"
@@ -41,4 +40,7 @@ export XDG_CACHE_HOME
 echo "Running pooling for:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 echo "looking at dir for:  ${train_dir_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/distance_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma} ${train_dir_list[$SLURM_ARRAY_TASK_ID]}
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny_fz.simg python /om/user/${USER}/neural_manifolds/distance_pool_results.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma} ${train_dir_list[$SLURM_ARRAY_TASK_ID]}
+
+#### USE ARRAY IF SEVERAL ####
+#SBATCH --array=0-2
