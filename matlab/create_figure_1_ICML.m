@@ -186,8 +186,6 @@ for i=1:length(within_class_ids)
     temp1=repmat(diag(temp),1,length(res.class_id));
     between_class=double(arrayfun(@(x,y) isequal(x,y),temp,temp1));
     between_cell{i}=between_class;
-    
-    
 end 
 hier_within_class={};
 hier_between_class={};
