@@ -16,4 +16,4 @@ export SINGULARITY_CACHEDIR=/om/user/${USER}/st/
 XDG_CACHE_HOME=/om/user/${USER}/st
 export XDG_CACHE_HOME
 
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/gradient_analysis.py
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds.simg python /om/user/${USER}/neural_manifolds/gradient_analysis.py
