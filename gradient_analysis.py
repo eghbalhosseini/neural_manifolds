@@ -84,6 +84,17 @@ if __name__ == '__main__':
             branch_norm_mat = np.stack(branch_norm)
             layer_branch_data[f"hier_{hier_id}"]=branch_norm_mat
         layer_gradient_dict[layer]=layer_branch_data
+        # save layer data independently
+        layer_gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier,
+                                     f'{model_identifier}_{layer}_gradient_pooled.pkl')
+        d_layer = {'analyze_identifier': analyze_identifier,
+                    'model_identifier': model_identifier,
+                    'train_identifier': train_identifier,
+                    'layer':layer,
+                    'gradient_results': layer_branch_data}
+        save_dict(d_layer, layer_gradient_file)
+        print('saved ' + layer_gradient_file)
+
     # save the results
     gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled.pkl')
     d_master = {'analyze_identifier': analyze_identifier,

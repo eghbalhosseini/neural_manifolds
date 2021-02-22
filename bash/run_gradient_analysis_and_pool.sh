@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=grad_
 #SBATCH --array=0
-#SBATCH --time=24:00:00
+#SBATCH --time=72:00:00
 #SBATCH --mem=256G
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
