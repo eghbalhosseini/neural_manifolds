@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     params = train_pool[model_identifier]()
     params.load_dataset()
-    layer_names = params.get_layer_names()[1:]
+    layer_names = params.get_layer_names()[3:]
     transfo_mat = params.dataset.transformation_mats
     analyze_params = analyze_pool[analyze_identifier]()
     tiled_transfo_mat = [np.tile(x, (1, analyze_params.exm_per_class)).reshape(-1, x.shape[1]) for x in transfo_mat]
