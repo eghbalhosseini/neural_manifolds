@@ -17,10 +17,11 @@ if __name__ == '__main__':
     train_identifier = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
     analyze_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
 
-    training_files = []
-    for file in os.listdir(os.path.join(save_dir, model_identifier, train_identifier)):
-        if fnmatch.fnmatch(file, '*.pth'):
-            training_files.append(os.path.join(save_dir, model_identifier, train_identifier, file))
+    # Not used right here, but we could merge it with this script --- the hierarchical accuracies
+    # training_files = []
+    # for file in os.listdir(os.path.join(save_dir, model_identifier, train_identifier)):
+    #     if fnmatch.fnmatch(file, '*.pth'):
+    #         training_files.append(os.path.join(save_dir, model_identifier, train_identifier, file))
 
     grad_pkl_files = []
     for file in os.listdir(os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier)):
@@ -61,7 +62,7 @@ if __name__ == '__main__':
             a = list(range(example_per_class))
             combs = list(itertools.combinations_with_replacement(a, r=2))
             combs_1 = list(itertools.combinations(a, r=2))
-            combs_1 = [(x[1], x[0]) for x in combs_1] #flip
+            combs_1 = [(x[1], x[0]) for x in combs_1]
             all_combs = [combs, combs_1]
             all_combs = [item for sublist in all_combs for item in sublist]
             if len(all_combs)>example_per_class**2:
