@@ -39,7 +39,7 @@ if __name__ == '__main__':
     train_identifier = args.train_id
     analyze_id = args.analyze_id
     layer = args.layer_name
-    hier_idx = args.hier_id
+    hier_idx = args.hier_idx
     num_subsamples = 100
     k = 100
     knn_identifier = f"knn_k={k}_subsamples={num_subsamples}"
