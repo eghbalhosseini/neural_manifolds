@@ -10,8 +10,8 @@ source /opt/conda/bin/activate
 
 #conda activate rapids
 
-conda list
+#conda list
 
-cond env list
+conda env list
 
 python /om/user/${USER}/neural_manifolds/poincare_map_analysis.py ${model_id} ${train_id} ${analyze_id} ${layer_id} ${hier_id}
