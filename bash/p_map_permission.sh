@@ -8,7 +8,7 @@ hier_id=$5
 
 source /opt/conda/bin/activate
 
-conda activate rapids
+#conda activate rapids
 
 conda list
 
