@@ -13,5 +13,7 @@ source /opt/conda/bin/activate
 #conda list
 
 conda env list
+conda deactivate
+conda activate base
 
 python /om/user/${USER}/neural_manifolds/poincare_map_analysis.py ${model_id} ${train_id} ${analyze_id} ${layer_id} ${hier_id}
