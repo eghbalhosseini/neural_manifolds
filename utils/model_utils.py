@@ -11,7 +11,7 @@ import os
 #import matplotlib.pyplot as plt
 from random import sample
 from utils import save_dir
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 class sub_data(Dataset):
