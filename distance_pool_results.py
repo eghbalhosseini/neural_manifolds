@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # manually walk through the files
     distance_files=[]
     for file in os.listdir(os.path.join(save_dir,analyze_identifier,model_identifier_for_saving,train_dir_identifier)):
-        if fnmatch.fnmatch(file, '*distance_data.pkl'):
+        if fnmatch.fnmatch(file, '*distance_data_v2.pkl'):
             distance_files.append(os.path.join(save_dir,analyze_identifier,model_identifier_for_saving,train_dir_identifier,file))
     s = [re.findall('/\d+', x) for x in distance_files]
     s = [item for sublist in s for item in sublist]
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                 'file_generated': sorted_files}
 
 
-    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_distance_pooled.pkl')
+    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_distance_pooled_v2.pkl')
     save_dict(d_master, pool_file)
     print('saved '+pool_file)
     print('done')

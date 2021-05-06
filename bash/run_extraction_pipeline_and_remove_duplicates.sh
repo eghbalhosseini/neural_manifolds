@@ -39,7 +39,7 @@ for beta in 0.000161 ; do
               file_name="${line/$original/}"
               original='.pth'
 #              correction='_layer*'
-              correction='_gradient*'
+              correction='_gradient_v2*'
               possible_file="${file_name/$original/$correction}"
               leading_zero=$(printf "%04d" $MODEL_LINE)
               new_file_name="${ROOT_DIR}/${analyze}/${model}/${train_dir}/${leading_zero}_${possible_file}"
