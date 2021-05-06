@@ -50,10 +50,10 @@ for beta in 0.000161 ; do
 done
 
 echo $LINE_COUNT
-nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
+#nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 800 1000 200 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 # FOR TESTING
-# nohup /cm/shared/admin/bin/submit-many-jobs 20 10 20 10 extraction_script_for_all_permission.sh $GRAND_FILE &
+nohup /cm/shared/admin/bin/submit-many-jobs 20 10 20 10 extraction_script_for_all_permission.sh $GRAND_FILE &
 
 
 
