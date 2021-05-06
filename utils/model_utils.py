@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import os
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from random import sample
 from utils import save_dir
 import matplotlib.pyplot as plt
