@@ -180,8 +180,8 @@ if __name__ == '__main__':
                         'batchidx': weight_data['batchidx']
                         }
                 save_dict(d_master, projection_file)
-                mat_file_name = projection_file.replace(".pkl", '.mat')
-                sio.savemat(mat_file_name, {'activation': d_master})
+                # mat_file_name = projection_file.replace(".pkl", '.mat')
+                # sio.savemat(mat_file_name, {'activation': d_master})
 
         # doing extraction for distance:
         if do_distance_extraction:
