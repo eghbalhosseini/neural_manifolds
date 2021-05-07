@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=grad_
-#SBATCH --array=0
+#SBATCH --array=0-4
 #SBATCH --time=72:00:00
 #SBATCH --mem=256G
 #SBATCH -N 1
