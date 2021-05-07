@@ -82,5 +82,5 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     data = []
     for s, d in sampled_data.items():
         data.append(torch.stack(d))
-    return data
+    return (data,idx)
 
