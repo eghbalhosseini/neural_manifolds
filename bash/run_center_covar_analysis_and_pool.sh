@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name=covar_AandP
-#SBATCH --array=0-3
+#SBATCH --array=0-7
 #SBATCH --time=12:00:00
 #SBATCH -N 1
 #SBATCH --exclude node017,node018
@@ -16,7 +16,7 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.000161 ; do
+for beta in 0.000161 0.0923671 ; do
     for sigma in 5.0  ; do
       for nclass in 64  ; do
         for net in NN linear_NN ; do
