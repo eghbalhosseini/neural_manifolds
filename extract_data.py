@@ -173,7 +173,6 @@ if __name__ == '__main__':
                         'analyze_identifier': analyze_identifier,
                         'model_identifier': model_identifier,
                         'layer_name': name,
-                        'hier_sample_idx':hier_sample_idx,
                         'files_generated': projection_file,
                         'train_acc': weight_data['train_acc'],
                         'test_acc': weight_data['test_acc'],

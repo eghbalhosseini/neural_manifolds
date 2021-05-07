@@ -53,7 +53,7 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     assert examples_per_class * max_class <= len(dataset), 'Not enough examples per class in dataset'
 
     # Set the seed
-    #np.random.seed(seed)
+    np.random.seed(seed)
     # Storage for samples
     sampled_data = defaultdict(list)
     # Sample the labels
@@ -62,7 +62,7 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     idx = [i for i in range(len(dataset))]
     if randomize:
         np.random.shuffle(idx)
-    print(idx)
+    print(idx[0:10])
     # Iterate through the dataset until enough samples are drawn
     for i in idx:
         sample, label = dataset[i]
