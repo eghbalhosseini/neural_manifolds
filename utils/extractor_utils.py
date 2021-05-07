@@ -29,7 +29,7 @@ class mftma_extractor(object):
 
     # there should be a section for hierarchical data used
 
-def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=False):
+def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=None, seed=0,randomize=True):
     '''
     Samples manifold data for use in later analysis
 
@@ -62,7 +62,7 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     idx = [i for i in range(len(dataset))]
     if randomize:
         np.random.shuffle(idx)
-
+    print(idx)
     # Iterate through the dataset until enough samples are drawn
     for i in idx:
         sample, label = dataset[i]
@@ -82,5 +82,5 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     data = []
     for s, d in sampled_data.items():
         data.append(torch.stack(d))
-    return (data,idx)
+    return data
 

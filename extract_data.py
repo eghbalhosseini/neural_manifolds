@@ -147,12 +147,9 @@ if __name__ == '__main__':
         # STEP 3. Do extraction for mftma and knn
         if do_extraction_mftma_knn:
         # this is for projection part
-
-            hier_sample_mtmfa_idx = [make_manifold_data(x, hier_n_class[idx],
-                                            examples_per_class=analyze_params.exm_per_class,
-                                            randomize=True) for idx, x in enumerate(hier_dataset)]
-            hier_sample_idx =[[d.to(device) for d in data[1]] for data in hier_sample_mtmfa_idx]
-            hier_sample_mtmfa = [[d.to(device) for d in data[0]] for data in hier_sample_mtmfa_idx]
+            hier_sample_mtmfa = [make_manifold_data(x, hier_n_class[idx],
+                                examples_per_class=analyze_params.exm_per_class, randomize=analyze_params.randomize) for idx, x in enumerate(hier_dataset)]
+            hier_sample_mtmfa = [[d.to(device) for d in data] for data in hier_sample_mtmfa]
             projection_data_ = {'projection_results': []}
             activations_cell = [extract.extractor(model, x) for x in hier_sample_mtmfa]
             projection_cell = [extract.project(x, max_dim=analyze_params.n_project) for x in activations_cell]
