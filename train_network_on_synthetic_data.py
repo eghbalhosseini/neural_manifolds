@@ -26,15 +26,23 @@ except:
     print('no gpu to run')
 
 user = getpass.getuser()
-print(user)
+print(f'User: {user}')
 
-# parser = argparse.ArgumentParser(description='neural manifold train network')
-# parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
-# args = parser.parse_args()
+# Usage
+#  python train_network_on_synthetic_data.py --model_identifier NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0923671_sigma=5.0_nfeat=936-train_test-fixed
 
-if __name__ == '__main__':
-    model_identifier = 'linear_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
-    #model_identifier = args.model_identifier
+def main(raw_args=None):
+    parser = argparse.ArgumentParser(description='neural manifold train network')
+    parser.add_argument('--model_identifier', type=str,
+                        default="NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0923671_sigma=5.0_nfeat=936-train_test-fixed",
+                        help='')
+    args = parser.parse_args(raw_args)
+    print('*' * 40)
+    print(vars(args))
+    print('*' * 40)
+    
+    # model_identifier = 'linear_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+    model_identifier = args.model_identifier
     params = train_pool[model_identifier]()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -190,7 +198,8 @@ if __name__ == '__main__':
 
             break  # Break statement in case the end was not reached (test accuracy termination)
 
-
+if __name__ == '__main__':
+    main()
 
 
 
