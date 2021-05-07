@@ -11,8 +11,6 @@ import os
 #import matplotlib.pyplot as plt
 from random import sample
 from utils import save_dir
-#import matplotlib.pyplot as plt
-
 
 class sub_data(Dataset):
     def __init__(self, data_path, shape=(1, 936), transform=None):
@@ -40,24 +38,18 @@ class sub_data(Dataset):
         self.transformation_mats = self.create_hier_transform()
 
     def create_hier_transform(self):
+        """Create matrices to transform between different levels of hierarchy"""
         base_targets = self.hierarchical_target[0]
         target_classes = [np.unique(x) for x in self.hierarchical_target]
         target_index = [[np.argwhere(x == y) for y in np.unique(x)] for x in self.hierarchical_target]
-        target_base_assignment =[[np.unique(np.asarray([[base_targets[z]] for z in y])) for y in x ] for x in target_index]
-        tranformation_mats=[np.zeros((len(target_classes[0]),len(x))) for x in target_classes]
+        target_base_assignment = [[np.unique(np.asarray([[base_targets[z]] for z in y])) for y in x ] for x in target_index]
+        tranformation_mats = [np.zeros((len(target_classes[0]),len(x))) for x in target_classes]
 
         for matrix_idx, matrix in enumerate(target_base_assignment):
             for column, row_array in enumerate(matrix):
                 for row in row_array:
                     tranformation_mats[matrix_idx][int(row), column] = 1
         return tranformation_mats
-
-
-    def create_hier_transorm(self):
-        base_targets=self.hierarchical_target[0]
-        target_classes=[x.unique() for x in self.hierarchical_target]
-        target_index=[[np.argwhere(x==y) for y in x.unique()] for x in self.hierarchical_target]
-        pass
 
     def __len__(self):
         return len(self.targets)
@@ -79,7 +71,7 @@ class sub_data(Dataset):
         return data_tensor, target_dict
 
 
-def train(epoch, model, device, train_loader, test_loader, optimizer, train_spec):
+def train(epoch, model, device, train_loader, optimizer, train_spec):
     model.train()
     test_accuracies = []
     train_accuracies = []
@@ -167,18 +159,16 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
         optimizer.step()
 
         if (batch_idx % log_interval == 0) & (batch_idx != 0):
-
             # Extract hierarchical probabilities
             pred_nolog = np.exp(output.detach().numpy())
             # np.sum(np.exp((F.log_softmax(x, dim=1)).detach().numpy()[1, 1:2]))
 
             # get hierarchical probs for each sample:
             hier_probs = [np.matmul(pred_nolog, hier) for hier in test_loader.dataset.transformation_mats]
-            hier_pred = [torch.tensor(x).argmax(dim=1,keepdim=True) for x in hier_probs]
+            hier_pred = [torch.tensor(x).argmax(dim=1, keepdim=True) for x in hier_probs]
 
             # Training error
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
-            # _, pred = (torch.max(output, 1)) # other way of computing max pred - better?
 
             # Assert that hierarchical and normal target matches:
             if not torch.equal(hier_pred[0], pred):
@@ -221,7 +211,8 @@ def train_test(epoch, model, device, train_loader, test_loader, optimizer, train
             correct_test = pred_test.eq(target_test.view_as(pred_test)).sum().item()
             accuracy_test = (100. * correct_test / len(target_test))
             test_accuracies.append(accuracy_test)
-            # hierarchical test error
+            
+            # Hierarchical test error
             hier_probs_test = [np.matmul(pred_nolog_test, hier) for hier in test_loader.dataset.transformation_mats]
             hier_pred_test = [torch.tensor(x).argmax(dim=1, keepdim=True) for x in hier_probs_test]
 
@@ -418,9 +409,9 @@ def show_cov(dataset, frac=50):
 
     cov = np.cov((sorted_data))
 
-    plt.figure()
-    plt.imshow(cov)
-    plt.savefig(save_dir + 'cov_' + fname_split[-1][:-4] + '.pdf')
+    # plt.figure()
+    # plt.imshow(cov)
+    # plt.savefig(save_dir + 'cov_' + fname_split[-1][:-4] + '.pdf')
 
 def leaf_traverse(root, flat_children):
     '''
