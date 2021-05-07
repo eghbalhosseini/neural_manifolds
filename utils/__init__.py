@@ -8,7 +8,7 @@ Created on Wed Jul 22 11:08:09 2020
 save_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
 data_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
 analyze_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
-result_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/result/'
+results_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/results/'
 
 from utils.model_utils import sub_data, NN, leaf_traverse, add_layer_names
 from utils import model_utils
