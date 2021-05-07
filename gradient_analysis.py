@@ -12,10 +12,23 @@ from tqdm import tqdm
 import re
 import itertools
 
+parser = argparse.ArgumentParser(description='run covar and save results')
+parser.add_argument('model_id', type=str, default='[NN]-[partition/nclass=50/nobj=50000/beta=0.01/sigma=1.5/nfeat=3072]-[train_test]-[test_performance]')
+parser.add_argument('analyze_id', type=str, default='[mftma]-[exm_per_class=20]-[proj=False]-[rand=True]-[kappa=0]-[n_t=300]-[n_rep=1]')
+parser.add_argument('train_id', type=str, default='epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06')
+parser.add_argument('overwrite',type=str,default='false')
+args = parser.parse_args()
+
+
 if __name__ == '__main__':
-    model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
-    train_identifier = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
-    analyze_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
+
+    model_identifier = args.model_id
+    analyze_identifier = args.analyze_id
+    train_identifier = args.train_id
+
+    #model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
+    #train_identifier = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
+    #analyze_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
 
     training_files = []
     for file in os.listdir(os.path.join(save_dir, model_identifier, train_identifier)):
@@ -24,7 +37,7 @@ if __name__ == '__main__':
 
     grad_pkl_files = []
     for file in os.listdir(os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier)):
-        if fnmatch.fnmatch(file, '*gradient_data.pkl'):
+        if fnmatch.fnmatch(file, '*gradient_data_v2.pkl'):
             grad_pkl_files.append(os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, file))
     s = [re.findall('/\d+', x) for x in grad_pkl_files]
     s = [item for sublist in s for item in sublist]
@@ -86,7 +99,7 @@ if __name__ == '__main__':
         layer_gradient_dict[layer]=layer_branch_data
         # save layer data independently
         layer_gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier,
-                                     f'{model_identifier}_{layer}_gradient_pooled.pkl')
+                                     f'{model_identifier}_{layer}_gradient_pooled_v2.pkl')
         d_layer = {'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
                     'train_identifier': train_identifier,
@@ -96,7 +109,7 @@ if __name__ == '__main__':
         print('saved ' + layer_gradient_file)
 
     # save the results
-    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled.pkl')
+    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled_v2.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier':train_identifier,
