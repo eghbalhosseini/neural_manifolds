@@ -16,7 +16,6 @@ import re
 import argparse
 import matplotlib.pyplot as plt
 
-
 print('__cuda available ', torch.cuda.is_available())
 print('__Python VERSION:', sys.version)
 print('__CUDNN VERSION:', torch.backends.cudnn.version())
@@ -28,8 +27,6 @@ except:
 
 user = getpass.getuser()
 print(user)
-
-
 
 # parser = argparse.ArgumentParser(description='neural manifold train network')
 # parser.add_argument('model_identifier', type=str, default="synth_partition_nobj_50000_nclass_50_nfeat_3072_beta_0.01_sigma_1.50_norm_1.mat", help='')
@@ -60,11 +57,12 @@ if __name__ == '__main__':
         np.random.seed(params.random_seed)
         np.random.shuffle(indices)
     train_indices, test_indices = indices[split:], indices[:split]
-    # create sample pairs for doing similarity between hierarchies (pine/oak ...)
+    
+    # Create sample pairs for doing similarity between hierarchies (McClelland & Rogers 2004 tyoe of analysis; pine/oak ...)
     num_pair = params.n_pairs
-    L=params.dataset.hierarchical_target
+    L = params.dataset.hierarchical_target
     L = L[::-1] # backward
-    L_unique = [list(set(x)) for x in L ]
+    L_unique = [list(set(x)) for x in L]
     ASSEMBLY = dict()
     for idx, level in enumerate(L_unique[:-1]):
         pair_assembly = dict(n_hier=len(level), index_pairs=[])

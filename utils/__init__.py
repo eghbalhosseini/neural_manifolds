@@ -4,13 +4,6 @@ Created on Wed Jul 22 11:08:09 2020
 
 @author: greta
 """
-save_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
-data_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
-#data_dir='/Users/eghbalhosseini/Desktop/'
-analyze_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
-result_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/result/'
-
-
 from utils.model_utils import sub_data, NN, leaf_traverse, add_layer_names
 from utils import model_utils
 import itertools
@@ -20,15 +13,20 @@ import re
 from importlib import import_module
 import numpy as np
 
+## PATHS ##
+save_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
+data_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
+analyze_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
+result_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/result/'
+
 def load_train(train_name):
     return train_pool[train_name]()
-
 
 ####################### TRAINING ###########################
 class params:
     def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
                  shape=(1,1,1),structure=None,nfeat=0,stop_criteria='test_performance',n_pairs=200):
-        ##### DATA ####
+        ##### DATA #####
         self.datafile=datafile
         self.identifier=identifier
         self.beta=beta
@@ -39,10 +37,7 @@ class params:
         self.shape=shape
         self.structure=structure
         self.n_pairs=n_pairs
-        # TODO make this a method and only save the path here
         self.dataset_path=os.path.join(data_dir, self.datafile)
-        #self.dataset=sub_data(data_path=os.path.join(data_dir, self.datafile))
-        #
         self.model = model
         self.train_type = train_type
         self.nfeat = nfeat
@@ -60,7 +55,7 @@ class params:
         self.layer_names=layer_names
         return layer_names
 
-    #####  Training specs #####
+    ##### Training specs #####
     batch_size_train = 32
     batch_size_test = 32
     epochs = 10
@@ -76,28 +71,27 @@ class params:
     tensorboard = False
     training_folder = f'epochs-{epochs}_batch-{batch_size_test}_lr-{lr}_momentum-{momentum}_init-{init_type}_std-{gaussian_std}'
 
-data_config=[]
+##### Dataset specs #####
+data_config = []
+
 # Creating tags for training paradigm
 data_structure=[dict(struct='partition',nclass=64,n_hier=1,shape=(1,936)),
                 dict(struct='tree',nclass=64,n_hier=6,shape=(1,936)),
                 dict(struct='partition',nclass=96,n_hier=1,shape=(1,936)),
-                dict(struct='tree',nclass=96,n_hier=6,shape=(1,936)),
-                dict(struct='partition', nclass=64, n_hier=1, shape=(1, 3072)),
-                dict(struct='tree', nclass=64, n_hier=6, shape=(1, 3072)),
-                dict(struct='partition', nclass=96, n_hier=1, shape=(1, 3072)),
-                dict(struct='tree', nclass=96, n_hier=6, shape=(1, 3072))
+                dict(struct='tree',nclass=96,n_hier=6,shape=(1,936))
                 ]
-for idx, structure in enumerate(data_structure):
-    for beta in ['0.0001610','0.0000240']:
-        for sigma in  ['5.0000']:
 
-            nfeat=np.prod(structure['shape'])
-            data_file=f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_{nfeat}_beta_{beta}_sigma_{sigma}_norm_kemp_1_compressed.mat"
+for idx, structure in enumerate(data_structure):
+    for beta in ['0.0001610', '0.0923671']:
+        for sigma in ['5.0000']:
+            nfeat = np.prod(structure['shape'])
+            data_file = f"synth_{structure['struct']}_nobj_{structure['nclass']*1000}_nclass_{structure['nclass']}_nhier_{structure['n_hier']}_nfeat_{nfeat}_beta_{beta}_sigma_{sigma}_norm_kemp_1_compressed.mat"
             data_config.append(dict(data_file=data_file,shape=structure['shape']))
 
 train_configuration = []
 
-for dataset , model, train_type, stop_type in itertools.product(data_config,['NN','linear_NN'],['train_test'],['fixed','test_performance']):
+##### Create training identifier #####
+for dataset, model, train_type, stop_type in itertools.product(data_config,['NN','linear_NN'],['train_test'],['fixed','test_performance']):
     s = re.findall('nclass_\d+', dataset['data_file'])[0]
     nclass = int(s.split('_')[1])
     s = re.findall('nhier_\d+', dataset['data_file'])[0]
@@ -117,8 +111,9 @@ for dataset , model, train_type, stop_type in itertools.product(data_config,['NN
     train_configuration.append(dict(identifier=train_identifier,dataset=dataset['data_file'],shape=dataset['shape'],
                                     nclass=nclass,nobj=nobj,nhier=nhier,sigma=sigma,beta=beta,model=model,train_type=train_type,
                                     structure=structure,nfeat=nfeat,stop_criteria=stop_type))
+    
+##### Create identifier pools based on all the possible specs #####
 train_pool={}
-# create the pool
 for config in train_configuration:
     configuration=copy.deepcopy(config)
     train_identifier=configuration['identifier']
