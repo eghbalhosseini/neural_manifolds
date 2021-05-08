@@ -43,7 +43,7 @@ for beta in 0.0923671 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*_extracted.pkl")
+            done < <(find $FULL_DIR -name "*_extracted_v2.pkl")
           i=$i+1
           done
           echo $LINE_COUNT
