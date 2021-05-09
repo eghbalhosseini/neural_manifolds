@@ -5,7 +5,7 @@ analyze_mftma='mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n
 
 i=0
 LINE_COUNT=0
-GRAND_MFTMA_FILE="${ANALYSIS_DIR}/Grand_pool_${analyze_mftma}_processed.csv"
+GRAND_MFTMA_FILE="${ANALYSIS_DIR}/Grand_pool_${analyze_mftma}_capacity_processed.csv"
 rm -f $GRAND_MFTMA_FILE
 touch $GRAND_MFTMA_FILE
 #
@@ -55,6 +55,7 @@ done
 echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
+  echo "running  ${LINE_COUNT} "
    #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 manifold_capacity_script.sh $GRAND_MFTMA_FILE &
    nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_manifold_capacity_scriptscript.sh $GRAND_MFTMA_FILE &
   else
