@@ -44,5 +44,5 @@ XDG_CACHE_HOME=/om/user/${USER}/st
 export XDG_CACHE_HOME
 
 # Get the relevant line from the parameters
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/mftma_analysis.py ${run_file} ${run_model} ${run_analyze} ${OVERWRITE}
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny_fz.simg python /om/user/${USER}/neural_manifolds/mftma_analysis.py ${run_file} ${run_model} ${run_analyze} ${OVERWRITE}
 
