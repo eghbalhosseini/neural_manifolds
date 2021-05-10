@@ -1,8 +1,17 @@
 from utils.analysis_utils import run_mftma
-from utils import save_dir, data_dir,analyze_dir, train_pool, save_dict
+import pickle
+save_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
+data_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
+analyze_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
+
+def save_dict(di_, filename_):
+    with open(filename_, 'wb') as f:
+        pickle.dump(di_, f)
+
+from utils import train_pool
 from utils.analysis_utils import analyze_pool
 import torch
-import pickle
+
 import os
 import argparse
 parser = argparse.ArgumentParser(description='run mftma and save results')
