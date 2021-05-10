@@ -2,11 +2,11 @@ import numpy as np
 import sys
 import os
 import argparse
-from utils.model_utils import save_dict
+
 import pickle
 import fnmatch
 from tqdm import tqdm
-from utils import save_dir, analyze_dir, result_dir,train_pool
+from utils import save_dir, analyze_dir, results_dir,train_pool,save_dict
 from utils.analysis_utils import analyze_pool
 from tqdm import tqdm
 import re

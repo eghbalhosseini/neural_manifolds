@@ -1,5 +1,5 @@
-from utils.model_utils import save_dict
-from utils import save_dir,analyze_dir, train_pool
+
+from utils import save_dir,analyze_dir, train_pool,save_dict
 from utils.analysis_utils import analyze_pool
 import pickle
 import os

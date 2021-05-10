@@ -391,9 +391,6 @@ class CNN(nn.Module):
         return F.log_softmax(x_fc2, dim=1)
 
 
-def save_dict(di_, filename_):
-    with open(filename_, 'wb') as f:
-        pickle.dump(di_, f)
 
 
 def show_cov(dataset, frac=50):
