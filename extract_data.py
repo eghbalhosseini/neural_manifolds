@@ -1,7 +1,7 @@
 from utils.extractor_utils import mftma_extractor
-from utils.model_utils import NN, save_dict
+
 from utils.extractor_utils import make_manifold_data
-from utils import save_dir, data_dir, train_pool
+from utils import save_dir, data_dir, train_pool,save_dict
 from utils.analysis_utils import analyze_pool
 import pickle
 import torch

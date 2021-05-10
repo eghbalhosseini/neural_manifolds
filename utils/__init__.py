@@ -18,6 +18,7 @@ import os
 import re
 from importlib import import_module
 import numpy as np
+import pickle
 
 def load_train(train_name):
     return train_pool[train_name]()
@@ -138,6 +139,9 @@ for config in train_configuration:
 
     train_pool[train_identifier] = train_instantiation
 
+def save_dict(di_, filename_):
+    with open(filename_, 'wb') as f:
+        pickle.dump(di_, f)
 
 
 

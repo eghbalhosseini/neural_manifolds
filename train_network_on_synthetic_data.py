@@ -4,14 +4,14 @@ import copy
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset
-from utils.model_utils import train, train_test, save_dict, NN, show_cov
+from utils.model_utils import train, train_test, NN, show_cov
 from torch.utils.data.sampler import SubsetRandomSampler
 import os, sys
 import socket
 from datetime import datetime
 import getpass
 import numpy as np
-from utils import save_dir, train_pool
+from utils import save_dir, train_pool, save_dict
 import re
 import argparse
 import matplotlib.pyplot as plt
