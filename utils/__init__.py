@@ -23,6 +23,10 @@ import pickle
 def load_train(train_name):
     return train_pool[train_name]()
 
+def moving_average(x,w):
+    w_min=1#int(np.floor(w/2))
+    return pd.Series(x).rolling(w, min_periods=w_min).mean()
+av_window=10
 ####################### TRAINING ###########################
 class params:
     def __init__(self,datafile=None,model=None,train_type='train_test',identifier=None,beta=0.0,sigma=0.0,nclass=0,nobj=0,nhier=0,
