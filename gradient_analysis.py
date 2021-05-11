@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     grad_pkl_files = []
     for file in os.listdir(os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier)):
-        if fnmatch.fnmatch(file, '*gradient_data_v2.pkl'):
+        if fnmatch.fnmatch(file, '*gradient_data_v3.pkl'):
             grad_pkl_files.append(os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, file))
     s = [re.findall('/\d+', x) for x in grad_pkl_files]
     s = [item for sublist in s for item in sublist]
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         layer_gradient_dict[layer]=layer_branch_data
         # save layer data independently
         layer_gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier,
-                                     f'{model_identifier}_{layer}_gradient_pooled_v2.pkl')
+                                     f'{model_identifier}_{layer}_gradient_pooled_v3.pkl')
         d_layer = {'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
                     'train_identifier': train_identifier,
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         print('saved ' + layer_gradient_file)
 
     # save the results
-    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled_v2.pkl')
+    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled_v3.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier':train_identifier,
