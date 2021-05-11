@@ -29,8 +29,8 @@ for beta in 0.0923671 ; do
           MODEL_LINE=0
           while read x; do
               # check if file already exist in analyze dir
-              original='_extracted.pkl'
-              correction='_mftma_analysis.pkl'
+              original='_extracted_v3.pkl'
+              correction='_mftma_analysis_v3.pkl'
               possible_file="${x/$original/$correction}"
               possible_path="${possible_file/$FULL_DIR/$ANALYZE_DIR}"
               if [ -f "$possible_path" ]
@@ -43,7 +43,7 @@ for beta in 0.0923671 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*_extracted_v2.pkl")
+            done < <(find $FULL_DIR -name "*_extracted_v3.pkl")
           i=$i+1
           done
           echo $LINE_COUNT
