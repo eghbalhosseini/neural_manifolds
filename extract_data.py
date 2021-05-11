@@ -105,7 +105,7 @@ if __name__ == '__main__':
         ## Check if distance data exsits:
         distance_file = os.path.join(data_dir, file_parts[-1])
         distance_file = distance_file.replace(".pth", '')
-        distance_file = distance_file + '_distance_data_v2.pkl'
+        distance_file = distance_file + '_distance_data_v3.pkl'
         distance_file = distance_file.replace(os.path.join(data_dir) + '/',
                                           os.path.join(data_dir) + '/' + str(
                                               task_id).zfill(4) + '_')
@@ -164,7 +164,7 @@ if __name__ == '__main__':
                 # STEP 4. save the file
                 projection_file = os.path.join(data_dir,file_parts[-1])
                 projection_file = projection_file.replace(".pth", '')
-                projection_file = projection_file + '_' + name + '_extracted_v2.pkl'
+                projection_file = projection_file + '_' + name + '_extracted_v3.pkl'
 
                 projection_file = projection_file.replace(os.path.join(data_dir) + '/',
                                           os.path.join(data_dir) + '/' + str(task_id).zfill(4) + '_')
@@ -219,7 +219,7 @@ if __name__ == '__main__':
                         'batchidx': weight_data['batchidx']}
             distance_file = os.path.join(data_dir, file_parts[-1])
             distance_file = distance_file.replace(".pth", '')
-            distance_file = distance_file + '_distance_data_v2.pkl'
+            distance_file = distance_file + '_distance_data_v3.pkl'
             distance_file = distance_file.replace(os.path.join(data_dir) + '/',
                                                   os.path.join(data_dir) + '/' + str(task_id).zfill(
                                                       4) + '_')
@@ -256,7 +256,7 @@ if __name__ == '__main__':
 
                 gradient_file = os.path.join(data_dir, file_parts[-1])
                 gradient_file = gradient_file.replace(".pth", '')
-                gradient_file = gradient_file + '_gradient_data_v2.pkl'
+                gradient_file = gradient_file + '_gradient_data_v3.pkl'
                 gradient_file = gradient_file.replace(os.path.join(data_dir) + '/',
                                                       os.path.join(data_dir) + '/' + str(task_id).zfill(
                                                           4) + '_')
