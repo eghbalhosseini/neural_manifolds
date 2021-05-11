@@ -52,7 +52,7 @@ if __name__ == '__main__':
             layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx, batch=batchidx,
                  seq=id_file,train_acc=data_['train_acc'],test_acc=data_['test_acc'] , file=file))
         mftma_pooled[layer]=layer_results
-    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_distance_pooled_v3.pkl')
+    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_mftma_pooled_v3.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier': train_dir_identifier,
