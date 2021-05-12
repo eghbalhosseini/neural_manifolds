@@ -46,7 +46,7 @@ if __name__=='__main__':
     extracted_files = []
     for file in os.listdir(os.path.join(save_dir, analyze_identifier_for_saving, model_identifier_for_saving,
                                         train_dir_identifier)):
-        if fnmatch.fnmatch(file, '*_extracted_v2.pkl'):
+        if fnmatch.fnmatch(file, '*_extracted_v3.pkl'):
             extracted_files.append(os.path.join(save_dir, analyze_identifier_for_saving, model_identifier_for_saving,
                                             train_dir_identifier, file))
     s = [re.findall('/\d+', x) for x in extracted_files]
@@ -93,7 +93,7 @@ if __name__=='__main__':
 
         covar_pooled[layer] = layer_results
     pool_file = os.path.join(analyze_dir, analyze_identifier_for_saving, model_identifier_for_saving,
-                             train_dir_identifier, f'{model_identifier_for_saving}_{distance_metric}_center_covar_pooled_v2.pkl')
+                             train_dir_identifier, f'{model_identifier_for_saving}_{distance_metric}_center_covar_pooled_v3.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier': train_dir_identifier,

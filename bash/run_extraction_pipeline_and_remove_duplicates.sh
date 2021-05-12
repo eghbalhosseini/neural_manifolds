@@ -20,11 +20,11 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0923671 0.000161; do
+for beta in 0.0923671 ; do
   for sigma in 5.0  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
-        for net in linear_NN ; do
+        for net in NN  ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
 #                           epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001 \
 #                           epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05 \
@@ -39,7 +39,7 @@ for beta in 0.0923671 0.000161; do
               file_name="${line/$original/}"
               original='.pth'
 #              correction='_layer*'
-              correction='_gradient_data_v2*'
+              correction='_gradient_data_v3*'
               possible_file="${file_name/$original/$correction}"
               leading_zero=$(printf "%04d" $MODEL_LINE)
               new_file_name="${ROOT_DIR}/${analyze}/${model}/${train_dir}/${leading_zero}_${possible_file}"
@@ -51,7 +51,6 @@ for beta in 0.0923671 0.000161; do
                 LINE_COUNT=$(expr ${LINE_COUNT} + 1)
                 echo "$new_file_name doesnt exists adding it"
 	              printf "%d, %d , %s, %s, %s\n" "$LINE_COUNT" "$MODEL_LINE" "$model" "$analyze" "$line" >> $GRAND_FILE
-
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
 	      done <$FULL_FILE

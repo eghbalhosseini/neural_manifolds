@@ -57,7 +57,7 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     # Storage for samples
     sampled_data = defaultdict(list)
     # Sample the labels
-    sampled_labels = np.random.choice(list(range(max_class)), size=sampled_classes, replace=False)
+    sampled_labels = np.sort(np.random.choice(list(range(max_class)), size=sampled_classes, replace=False))
     # Shuffle the order to iterate through the dataset
     idx = [i for i in range(len(dataset))]
     if randomize:
@@ -80,7 +80,8 @@ def make_manifold_data(dataset, sampled_classes, examples_per_class, max_class=N
     assert complete, 'Could not find enough examples for the sampled classes'
     # Combine the samples into batches
     data = []
-    for s, d in sampled_data.items():
-        data.append(torch.stack(d))
+    for s in sorted(sampled_data.keys()):
+        print(f'{s}\t')
+        data.append(torch.stack(sampled_data[s]))
     return data
 

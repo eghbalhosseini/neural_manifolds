@@ -67,7 +67,7 @@ if __name__=='__main__':
     projection_data_ = extracted_data['projection_results']
     # create outputfile
     mftma_file = os.path.join(results_dir,file_parts[-1])
-    mftma_file = mftma_file.replace("_extracted_v2.pkl", '_mftma_analysis_v2.pkl')
+    mftma_file = mftma_file.replace("_extracted_v3.pkl", '_mftma_analysis_v3.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # check whether file exist
@@ -83,7 +83,7 @@ if __name__=='__main__':
         mftma_results = run_mftma(projection_data_, kappa=analyze_params.kappa, n_t=analyze_params.n_t, n_reps=analyze_params.n_rep)
         # save results:
         mftma_file=os.path.join(results_dir,file_parts[-1])
-        mftma_file = mftma_file.replace("_extracted_v2.pkl", '_mftma_analysis_v2.pkl')
+        mftma_file = mftma_file.replace("_extracted_v3.pkl", '_mftma_analysis_v3.pkl')
         #print(mftma_file)
     #
         d_master = {'mftma_results': mftma_results,

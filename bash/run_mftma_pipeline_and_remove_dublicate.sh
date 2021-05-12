@@ -16,10 +16,10 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0923671 ; do
+for beta in 0.000161 ; do
   for sigma in 5.0 ; do
     for nclass in 64 ; do
-      for net in linear_NN  ; do
+      for net in NN  ; do
         for idx in 0 ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
           model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
@@ -29,8 +29,8 @@ for beta in 0.0923671 ; do
           MODEL_LINE=0
           while read x; do
               # check if file already exist in analyze dir
-              original='_extracted.pkl'
-              correction='_mftma_analysis.pkl'
+              original='_extracted_v3.pkl'
+              correction='_mftma_analysis_v3.pkl'
               possible_file="${x/$original/$correction}"
               possible_path="${possible_file/$FULL_DIR/$ANALYZE_DIR}"
               if [ -f "$possible_path" ]
@@ -43,7 +43,7 @@ for beta in 0.0923671 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*_extracted_v2.pkl")
+            done < <(find $FULL_DIR -name "*_extracted_v3.pkl")
           i=$i+1
           done
           echo $LINE_COUNT
@@ -55,8 +55,8 @@ done
 echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
-   #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 mftma_script.sh $GRAND_MFTMA_FILE &
-   nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_MFTMA_FILE &
+   nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 500 600 100 mftma_script.sh $GRAND_MFTMA_FILE &
+   #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_MFTMA_FILE &
   else
     echo $LINE_COUNT
 fi
