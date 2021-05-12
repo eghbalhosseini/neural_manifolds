@@ -48,7 +48,8 @@ if __name__ == '__main__':
 
     params = train_pool[model_identifier]()
     params.load_dataset()
-    layer_names = params.get_layer_names()[3:]
+    layer_names = params.get_layer_names()[1:]
+    print(layer_names)
     transfo_mat = params.dataset.transformation_mats
     analyze_params = analyze_pool[analyze_identifier]()
     tiled_transfo_mat = [np.tile(x, (1, analyze_params.exm_per_class)).reshape(-1, x.shape[1]) for x in transfo_mat]
@@ -78,7 +79,7 @@ if __name__ == '__main__':
             all_combs = [combs, combs_1]
             all_combs = [item for sublist in all_combs for item in sublist]
             if len(all_combs)>example_per_class**2:
-                select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=2500)]
+                select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=10)]
             else:
                 select_combs=all_combs
             # use the combination to compute the differences in vectors
@@ -99,7 +100,7 @@ if __name__ == '__main__':
         layer_gradient_dict[layer]=layer_branch_data
         # save layer data independently
         layer_gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier,
-                                     f'{model_identifier}_{layer}_gradient_pooled_v3.pkl')
+                                     f'{model_identifier}_{layer}_gradient_pooled_v3_small.pkl')
         d_layer = {'analyze_identifier': analyze_identifier,
                     'model_identifier': model_identifier,
                     'train_identifier': train_identifier,
@@ -109,7 +110,7 @@ if __name__ == '__main__':
         print('saved ' + layer_gradient_file)
 
     # save the results
-    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled_v3.pkl')
+    gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier, f'{model_identifier}_gradient_pooled_v3_small.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier':train_identifier,
