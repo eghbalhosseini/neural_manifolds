@@ -79,7 +79,7 @@ if __name__ == '__main__':
             all_combs = [combs, combs_1]
             all_combs = [item for sublist in all_combs for item in sublist]
             if len(all_combs)>example_per_class**2:
-                select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=10)]
+                select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=200)]
             else:
                 select_combs=all_combs
             # use the combination to compute the differences in vectors
