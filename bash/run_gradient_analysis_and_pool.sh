@@ -3,7 +3,6 @@
 #SBATCH --array=0-1
 #SBATCH --time=72:00:00
 #SBATCH --mem=256G
-#SBATCH -N 1
 #SBATCH --exclude node017,node018
 
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
