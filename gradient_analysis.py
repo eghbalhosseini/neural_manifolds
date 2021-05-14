@@ -53,35 +53,45 @@ if __name__ == '__main__':
     transfo_mat = params.dataset.transformation_mats
     analyze_params = analyze_pool[analyze_identifier]()
     tiled_transfo_mat = [np.tile(x, (1, analyze_params.exm_per_class)).reshape(-1, x.shape[1]) for x in transfo_mat]
+    # extract the data first :
+    epoch_data = []
+    for idx, file in tqdm(enumerate(grad_pkl_files)):
+        g = pickle.load(open(file, 'rb'))
+        batch_ = dict()
+        for key in g['results'][0].keys():
+            e = np.asarray(g['results'][0][key]).squeeze()
+            batch_[key] = (np.reshape(e, [-1, e.shape[2]]))
+        epoch_data.append(batch_)
+    # reformat the data :
+    all_e_f_list = dict()
+    for layer in layer_names:
+        e_f_ = [x[layer] for x in epoch_data]
+        all_e_f_list[layer] = e_f_
 
     # do analysis for layers
     layer_gradient_dict=dict()
+
     for layer in layer_names:
         print(f"analyzing {layer} \n")
-        layer_branch_data=dict()
+        layer_branch_data = dict()
         all_grad_data = []
-        # method 1 , only analyze leaf node.
-        for idx, file in tqdm(enumerate(grad_pkl_files)):
-            g = pickle.load(open(file, 'rb'))
-            e = np.asarray(g['results'][0][layer]).squeeze()
-            all_grad_data.append(e)
-        e_f_list = [np.reshape(x, [-1, x.shape[2]]) for x in all_grad_data]
+        e_f_list = all_e_f_list[layer]
 
-        for hier_id,transfo in enumerate(tiled_transfo_mat):
+        for hier_id, transfo in enumerate(tiled_transfo_mat):
             print(f"analyzing hierarchy {hier_id} \n")
             # get grad data:
             # create combination pairs
-            example_per_class=int(np.unique(transfo.sum(axis=0)))
+            example_per_class = int(np.unique(transfo.sum(axis=0)))
             a = list(range(example_per_class))
             combs = list(itertools.combinations_with_replacement(a, r=2))
             combs_1 = list(itertools.combinations(a, r=2))
-            combs_1 = [(x[1], x[0]) for x in combs_1] #flip
+            combs_1 = [(x[1], x[0]) for x in combs_1]  # flip
             all_combs = [combs, combs_1]
             all_combs = [item for sublist in all_combs for item in sublist]
-            if len(all_combs)>example_per_class**2:
-                select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=200)]
-            else:
-                select_combs=all_combs
+            # if len(all_combs)>example_per_class**2:
+            select_combs = [all_combs[x] for x in np.random.choice(np.arange(len(all_combs)), size=500)]
+            # else:
+            #    select_combs=all_combs
             # use the combination to compute the differences in vectors
             all_branch_diffs = []
             for _, time_point in tqdm(enumerate(e_f_list)):
@@ -96,16 +106,16 @@ if __name__ == '__main__':
             # compute the norms for differences
             branch_norm = [[np.linalg.norm(x) for x in branch_diffs] for branch_diffs in all_branch_diffs]
             branch_norm_mat = np.stack(branch_norm)
-            layer_branch_data[f"hier_{hier_id}"]=branch_norm_mat
-        layer_gradient_dict[layer]=layer_branch_data
+            layer_branch_data[f"hier_{hier_id}"] = branch_norm_mat
+        layer_gradient_dict[layer] = layer_branch_data
         # save layer data independently
         layer_gradient_file = os.path.join(save_dir, analyze_identifier, model_identifier, train_identifier,
-                                     f'{model_identifier}_{layer}_gradient_pooled_v3_small.pkl')
+                                           f'{model_identifier}_{layer}_gradient_pooled_v3_medium.pkl')
         d_layer = {'analyze_identifier': analyze_identifier,
-                    'model_identifier': model_identifier,
-                    'train_identifier': train_identifier,
-                    'layer':layer,
-                    'gradient_results': layer_branch_data}
+                   'model_identifier': model_identifier,
+                   'train_identifier': train_identifier,
+                   'layer': layer,
+                   'gradient_results': layer_branch_data}
         save_dict(d_layer, layer_gradient_file)
         print('saved ' + layer_gradient_file)
 

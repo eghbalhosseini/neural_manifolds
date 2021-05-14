@@ -1,8 +1,11 @@
 #!/bin/sh
 #SBATCH --job-name=grad_
 #SBATCH --array=0-1
-#SBATCH --time=72:00:00
-#SBATCH --mem=256G
+#SBATCH --time=6:00:00
+#SBATCH --mem=128G
+#SBATCH --gres=gpu:1
+#SBATCH --constraint=high-capacity
+
 #SBATCH --exclude node017,node018
 
 ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
@@ -17,10 +20,10 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.000161  ; do
+for beta in 0.000161 0.0923671  ; do
   for sigma in 5.0  ; do
     for nclass in 64  ; do
-      for net in NN  ; do
+      for net in linear_NN  ; do
         for idx in 0 ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
             model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
