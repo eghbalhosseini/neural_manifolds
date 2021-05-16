@@ -16,7 +16,7 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0923671 ; do
+for beta in 0.000161 ; do
   for sigma in 5.0 ; do
     for nclass in 64 ; do
       for net in NN  ; do
@@ -43,7 +43,7 @@ for beta in 0.0923671 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*_extracted_v2.pkl")
+            done < <(find $FULL_DIR -name "*Input_extracted_v3.pkl")
           i=$i+1
           done
           echo $LINE_COUNT
