@@ -48,14 +48,14 @@ module add mit/matlab/2018b
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
 save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/';\
-load(${run_file});\
+load(erase('${run_file}',' '));\
 X = (activation.projection_results{1}.(activation.layer_name));\
 for ii=1:min(30,size(X,1)),XtotT{ii} = double(squeeze(X(ii,:,1:20))); end ;\
 options.n_rep =10;\
 options.seed0 = 1;\
 options.flag_NbyM =1;\
 [output] = manifold_simcap_analysis(XtotT, options);\
-save_id=strrep(${run_file},'extracted_v3.mat','capacity_v3.mat');\
+save_id=strrep(erase('${run_file}',' '),'extracted_v3.mat','capacity_v3.mat');\
 save(save_id,'output');\
 quit;"
 
