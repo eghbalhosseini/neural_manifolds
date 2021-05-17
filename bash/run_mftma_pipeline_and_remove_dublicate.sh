@@ -30,7 +30,7 @@ for beta in 0.000161 ; do
           while read x; do
               # check if file already exist in analyze dir
               original='_extracted_v3.pkl'
-              correction='_mftma_analysis_v3.pkl'
+              correction='_mftma_analysis_v4.pkl'
               possible_file="${x/$original/$correction}"
               possible_path="${possible_file/$FULL_DIR/$ANALYZE_DIR}"
               if [ -f "$possible_path" ]
@@ -43,7 +43,7 @@ for beta in 0.000161 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*_extracted_v3.pkl")
+            done < <(find $FULL_DIR -name "*Linear_extracted_v3.pkl")
           i=$i+1
           done
           echo $LINE_COUNT
@@ -55,8 +55,8 @@ done
 echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
-   nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 500 600 100 mftma_script.sh $GRAND_MFTMA_FILE &
-   #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_MFTMA_FILE &
+   #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 500 600 100 mftma_script.sh $GRAND_MFTMA_FILE &
+   nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 mftma_script.sh $GRAND_MFTMA_FILE &
   else
     echo $LINE_COUNT
 fi

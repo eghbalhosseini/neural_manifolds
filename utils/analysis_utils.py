@@ -107,7 +107,7 @@ analyze_pool={}
 analyze_method=['mftma']
 n_ts=[300]
 kappas=[0,0.00000001]
-n_reps=[1,5,10]
+n_reps=[1,5,10,25]
 n_projs=[5000]
 
 exm_per_class=[20,50,100]
