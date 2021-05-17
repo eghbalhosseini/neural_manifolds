@@ -43,7 +43,7 @@ for beta in 0.000161 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*Input_extracted_v3.mat")
+            done < <(find $FULL_DIR -name "*Linear_extracted_v3.mat")
           i=$i+1
           done
           echo $LINE_COUNT
