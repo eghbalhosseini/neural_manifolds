@@ -29,28 +29,34 @@
 
 
 %% Try to load real KNN data
-data_super = load('/Users/gt/Documents/GitHub/neural_manifolds/local/result/feb26/NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed_layer_2_Linear_numSubsamples_100_k_100.mat')
+data_super = load('layer=layer_1_Linear_hier=1_v3.mat')
+data = data_super.data;
 
 %%
 hier_num = 6;
-data = data_super.super_struct.hier_6;
-NNids_data = data.NNids;
+NNids = data.I;
+% NNids = NNids(:, 2:10)+1;  
+NNids=double(NNids);
+NNids = double(NNids(10600*2:10600*6-1, 1:10)) ;
+NNids = NNids - min(min(NNids))+1;
+
+% NNids = NNids(:, 2:end)+1;                               % points should not be their own neighbors
+% points should not be their own neighbors
 
 % fix normalization 
 NNids_t = size(NNids,1)*NNids;
 NNids = ceil(NNids_t);
-
-figure;imagesc(NNids)
+% % 
+% figure;imagesc(NNids)
 
 %% Get params
 nSamples = 100;                                        % samples per subEpoch
-nEpochs = 10;                                          % number of epochs (e.g. days)
-nSubEpochs = length(NNids)/nSamples/10;                                        % number of sub epochs  (e.g. periods in day)
+nEpochs = 4;                                          % number of epochs (e.g. days)
+nSubEpochs = length(NNids)/nSamples/nEpochs;            % number of sub epochs  (e.g. periods in day)
 N = nEpochs * nSubEpochs * nSamples;                   % total number of datapoints
 productionTime = (1:N)';                               % production time for each datapoint
 epoch = ceil(productionTime/(nSubEpochs*nSamples));
 subEpoch = floor(mod(productionTime-1, (nSubEpochs*nSamples))/nSamples) + 1;
-permute = False
 
 %% Create random data
 % nEpochs = 40;                                          % number of epochs (e.g. days)
@@ -66,14 +72,14 @@ permute = False
 
 %% Compute k-NN graph
 
-if permute
-    data1 = data;
-    rand_idx = randperm(length(data1));
-    data = data1(rand_idx, :);
-end 
+% if permute
+%     data1 = data;
+%     rand_idx = randperm(length(data1));
+%     data = data1(rand_idx, :);
+% end 
 
-NNids_self = knnsearch(data, data, 'K', 100);               % or use your preferred nearest neighbor searcher 
-NNids = NNids_self(:, 2:end);                               % points should not be their own neighbors
+% NNids_self = knnsearch(data, data, 'K', 100);               % or use your preferred nearest neighbor searcher 
+NNids = NNids(:, 2:end);                               % points should not be their own neighbors
 
 %% GT norm computation (prob not relevant)
 % normNN = zeros(100 - 1, length(epoch));
@@ -89,10 +95,10 @@ NNids = NNids_self(:, 2:end);                               % points should not 
 [RPD, RPD_epoch, RPD_subEpoch] = repertoireDating.percentiles(NNids, epoch, subEpoch);
 
 %%
-repertoireDating.plotPercentiles(RPD, RPD_epoch, RPD_subEpoch, 3:5);
+repertoireDating.plotPercentiles(RPD, RPD_epoch, RPD_subEpoch);
 
 %%
-RP = repertoireDating.renditionPercentiles(NNids, epoch, 'percentiles', 50);
+RP = repertoireDating.renditionPercentiles(NNids, epoch, 'percentiles', 50, 3:5);
 
 %% Compute and plot rendition percentiles for all datapoints from epoch 20
 repertoireDating.renditionPercentiles(NNids, epoch, 'valid', epoch == 3, 'doPlot', true);

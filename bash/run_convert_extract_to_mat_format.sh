@@ -16,19 +16,16 @@ hier_list="6"
 struct_arr=($struct_list)
 hier_arr=($hier_list)
 
-for beta in 0.0923671 ; do
+for beta in 0.000161 ; do
     for sigma in 5.0  ; do
       for nclass in 64  ; do
-        for net in linear_NN ; do
-          for distance_metric in cosine euclidean ; do
+        for net in NN ; do
           for idx in 0 ; do
             for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
             model="${net}-${struct_arr[$idx]}_nclass=${nclass}_nobj=$(($nclass * 1000))_nhier=${hier_arr[$idx]}_beta=${beta}_sigma=${sigma}_nfeat=936-train_test-fixed"
             model_list[$i]="$model"
             train_dir_list[$i]="$train_dir"
-            distance_metric_list[$i]="$distance_metric"
             i=$i+1
-          done
           done
         done
       done
@@ -46,4 +43,4 @@ echo "Running model:  ${model_list[$SLURM_ARRAY_TASK_ID]}"
 echo "Running pooling for :  ${analyze_mftma}"
 echo "Running distance_metric for :  ${distance_metric_list[$SLURM_ARRAY_TASK_ID]}"
 
-singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/center_covar_analysis_and_pool.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma} ${train_dir_list[$SLURM_ARRAY_TASK_ID]} ${distance_metric_list[$SLURM_ARRAY_TASK_ID]} OVERWRITE
+singularity exec -B /om:/om,/mindhive:/mindhive /om/user/${USER}/simg_images/neural_manifolds_tiny.simg python /om/user/${USER}/neural_manifolds/convert_extract_to_mat_format.py ${model_list[$SLURM_ARRAY_TASK_ID]} ${analyze_mftma} ${train_dir_list[$SLURM_ARRAY_TASK_ID]} $OVERWRITE

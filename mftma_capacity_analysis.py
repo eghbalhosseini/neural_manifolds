@@ -57,9 +57,23 @@ if __name__=='__main__':
     file_parts=file_id.split('/')
     extracted_data = pickle.load(open(file_id, 'rb'))
     projection_data_ = extracted_data['projection_results']
+
+    M = 30
+    P = 20
+    type(projection_data_[1]['layer_0_Input'])
+    projection_data_mod = []
+    for porj in projection_data_:
+        for key in porj.keys():
+            print(len(porj[key]))
+            # classes:
+            temp1 = porj[key][0:min(len(porj[key]), P)]
+            temp2 = [x[:, :min(M, x.shape[1])] for x in temp1]
+            porj[key] = temp2
+        projection_data_mod.append(porj)
+
     # create outputfile
     mftma_file = os.path.join(results_dir,file_parts[-1])
-    mftma_file = mftma_file.replace("_extracted_v2.pkl", '_mftma_capacity_analysis_v2.pkl')
+    mftma_file = mftma_file.replace("_extracted_v3.pkl", '_mftma_capacity_analysis_v3.pkl')
     #
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # check whether file exist
@@ -72,10 +86,10 @@ if __name__=='__main__':
     #
     if do_analysis:
     # run mftma
-        mftma_results = run_mftma_simcap(projection_data_)
+        mftma_results = run_mftma_simcap(projection_data_mod)
         # save results:
         mftma_file=os.path.join(results_dir,file_parts[-1])
-        mftma_file = mftma_file.replace("_extracted_v2.pkl", '_mftma_capacity_analysis_v2.pkl')
+        mftma_file = mftma_file.replace("_extracted_v3.pkl", '_mftma_capacity_analysis_v3.pkl')
         #print(mftma_file)
     #
         d_master = {'mftma_capacity_results': mftma_results,
