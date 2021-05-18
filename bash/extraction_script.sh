@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 #SBATCH -n 1 # one core
-#SBATCH -t 3:00:00
-#SBATCH --mem=8000
+#SBATCH -t 2:00:00
+#SBATCH --mem=4000
 
 GRAND_FILE=$1
 OVERWRITE='false'
