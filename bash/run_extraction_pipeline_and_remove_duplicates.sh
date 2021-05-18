@@ -24,7 +24,7 @@ for beta in 0.0923671 ; do
   for sigma in 5.0  ; do
     for nclass in 64 ; do
       for idx in 0 ; do
-        for net in NN  ; do
+        for net in linear_NN  ; do
           for train_dir in epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06 ; do
 #                           epochs-10_batch-32_lr-0.001_momentum-0.5_init-gaussian_std-0.0001 \
 #                           epochs-10_batch-32_lr-0.002_momentum-0.6_init-gaussian_std-1e-05 \
