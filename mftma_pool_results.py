@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # manually walk through the files
     mftma_files = []
     for file in os.listdir(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving,train_dir_identifier)):
-        if fnmatch.fnmatch(file, '*_mftma_analysis_v3_nrep_100.pkl'):
+        if fnmatch.fnmatch(file, '*_mftma_analysis_v3.pkl'):
             mftma_files.append(os.path.join(analyze_dir, analyze_identifier_for_saving,model_identifier_for_saving,train_dir_identifier, file))
     s = [re.findall('/\d+', x) for x in mftma_files]
     s = [item for sublist in s for item in sublist]
@@ -52,7 +52,7 @@ if __name__ == '__main__':
             layer_results.append(dict(mftma=data_['mftma_results'], epoch=epochidx, batch=batchidx,
                  seq=id_file,train_acc=data_['train_acc'],test_acc=data_['test_acc'] , file=file))
         mftma_pooled[layer]=layer_results
-    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_mftma_pooled_v3_nrep_100.pkl')
+    pool_file = os.path.join(save_dir,analyze_identifier, model_identifier_for_saving,train_dir_identifier, f'{model_identifier_for_saving}_mftma_pooled_v3.pkl')
     d_master = {'analyze_identifier': analyze_identifier,
                 'model_identifier': model_identifier,
                 'train_identifier': train_dir_identifier,
