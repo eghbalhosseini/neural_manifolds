@@ -30,7 +30,7 @@ for beta in 0.000161 ; do
           while read x; do
               # check if file already exist in analyze dir
               original='_extracted_v3.pkl'
-              correction='_mftma_analysis_v4.pkl'
+              correction='_mftma_analysis_v3_nrep_100.pkl'
               possible_file="${x/$original/$correction}"
               possible_path="${possible_file/$FULL_DIR/$ANALYZE_DIR}"
               if [ -f "$possible_path" ]
