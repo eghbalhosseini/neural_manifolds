@@ -97,6 +97,7 @@ if __name__=='__main__':
                  'epoch': extracted_data['epoch'],
                  'files_generated': mftma_file}
         save_dict(d_master, mftma_file)
+        print(f'saved {mftma_file}, done!')
     else:
          print('file already exists, abort')
          pass
