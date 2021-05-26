@@ -9,7 +9,7 @@ fprintf('all files found : %d\n',length(d_files))
 
 Alphas_list=[];
 Gammas_list=[];
-beta_vals=[];
+beta_vals=[]CjK3n0TbAA8&50tEIrB0;
 for n=1:length(d_files)
     fprintf('%d\n',n)
     res=load(strcat(d_files(n).folder,filesep,d_files(n).name));
