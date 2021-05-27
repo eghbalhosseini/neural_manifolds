@@ -5,8 +5,6 @@
 #SBATCH --job-name=SIM_CAP
 #SBATCH -t 48:00:00
 #SBATCH -N 1
-#SBATCH --array=0
-#SBATCH -n 16
 #SBATCH --mem-per-cpu 64000
 #SBATCH --exclude node017,node018
 #SBATCH --mail-type=ALL
