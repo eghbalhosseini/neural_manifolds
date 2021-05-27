@@ -62,7 +62,7 @@ for n=1:n_feat
     fprintf('feature: %d\n',n);
 end
 % clear up some space 
-clear S Adj Laplacian V Liplacian_tilde Chol_lower 
+clear S Adj Laplacian V Laplacian_tilde Chol_lower 
 % save the results 
 ops_out=ops;
 % 
