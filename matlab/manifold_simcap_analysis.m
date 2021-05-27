@@ -238,8 +238,8 @@ try
 %     [sep, sep_slack, w, bias, xi, margin, flag, minima] ...
 %     =find_svm_cplexqp_sep_primal_slackb(X, y, w_ini, bias_ini, kappa, C0, xi_ini, tolerance); 
     
-%    [sep, w, margin, flag, u, bias] = ...
-%    find_svm_cplexqp_sep_primal_wb(X, y, w_ini, kappa, tolerance, bias_ini, 1); 
+    [sep, w, margin, flag, u, bias] = ...
+    find_svm_cplexqp_sep_primal_wb(X, y, w_ini, kappa, tolerance, bias_ini, 1); 
 
 catch error 
     flag_wb=1; m_ini=1; m_add=5; tmax=500; 
