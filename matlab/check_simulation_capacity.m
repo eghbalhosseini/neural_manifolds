@@ -11,15 +11,17 @@ sav_id='0789_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=
 load(strcat(save_path,filesep,mftma_id,filesep,network_id,filesep,train_id,filesep,file_id));
 
 
-%load(strcat('/Users/eghbalhosseini/Desktop/mftma_capacity_data/',...
-%    '0789_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=08-batchidx=720_layer_0_Input_extracted_v3.mat'));
-X = (activation.projection_results{1}.(activation.layer_name));
+load(strcat('/Users/eghbalhosseini/Desktop/mftma_capacity_data/',...
+    '0795_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=08-batchidx=810_layer_0_Input_extracted_v3.mat'));
+X = (activation.projection_results{2}.(activation.layer_name));
 options.n_rep =10;
 options.seed0 = 1;
 options.flag_NbyM =1;
-
+XtotT={};
 for ii=1:size(X,1),
-    XtotT{ii} = double(squeeze(X(ii,:,1:size(X,3))));
+    X_class=double(squeeze(X(ii,:,1:size(X,3))));
+    modif=0e-2*repmat(randn(size(X_class,1),1),1,size(X_class,2));
+    XtotT{ii} = X_class+modif;
 end
 [output] = manifold_simcap_analysis(XtotT, options);
 output
