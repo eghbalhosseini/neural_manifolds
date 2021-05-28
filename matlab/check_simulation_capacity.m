@@ -12,8 +12,10 @@ load(strcat(save_path,filesep,mftma_id,filesep,network_id,filesep,train_id,files
 
 
 load(strcat('/Users/eghbalhosseini/Desktop/mftma_capacity_data/',...
-    '0795_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=08-batchidx=810_layer_0_Input_extracted_v3.mat'));
-X = (activation.projection_results{2}.(activation.layer_name));
+    '0000_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=01-batchidx=15_layer_0_Input_extracted_v3.mat'));
+output_cell={};
+for p=1:size(activation.projection_results,2) 
+X = (activation.projection_results{p}.(activation.layer_name));
 options.n_rep =10;
 options.seed0 = 1;
 options.flag_NbyM =1;
@@ -21,8 +23,34 @@ XtotT={};
 for ii=1:size(X,1),
     X_class=double(squeeze(X(ii,:,1:size(X,3))));
     modif=0e-2*repmat(randn(size(X_class,1),1),1,size(X_class,2));
-    XtotT{ii} = X_class+modif;
+    XtotT{ii} = X_class;%+modif;
 end
 [output] = manifold_simcap_analysis(XtotT, options);
-output
-save(strcat(save_path,filesep,mftma_id,filesep,network_id,filesep,train_id,filesep,sav_id),'output');
+
+%save(strcat(save_path,filesep,mftma_id,filesep,network_id,filesep,train_id,filesep,sav_id),'output');
+
+output_cell=[output_cell;output]
+end 
+
+mftma=[ 0.304488, 0.305600, 0.281324, 0.223159];
+
+sims=cellfun(@(x) x.asim0, output_cell)
+classes=[64,32,16,8]
+colors=flipud(inferno(6));
+figure
+axes=subplot(1,1,1)
+hold on
+arrayfun(@(x) scatter(sims(x),mftma(x),20,colors(x+2,:),'filled','displayname',num2str(classes(x))),[1:4])
+%scatter(sims(1:4),mftma,20,colors(3:6,:),'filled')
+xlim([0,.5])
+ylim([0,.5])
+axis square
+hold on 
+plot([0,.5],[0,.5],'--')
+xlabel('simulation')
+ylabel('capacity')
+shg
+legend('show')
+title('input,  936 feature, epoch 1')
+
+
