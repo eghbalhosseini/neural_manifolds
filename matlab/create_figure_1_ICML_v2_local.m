@@ -1,6 +1,6 @@
-function create_figure_1_ICML_v2_openmind(file_to_pick)
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';
-plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';
+function create_figure_1_ICML_v2_local(file_to_pick)
+save_path='~/MyData/neural_manifolds/data/';
+plot_path='~/MyData/neural_manifolds/data/plots/';
 %% construct file names to grab
 file_pattern='synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_936_beta*_norm_kemp_1_compressed.mat';
 d_files=dir(strcat(save_path,filesep,file_pattern));
@@ -52,7 +52,7 @@ ax.Box='off';axis off;
 ax=axes('position',[.01,.55,.27,.27*xy_ratio]);
 cm=inferno(512);
 im=imagesc(res.data_covar);
-caxis([0,1]);
+caxis([0,.5]);
 colormap(cm);
 hold on;
 ax.Box='off';axis off;
