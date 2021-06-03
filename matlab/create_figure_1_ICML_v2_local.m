@@ -28,7 +28,7 @@ res.data_covar=calc_cov(res.data);
 difference=Alphas_list-Gammas_list;
 %% figure setup
 
-f=figure('visible','off');
+f=figure('visible','on');
 u=f.Units;
 f.Units='inches';
 %f.Resize='off';
@@ -54,6 +54,7 @@ cm=inferno(512);
 im=imagesc(res.data_covar);
 caxis([0,.5]);
 colormap(cm);
+colorbar()
 hold on;
 ax.Box='off';axis off;
 
@@ -272,6 +273,7 @@ temp1=res.data_id(1:regexp(res.data_id,'_beta_'));
 plt_name_str=strcat(plot_path,filesep,...
     sprintf("%sbeta_vals_%d_%d_sigma_%d_id_%d_beta_plot_%d.pdf",temp1,beta_vals_sort(1),beta_vals_sort(end),res.sigma,file_id,res.beta));
 print(f,'-painters', '-dpdf', plt_name_str);
+
 
 fprintf("saved file at %s",plt_name_str);
 
