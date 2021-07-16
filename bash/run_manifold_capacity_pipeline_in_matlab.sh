@@ -43,7 +43,7 @@ for beta in 0.000161 ; do
 
               fi
               MODEL_LINE=$(expr ${MODEL_LINE} + 1)
-            done < <(find $FULL_DIR -name "*Linear_extracted_v3.mat")
+            done < <(find $FULL_DIR -name "*_extracted_v3.mat")
           i=$i+1
           done
           echo $LINE_COUNT
@@ -56,8 +56,8 @@ echo $LINE_COUNT
 run_val=0
 if [ "$LINE_COUNT" -gt "$run_val" ]; then
   echo "running  ${LINE_COUNT} "
-   #nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 manifold_capacity_matlab_script.sh $GRAND_MFTMA_FILE &
-   nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 manifold_capacity_matlab_script.sh $GRAND_MFTMA_FILE &
+   nohup /cm/shared/admin/bin/submit-many-jobs $LINE_COUNT 150 200 50 manifold_capacity_matlab_script.sh $GRAND_MFTMA_FILE &
+   #nohup /cm/shared/admin/bin/submit-many-jobs 20 15 20 5 manifold_capacity_matlab_script.sh $GRAND_MFTMA_FILE &
   else
     echo $LINE_COUNT
 fi
