@@ -1,4 +1,4 @@
-function run_manifold_simulation_capactity(run_file)
+function run_manifold_simulation_capacity(run_file)
 load(erase(run_file,' '));
 output_cell={};
 for p=1:size(activation.projection_results,2)
