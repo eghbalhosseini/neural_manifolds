@@ -32,11 +32,10 @@ for beta in 0.000161 ; do
   done
 done
 # implement the code in matlab
-
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
-loc_folder=strcat($ROOT_DIR,filesep,$analyze_mftma,filesep,${model_list[$SLURM_ARRAY_TASK_ID]},filesep,${train_dir_list[$SLURM_ARRAY_TASK_ID]});\
+loc_folder=strcat('${ROOT_DIR}',filesep,'${analyze_mftma}',filesep,'${model_list[$SLURM_ARRAY_TASK_ID]}',filesep,'${train_dir_list[$SLURM_ARRAY_TASK_ID]}');\
 disp(loc_folder);\
 %model_identifier=${model_list[$SLURM_ARRAY_TASK_ID]};\
 %d=dir(strcat(loc_folder,filesep,'*_capacity_v3.mat');\
