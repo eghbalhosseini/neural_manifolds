@@ -37,15 +37,16 @@ matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
 loc_folder=strcat('${ROOT_DIR}',filesep,'${analyze_mftma}',filesep,'${model_list[$SLURM_ARRAY_TASK_ID]}',filesep,'${train_dir_list[$SLURM_ARRAY_TASK_ID]}');\
 disp(loc_folder);\
-%model_identifier=${model_list[$SLURM_ARRAY_TASK_ID]};\
-%d=dir(strcat(loc_folder,filesep,'*_capacity_v3.mat');\
-%names=arrayfun(@(x) d(x).name,1:size(d,1),'uni',false);\
-%file_num=regexp(names,['\d+_',model_identifier],'match');\
-%file_num_unorder=cell2mat(cellfun(@(x) str2num(cell2mat(erase(x,['_',model_identifier]))),file_num,'uni',false));\
-%[~,order_idx]=sort(file_num_unorder);\
-%sorted_files=arrayfun(@(x) strcat(d(x).folder,filesep,d(x).name),order_idx,'uni',false);\
-%capacity_data_pool=[];\
-%for k=1:length(sorted_files),capacity_data_pool=[capacity_data_pool;[file_num_unorder(k),{load(sorted_files{k})}]];end;\
-%save_path=strcat(loc_folder,filesep,model_identifier,'_capacity_pooled.mat');\
-%save(save_path,'capacity_data_pool');\
+model_identifier='${model_list[$SLURM_ARRAY_TASK_ID]}';\
+d=dir(strcat(loc_folder,filesep,'*_capacity_v3.mat');\
+names=arrayfun(@(x) d(x).name,1:size(d,1),'uni',false);\
+file_num=regexp(names,['\d+_',model_identifier],'match');\
+disp(model_identifier);\
+file_num_unorder=cell2mat(cellfun(@(x) str2num(cell2mat(erase(x,['_',model_identifier]))),file_num,'uni',false));\
+[~,order_idx]=sort(file_num_unorder);\
+sorted_files=arrayfun(@(x) strcat(d(x).folder,filesep,d(x).name),order_idx,'uni',false);\
+capacity_data_pool=[];\
+for k=1:length(sorted_files),capacity_data_pool=[capacity_data_pool;[file_num_unorder(k),{load(sorted_files{k})}]];end;\
+save_path=strcat(loc_folder,filesep,model_identifier,'_capacity_pooled.mat');\
+save(save_path,'capacity_data_pool');\
 quit;"
