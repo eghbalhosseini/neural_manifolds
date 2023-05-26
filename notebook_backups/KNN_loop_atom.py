@@ -13,7 +13,7 @@ import argparse
 import matplotlib.pyplot as plt
 from cuml.neighbors import NearestNeighbors as cuNearestNeighbors
 
-ROOTDIR = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/'
+ROOTDIR = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/'
 model_identifier = 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed'
 train_identifier = 'epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06'
 analyze_identifier = 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
@@ -23,7 +23,7 @@ np.random.seed(0)
 
 def main(raw_args=None):
     parser = argparse.ArgumentParser(description='Compute KNN')
-    parser.add_argument('--ROOTDIR', default='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/', type=str)
+    parser.add_argument('--ROOTDIR', default='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/', type=str)
     parser.add_argument('--model_identifier', default='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed', type=str, help='Model ID str')
     parser.add_argument('--train_identifier', default='epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06', type=str)
     parser.add_argument('--analyze_identifier', default='mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5', type=str)

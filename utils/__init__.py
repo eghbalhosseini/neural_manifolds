@@ -5,10 +5,10 @@ Created on Wed Jul 22 11:08:09 2020
 @author: greta
 """
 ## PATHS ##
-save_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
-data_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
-analyze_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
-results_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/results/'
+save_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/'
+data_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/'
+analyze_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/analyze/'
+results_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/results/'
 
 from utils.model_utils import sub_data, NN, leaf_traverse, add_layer_names
 from utils import model_utils

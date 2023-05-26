@@ -33,8 +33,8 @@ echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
-plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';\
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/';\
+plot_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/plots/';\
 structures={'partition','tree'};\
 betas=logspace(-6,2,30);\
 sigmas=[5];\
@@ -56,8 +56,8 @@ fprintf('saved compressed data in %s \n',data_comp_loc);\
 %save(data_loc,'ops','-v7.3');\
 %fprintf('saved full data in %s \n',data_loc);\
 quit;"
-chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
-chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots
+chmod g+w -R /nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data
+chmod g+w -R /nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/plots
 
 
 # #SBATCH -n 4

@@ -1,6 +1,6 @@
 function create_figure_1_ICML_v2_openmind(file_to_pick)
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';
-plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/';
+plot_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/plots/';
 %% construct file names to grab
 file_pattern='synth_tree_nobj_64000_nclass_64_nhier_6_nfeat_936_beta*_norm_kemp_1_compressed.mat';
 d_files=dir(strcat(save_path,filesep,file_pattern));

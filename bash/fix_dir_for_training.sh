@@ -1,5 +1,5 @@
 #!/bin/sh
-ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
+ROOT_DIR=/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/
 
 i=0
 LINE_COUNT=0

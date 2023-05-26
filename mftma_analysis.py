@@ -1,8 +1,8 @@
 from utils.analysis_utils import run_mftma
 import pickle
-save_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/'
-data_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/'
-analyze_dir = '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/'
+save_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/'
+data_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/'
+analyze_dir = '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/analyze/'
 
 def save_dict(di_, filename_):
     with open(filename_, 'wb') as f:

@@ -1,6 +1,6 @@
 #!/bin/bash
-ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
-ANALYSIS_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/analyze/
+ROOT_DIR=/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/
+ANALYSIS_DIR=/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/analyze/
 analyze_mftma='mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5'
 
 i=0

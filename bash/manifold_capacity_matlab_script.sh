@@ -47,7 +47,7 @@ export XDG_CACHE_HOME
 module add mit/matlab/2018b
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/';\
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/';\
 run_manifold_simulation_capacity('${run_file}');\
 quit;"
 

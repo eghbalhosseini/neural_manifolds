@@ -1,6 +1,6 @@
 function M = runKNN(varargin)
 p=inputParser();
-addParameter(p, 'root_dir', '/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/');
+addParameter(p, 'root_dir', '/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/');
 addParameter(p, 'analyze_identifier', 'knn-k=100-dist_metric=euclidean-num_subsamples=100');
 addParameter(p, 'extraction_identifier', 'mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5');
 addParameter(p, 'model_identifier', 'NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.0_sigma=2.5_nfeat=3072-train_test-fixed');

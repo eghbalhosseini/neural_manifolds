@@ -2,7 +2,7 @@ clear all;
 %load('0987_NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed-epoch=10-batchidx=510_layer_2_Linear_extracted_v3.mat')
 % Xd = double(activation.projection_results{1}.layer_2_Linear); 
 % X = (activation.projection_results{1}.layer_2_Linear);
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/';
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/';
 mftma_id='mftma-exm_per_class=50-proj=False-rand=True-kappa=1e-08-n_t=300-n_rep=5';
 network_id='NN-tree_nclass=64_nobj=64000_nhier=6_beta=0.000161_sigma=5.0_nfeat=936-train_test-fixed';
 train_id='epochs-10_batch-32_lr-0.01_momentum-0.5_init-gaussian_std-1e-06';

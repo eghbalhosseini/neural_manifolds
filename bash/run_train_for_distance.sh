@@ -8,7 +8,7 @@
 
 # create a list of config names
 
-ROOT_DIR=/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/extracted/
+ROOT_DIR=/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/extracted/
 #chmod g+w -R "${ROOT_DIR}"
 
 struct_list="tree"

@@ -34,8 +34,8 @@ echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
-plot_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots/';\
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/';\
+plot_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/plots/';\
 structures={'partition','tree'};\
 betas=[1e-10, 0.0025, 0.0050, 0.0075, 0.0100];\
 sigmas=[1e-5, 0.5, 1, 1.5, 2];\
@@ -48,5 +48,5 @@ ops=create_synth_data_cholesky_method('structure',struct,'n_class',n_class,'exm_
 plot_str=strcat('beta_',num2str(ops.beta),'_sigma_',num2str(ops.sigma),'_','nclass_',num2str(ops.n_class),'_nfeat_',num2str(ops.n_feat),'_exmperclass_',num2str(ops.exm_per_class),'_structure_',ops.structure,'.pdf');\
 plot_tree_decomp(ops.data, 'save_path', plot_path, 'plot_str', plot_str);\
 quit;"
-chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
-chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/plots
+chmod g+w -R /nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data
+chmod g+w -R /nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/plots

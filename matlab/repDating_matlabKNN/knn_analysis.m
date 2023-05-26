@@ -1,5 +1,5 @@
 function knn_analysis(file,model_identifier,analyze_identifier)
-root_dir='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/';
+root_dir='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/';
 assignment=cellfun(@(x) strsplit(x,'='),strsplit(analyze_identifier,'-'),'uni',false);
 cellfun(@(x) evalin('base',strcat(x{1},'=',"'",x{2},"'")),assignment(2:end),'uni',false);
 layer=file([regexp(file,'layer'):(regexp(file,'_extracted'))-1]);

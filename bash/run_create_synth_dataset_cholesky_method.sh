@@ -34,7 +34,7 @@ echo "Running structure ${struct_list[$SLURM_ARRAY_TASK_ID]}"
 module add mit/matlab/2020a
 matlab -nodisplay -r "maxNumCompThreads($SLURM_NTASKS);\
 addpath(genpath('/om/user/${USER}/neural_manifolds/matlab/'));\
-save_path='/mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data/';\
+save_path='/nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data/';\
 structures={'partition','tree'};\
 betas=[1];\
 sigmas=[1];\
@@ -45,4 +45,4 @@ exm_per_class=1000;n_feat=936;\
 beta=betas(${beta_list[$SLURM_ARRAY_TASK_ID]});sigma=sigmas(${sigma_list[$SLURM_ARRAY_TASK_ID]});\
 create_synth_data_cholesky_method('structure',struct,'n_class',n_class,'exm_per_class',exm_per_class,'n_feat',n_feat,'save_path',save_path,'beta',beta,'sigma',sigma);\
 quit;"
-chmod g+w -R /mindhive/evlab/u/Shared/Greta_Eghbal_manifolds/data
+chmod g+w -R /nese/mit/group/evlab/projects/Greta_Eghbal_manifolds/data
